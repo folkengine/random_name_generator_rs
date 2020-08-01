@@ -47,6 +47,8 @@ fn to_rule(s: &str) -> Rule {
     }
 }
 
+// (-{0,1})(\w+)\s{0,1}([\+\-][vc]){0,1}\s{0,1}([\+\-][vc]){0,1}
+
 mod classification_tests {
     use super::*;
 
