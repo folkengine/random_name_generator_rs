@@ -6,7 +6,6 @@ repository = "https://github.com/folkengine/random_name_generator_rs.git"
 homepage = "https://github.com/folkengine/random_name_generator_rs"
 edition = "2018"
 license = "BSD-3-Clause"
-license-file = "LICENSE"
 readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
