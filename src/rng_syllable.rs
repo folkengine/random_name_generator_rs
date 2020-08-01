@@ -1,4 +1,17 @@
+use lazy_static::lazy_static;
+use log::{info};
 use regex::Regex;
+
+static CONSONANTS: [char; 30] = [
+    'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l',
+    'ł', 'm', 'ɱ', 'n', 'ɳ', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'];
+static VOWELS: [char; 36] = [
+    'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'ɯ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ø',
+    'ə', 'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ'];
+
+lazy_static! {
+    static ref RE: Regex = Regex::new(r"(-{0,1})(\w+)\s{0,1}([\+\-][vc]){0,1}\s{0,1}([\+\-][vc]){0,1}").unwrap();
+}
 
 #[derive(Debug)]
 #[derive(PartialEq)]
@@ -46,6 +59,10 @@ fn to_rule(s: &str) -> Rule {
         _ => Rule::None,
     }
 }
+
+// fn scratch(raw: String) {
+//
+// }
 
 // (-{0,1})(\w+)\s{0,1}([\+\-][vc]){0,1}\s{0,1}([\+\-][vc]){0,1}
 
