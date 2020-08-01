@@ -19,7 +19,8 @@ pub enum Rule {
 pub struct Syllable {
     value: String,
     classification: Classification,
-    rule: Rule,
+    must_follow: Rule,
+    must_proceed: Rule,
 }
 
 impl Syllable {
@@ -30,18 +31,64 @@ impl Syllable {
     fn classify(raw: String) -> (Classification, String) {
         return (Classification::Prefix, raw);
     }
-
 }
 
-#[cfg(test)]
-mod tests {
+fn to_classification(s: &str) -> Classification {
+    match s {
+        "-" => Classification::Prefix,
+        "+" => Classification::Suffix,
+        _ => Classification::Center,
+    }
+}
+
+fn to_rule(s: &str) -> Rule {
+    match s {
+        _ => Rule::None,
+    }
+}
+
+mod classification_tests {
     use super::*;
 
     #[test]
-    fn classify_prefix() {
-        let (classification, s) = Syllable::classify("-ansr +v".to_string());
+    fn to_classification_prefix() {
+        let v = "-";
 
-        assert_eq!(Classification::Prefix, classification);
-        // assert_eq!("ansr +v".to_string(), s);
+        assert_eq!(Classification::Prefix, to_classification(v));
     }
+
+    #[test]
+    fn to_classification_center() {
+        let v = "";
+
+        assert_eq!(Classification::Center, to_classification(v));
+    }
+
+    #[test]
+    fn to_classification_suffix() {
+        let v = "+";
+
+        assert_eq!(Classification::Suffix, to_classification(v));
+    }
+
+    #[test]
+    fn to_classification_garbage() {
+        assert_eq!(Classification::Center, to_classification(" "));
+        assert_eq!(Classification::Center, to_classification("asd"));
+    }
+}
+
+#[cfg(test)]
+mod rule_tests {
+
+    use super::*;
+    // #[test]
+    // fn classify_prefix() {
+    //     let (classification, s) = Syllable::classify("-ansr +v".to_string());
+    //
+    //     assert_eq!(Classification::Prefix, classification);
+    //     // assert_eq!("ansr +v".to_string(), s);
+    // }
+
+
 }
