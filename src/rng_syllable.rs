@@ -55,6 +55,14 @@ impl Syllable {
         }
     }
 
+    pub fn ends_with_vowel(&self) -> bool {
+        VOWELS.contains(&self.value.chars().last().unwrap())
+    }
+
+    pub fn starts_with_vowel(&self) -> bool {
+        VOWELS.contains(&self.value.chars().next().unwrap())
+    }
+
     fn determine_classification(s: &str) -> Classification {
         match s {
             "-" => Classification::Prefix,
@@ -139,6 +147,34 @@ mod syllable_tests {
         let actual = Syllable::new("+adly -v");
 
         assert_eq!(expected, actual.unwrap());
+    }
+
+    #[test]
+    fn starts_with_vowel() {
+        let actual = Syllable::new("+sadly -v");
+
+        assert_eq!(false, actual.unwrap().starts_with_vowel());
+    }
+
+    #[test]
+    fn starts_with_vowel_not() {
+        let actual = Syllable::new("+adly -v");
+
+        assert_eq!(true, actual.unwrap().starts_with_vowel());
+    }
+
+    #[test]
+    fn ends_with_vowel() {
+        let actual = Syllable::new("+sadly -v");
+
+        assert_eq!(true, actual.unwrap().ends_with_vowel());
+    }
+
+    #[test]
+    fn ends_with_vowel_not() {
+        let actual = Syllable::new("-asdf -v");
+
+        assert_eq!(false, actual.unwrap().ends_with_vowel());
     }
 
     #[test]
