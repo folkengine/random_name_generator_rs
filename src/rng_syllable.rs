@@ -1,5 +1,5 @@
 use lazy_static::lazy_static;
-// use log::{info};
+use log::{info};
 use regex::Regex;
 use core::fmt::Alignment::Left;
 
@@ -44,11 +44,7 @@ impl Syllable {
     //     Syllable
     // }
 
-    fn classify(raw: String) -> (Classification, String) {
-        return (Classification::Prefix, raw);
-    }
-
-    fn to_classification(s: &str) -> Classification {
+    fn determine_classification(s: &str) -> Classification {
         match s {
             "-" => Classification::Prefix,
             "+" => Classification::Suffix,
@@ -56,30 +52,36 @@ impl Syllable {
         }
     }
 
-
-
-    fn to_next_rule(s: &str) -> Rule {
+    fn determine_next_rule(s: &str) -> Rule {
         if SUFFIX_RE.is_match(s) {
-            Syllable::vowel_or_consonant(s, "+v")
+            Syllable::vowel_or_consonant_flag(s, "+v")
         } else {
             Rule::Either
         }
     }
 
-    fn to_previous_rule(s: &str) -> Rule {
+    fn determine_previous_rule(s: &str) -> Rule {
         if PREFIX_RE.is_match(s) {
-            Syllable::vowel_or_consonant(s, "-v")
+            Syllable::vowel_or_consonant_flag(s, "-v")
         } else {
             Rule::Either
         }
     }
 
-    fn vowel_or_consonant(s: &str, matcher: &str) -> Rule {
+    fn vowel_or_consonant_flag(s: &str, matcher: &str) -> Rule {
         if s.to_ascii_lowercase().contains(matcher) {
             Rule::Vowel
         } else {
             Rule::Consonant
         }
+    }
+
+    fn classify(raw: &str) -> (Classification, String) {
+        let cap = FULL_RE.captures(raw).unwrap();
+        return (
+            Syllable::determine_classification(&cap[1]),
+            cap[2].to_string()
+        )
     }
 }
 
@@ -87,30 +89,30 @@ mod syllable_tests {
     use super::*;
 
     #[test]
-    fn to_classification_prefix() {
+    fn determine_classification_prefix() {
         let v = "-";
 
-        assert_eq!(Classification::Prefix, Syllable::to_classification(v));
+        assert_eq!(Classification::Prefix, Syllable::determine_classification(v));
     }
 
     #[test]
-    fn to_classification_center() {
+    fn determine_classification_center() {
         let v = "";
 
-        assert_eq!(Classification::Center, Syllable::to_classification(v));
+        assert_eq!(Classification::Center, Syllable::determine_classification(v));
     }
 
     #[test]
-    fn to_classification_suffix() {
+    fn determine_classification_suffix() {
         let v = "+";
 
-        assert_eq!(Classification::Suffix, Syllable::to_classification(v));
+        assert_eq!(Classification::Suffix, Syllable::determine_classification(v));
     }
 
     #[test]
-    fn to_classification_garbage() {
-        assert_eq!(Classification::Center, Syllable::to_classification(" "));
-        assert_eq!(Classification::Center, Syllable::to_classification("asd"));
+    fn determine_classification_garbage() {
+        assert_eq!(Classification::Center, Syllable::determine_classification(" "));
+        assert_eq!(Classification::Center, Syllable::determine_classification("asd"));
     }
 }
 
@@ -119,6 +121,17 @@ mod rule_tests {
 
     use super::*;
     use rstest::rstest;
+
+    #[rstest(input, classification, value,
+        case("+sakku -V", Classification::Suffix, "sakku".to_string()),
+        case("-darr +v", Classification::Prefix, "darr".to_string()),
+        case("drov", Classification::Center, "drov".to_string()),
+    )]
+    fn classify(input: &str, classification: Classification, value: String) {
+        let (actual_classification, actual_value) = Syllable::classify(input);
+        assert_eq!(classification, actual_classification);
+        assert_eq!(value, actual_value);
+    }
 
     #[rstest(input, expected,
         case("", Rule::Either),
@@ -131,21 +144,21 @@ mod rule_tests {
         case("dra +c", Rule::Consonant),
     )]
     fn to_next_rule(input: &str, expected: Rule) {
-        assert_eq!(expected, Syllable::to_next_rule(input))
+        assert_eq!(expected, Syllable::determine_next_rule(input));
     }
 
     #[rstest(input, expected,
-    case("", Rule::Either),
-    case("-ahr", Rule::Either),
-    case("dus", Rule::Either),
-    case("+zou ", Rule::Either),
-    case("gru -v +c", Rule::Vowel),
-    case("+sakku -V", Rule::Vowel),
-    case("ay -c", Rule::Consonant),
-    case("it -c +v", Rule::Consonant),
+        case("", Rule::Either),
+        case("-ahr", Rule::Either),
+        case("dus", Rule::Either),
+        case("+zou ", Rule::Either),
+        case("gru -v +c", Rule::Vowel),
+        case("+sakku -V", Rule::Vowel),
+        case("ay -c", Rule::Consonant),
+        case("it -c +v", Rule::Consonant),
     )]
     fn to_previous_rule(input: &str, expected: Rule) {
-        assert_eq!(expected, Syllable::to_previous_rule(input))
+        assert_eq!(expected, Syllable::determine_previous_rule(input))
     }
 
     // #[test]
