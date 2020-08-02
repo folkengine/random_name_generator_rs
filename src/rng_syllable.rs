@@ -1,7 +1,5 @@
 use lazy_static::lazy_static;
-use log::{info};
 use regex::Regex;
-use core::fmt::Alignment::Left;
 
 static CONSONANTS: [char; 30] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l',
@@ -32,6 +30,8 @@ pub enum Rule {
     Either,
 }
 
+#[derive(Debug)]
+#[derive(PartialEq)]
 pub struct Syllable {
     value: String,
     classification: Classification,
@@ -40,9 +40,20 @@ pub struct Syllable {
 }
 
 impl Syllable {
-    // pub fn new(raw: String) -> Syllable {
-    //     Syllable
-    // }
+    pub fn new(raw: &str) -> Option<Syllable> {
+        if FULL_RE.is_match(raw) {
+            let (classification, value) = Syllable::classify(raw);
+            let syllable = Syllable {
+                value,
+                classification,
+                next: Syllable::determine_next_rule(raw),
+                previous: Syllable::determine_previous_rule(raw),
+            };
+            Some(syllable)
+        } else {
+            None
+        }
+    }
 
     fn determine_classification(s: &str) -> Classification {
         match s {
@@ -87,6 +98,48 @@ impl Syllable {
 
 mod syllable_tests {
     use super::*;
+
+    #[test]
+    fn new_center() {
+        let expected = Syllable {
+            value: "idr".to_string(),
+            classification: Classification::Center,
+            next: Rule::Vowel,
+            previous: Rule::Consonant,
+        };
+
+        let actual = Syllable::new("idr -c +v");
+
+        assert_eq!(expected, actual.unwrap());
+    }
+
+    #[test]
+    fn new_prefix_any() {
+        let expected = Syllable {
+            value: "asd".to_string(),
+            classification: Classification::Prefix,
+            next: Rule::Either,
+            previous: Rule::Either,
+        };
+
+        let actual = Syllable::new("-asd");
+
+        assert_eq!(expected, actual.unwrap());
+    }
+
+    #[test]
+    fn new_suffix_any() {
+        let expected = Syllable {
+            value: "adly".to_string(),
+            classification: Classification::Suffix,
+            next: Rule::Either,
+            previous: Rule::Vowel,
+        };
+
+        let actual = Syllable::new("+adly -v");
+
+        assert_eq!(expected, actual.unwrap());
+    }
 
     #[test]
     fn determine_classification_prefix() {
