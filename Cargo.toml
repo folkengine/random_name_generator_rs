@@ -21,3 +21,6 @@ path = "src/main.rs"
 [dependencies]
 lazy_static = "1.4.0"
 regex = "1"
+
+[dev-dependencies]
+rstest = "0.6.4"
