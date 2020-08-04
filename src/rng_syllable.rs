@@ -16,14 +16,6 @@ lazy_static! {
 
 #[derive(Debug)]
 #[derive(PartialEq)]
-pub enum Rule {
-    Consonant,
-    Vowel,
-    Either,
-}
-
-#[derive(Debug)]
-#[derive(PartialEq)]
 pub struct Syllable {
     value: String,
     classification: Classification,
@@ -45,6 +37,12 @@ impl Syllable {
         } else {
             None
         }
+    }
+
+    pub fn to_string(&self) -> String {
+        format!("{}{}{}{}",
+                self.classification.value(), self.value,
+                self.previous.value_previous(), self.previous.value_next())
     }
 
     pub fn ends_with_vowel(&self) -> bool {
@@ -109,6 +107,32 @@ impl Classification {
         match *self {
             Classification::Prefix => "-".to_string(),
             Classification::Suffix => "+".to_string(),
+            _ => "".to_string(),
+        }
+    }
+}
+
+#[derive(Debug)]
+#[derive(PartialEq)]
+pub enum Rule {
+    Consonant,
+    Vowel,
+    Either,
+}
+
+impl Rule {
+    fn value_next(&self) -> String {
+        match *self {
+            Rule::Consonant => " +c".to_string(),
+            Rule::Vowel => " +v".to_string(),
+            _ => "".to_string(),
+        }
+    }
+
+    fn value_previous(&self) -> String {
+        match *self {
+            Rule::Consonant => " -c".to_string(),
+            Rule::Vowel => " -v".to_string(),
             _ => "".to_string(),
         }
     }
@@ -216,11 +240,35 @@ mod syllable_tests {
 }
 
 #[cfg(test)]
-mod rule_tests {
+mod rs_tests {
 
     use super::*;
     use rstest::rstest;
 
+    #[rstest(input, expected,
+        case("-ang +v", "-ang +v".to_string())
+    )]
+    fn to_string(input: &str, expected: String) {
+        assert_eq!(Syllable::new(input).unwrap().to_string(), expected);
+    }
+
+    #[rstest(input, expected,
+        case(Rule::Consonant, " +c".to_string()),
+        case(Rule::Vowel, " +v".to_string()),
+        case(Rule::Either, "".to_string()),
+    )]
+    fn rule_value_next(input: Rule, expected: String) {
+        assert_eq!(input.value_next(), expected);
+    }
+
+    #[rstest(input, expected,
+        case(Rule::Consonant, " -c".to_string()),
+        case(Rule::Vowel, " -v".to_string()),
+        case(Rule::Either, "".to_string()),
+    )]
+    fn rule_value_previous(input: Rule, expected: String) {
+        assert_eq!(input.value_previous(), expected);
+    }
 
     #[rstest(input, expected,
         case(Classification::Prefix, "-".to_string()),
