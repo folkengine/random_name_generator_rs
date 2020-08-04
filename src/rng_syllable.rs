@@ -16,14 +16,6 @@ lazy_static! {
 
 #[derive(Debug)]
 #[derive(PartialEq)]
-pub enum Classification {
-    Prefix,
-    Center,
-    Suffix,
-}
-
-#[derive(Debug)]
-#[derive(PartialEq)]
 pub enum Rule {
     Consonant,
     Vowel,
@@ -101,6 +93,24 @@ impl Syllable {
             Syllable::determine_classification(&cap[1]),
             cap[2].to_string()
         )
+    }
+}
+
+#[derive(Debug)]
+#[derive(PartialEq)]
+pub enum Classification {
+    Prefix,
+    Center,
+    Suffix,
+}
+
+impl Classification {
+    fn value(&self) -> String {
+        match *self {
+            Classification::Prefix => "-".to_string(),
+            Classification::Suffix => "+".to_string(),
+            _ => "".to_string(),
+        }
     }
 }
 
@@ -211,6 +221,16 @@ mod rule_tests {
     use super::*;
     use rstest::rstest;
 
+
+    #[rstest(input, expected,
+        case(Classification::Prefix, "-".to_string()),
+        case(Classification::Center, "".to_string()),
+        case(Classification::Suffix, "+".to_string()),
+    )]
+    fn classification_value(input: Classification, expected: String) {
+        assert_eq!(input.value(), expected);
+    }
+
     #[rstest(input, classification, value,
         case("+sakku -V", Classification::Suffix, "sakku".to_string()),
         case("-darr +v", Classification::Prefix, "darr".to_string()),
@@ -257,6 +277,4 @@ mod rule_tests {
     //     assert_eq!(Classification::Prefix, classification);
     //     // assert_eq!("ansr +v".to_string(), s);
     // }
-
-
 }
