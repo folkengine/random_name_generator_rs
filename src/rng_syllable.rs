@@ -1,5 +1,6 @@
 use lazy_static::lazy_static;
 use regex::Regex;
+use std::fmt;
 
 static CONSONANTS: [char; 30] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l',
@@ -14,6 +15,15 @@ lazy_static! {
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcCV]).*").unwrap();
 }
 
+#[derive(Debug, Clone)]
+pub struct BadSyllable;
+
+impl fmt::Display for BadSyllable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Invalid Syllable")
+    }
+}
+
 #[derive(Debug)]
 #[derive(PartialEq)]
 pub struct Syllable {
@@ -24,7 +34,7 @@ pub struct Syllable {
 }
 
 impl Syllable {
-    pub fn new(raw: &str) -> Option<Syllable> {
+    pub fn new(raw: &str) -> Result<Syllable, BadSyllable> {
         if FULL_RE.is_match(raw) {
             let (classification, value) = Syllable::classify(raw);
             let syllable = Syllable {
@@ -33,16 +43,10 @@ impl Syllable {
                 next: Syllable::determine_next_rule(raw),
                 previous: Syllable::determine_previous_rule(raw),
             };
-            Some(syllable)
+            Ok(syllable)
         } else {
-            None
+            Err(BadSyllable)
         }
-    }
-
-    pub fn to_string(&self) -> String {
-        format!("{}{}{}{}",
-                self.classification.value(), self.value,
-                self.previous.value_previous(), self.previous.value_next())
     }
 
     pub fn ends_with_vowel(&self) -> bool {
@@ -92,7 +96,15 @@ impl Syllable {
             cap[2].to_string()
         )
     }
+
+    pub fn to_string(&self) -> String {
+        format!("{}{}{}{}",
+                self.classification.value(), self.value,
+                self.previous.value_previous(), self.next.value_next())
+    }
 }
+
+// region Enums
 
 #[derive(Debug)]
 #[derive(PartialEq)]
@@ -137,6 +149,8 @@ impl Rule {
         }
     }
 }
+
+// endregion
 
 mod syllable_tests {
     use super::*;
@@ -246,7 +260,11 @@ mod rs_tests {
     use rstest::rstest;
 
     #[rstest(input, expected,
-        case("-ang +v", "-ang +v".to_string())
+        case("-ang +v", "-ang +v".to_string()),
+        case("-ang +V", "-ang +v".to_string()),
+        case("-ang +V -C", "-ang -c +v".to_string()),
+        case("+ean -c", "+ean -c".to_string()),
+        case("+emar ", "+emar".to_string()),
     )]
     fn to_string(input: &str, expected: String) {
         assert_eq!(Syllable::new(input).unwrap().to_string(), expected);
