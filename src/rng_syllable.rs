@@ -15,16 +15,6 @@ lazy_static! {
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
 }
 
-#[derive(Debug, Clone)]
-#[derive(PartialEq)]
-pub struct BadSyllable;
-
-impl fmt::Display for BadSyllable {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Invalid Syllable")
-    }
-}
-
 #[derive(Debug)]
 #[derive(PartialEq)]
 pub struct Syllable {
@@ -105,6 +95,16 @@ impl Syllable {
     }
 }
 
+#[derive(Debug, Clone)]
+#[derive(PartialEq)]
+pub struct BadSyllable;
+
+impl fmt::Display for BadSyllable {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Invalid Syllable")
+    }
+}
+
 // region Enums
 
 #[derive(Debug)]
@@ -153,6 +153,7 @@ impl Rule {
 
 // endregion
 
+#[cfg(test)]
 mod syllable_tests {
     use super::*;
 
@@ -354,12 +355,4 @@ mod rs_tests {
     fn to_previous_rule(input: &str, expected: Rule) {
         assert_eq!(expected, Syllable::determine_previous_rule(input))
     }
-
-    // #[test]
-    // fn classify_prefix() {
-    //     let (classification, s) = Syllable::classify("-ansr +v".to_string());
-    //
-    //     assert_eq!(Classification::Prefix, classification);
-    //     // assert_eq!("ansr +v".to_string(), s);
-    // }
 }
