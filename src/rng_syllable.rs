@@ -10,12 +10,13 @@ static VOWELS: [char; 36] = [
     'ə', 'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ'];
 
 lazy_static! {
-    static ref FULL_RE: Regex = Regex::new(r"([-+]{0,1})(\w+)\s{0,1}([\+\-][vc]){0,1}\s{0,1}([\+\-][vc]){0,1}").unwrap();
+    static ref FULL_RE: Regex = Regex::new(r"^([-+]{0,1})([A-Za-z]+)\s{0,1}([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$").unwrap();
     static ref PREFIX_RE: Regex = Regex::new(r"(.+)(\-[vcVC]).*").unwrap();
-    static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcCV]).*").unwrap();
+    static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
 }
 
 #[derive(Debug, Clone)]
+#[derive(PartialEq)]
 pub struct BadSyllable;
 
 impl fmt::Display for BadSyllable {
@@ -258,6 +259,24 @@ mod rs_tests {
 
     use super::*;
     use rstest::rstest;
+
+    #[rstest(input,
+        case("!"),
+        case("+-"),
+        case("+123asfd3ew"),
+    )]
+    fn new_invalid_error(input: &str) {
+        assert_eq!(Syllable::new(input).unwrap_err(), BadSyllable);
+    }
+
+    #[rstest(input,
+        case("!"),
+        case("+-"),
+        case("+123asfd3ew"),
+    )]
+    fn full_re(input: &str) {
+        assert!(!FULL_RE.is_match(input))
+    }
 
     #[rstest(input, expected,
         case("-ang +v", "-ang +v".to_string()),
