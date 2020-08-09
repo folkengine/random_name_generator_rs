@@ -17,7 +17,7 @@ pub struct Dialect {
 
 impl Dialect {
     pub fn is_valid(&self) -> bool {
-        return true;
+        self.bad_syllables.len() < 1
     }
 
     pub fn new_from_path(path: String, name: String) -> Result<Dialect, BadDialect> {
@@ -125,7 +125,7 @@ mod test_weight {
             syllables: vec![],
             bad_syllables: vec!["#$@!".to_string()]
         };
-        assert!(bad.is_valid())
+        assert!(!bad.is_valid())
     }
     
     #[test]
