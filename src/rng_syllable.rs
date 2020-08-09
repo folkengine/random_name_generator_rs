@@ -82,7 +82,7 @@ impl Syllable {
 
     fn classify(raw: &str) -> (Classification, String) {
         let cap = FULL_RE.captures(raw).unwrap();
-        return (
+        (
             Syllable::determine_classification(&cap[1]),
             cap[2].to_string()
         )
