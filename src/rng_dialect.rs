@@ -2,6 +2,9 @@ use rand::prelude::*;
 use rand::distributions::WeightedIndex;
 use std::string::ToString;
 use std::fmt;
+use std::fs::File;
+use std::io::{self, BufRead};
+use std::path::Path;
 
 use crate::rng_syllable::Syllable;
 
@@ -16,8 +19,28 @@ impl Dialect {
     pub fn is_valid(&self) -> bool {
         return true;
     }
+
+    pub fn new_from_path(path: String, name: String) -> Result<Dialect, BadDialect> {
+        if let Ok(lines) = Dialect::read_lines(path) {
+            let d = Dialect {
+                name,
+                syllables: vec![],
+                bad_syllables: vec![],
+            };
+            Ok(d)
+        } else {
+            Err(BadDialect)
+        }
+    }
+
+    fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+        where P: AsRef<Path>, {
+        let file = File::open(filename)?;
+        Ok(io::BufReader::new(file).lines())
+    }
 }
 
+// region Dialects
 #[derive(Debug, PartialEq)]
 pub enum Dialects {
     Elven,
@@ -38,14 +61,31 @@ impl Dialects {
     }
 }
 
+// endregion
+
+// region BadDialect
+#[derive(Debug, Clone)]
+#[derive(PartialEq)]
+pub struct BadDialect;
+
+impl fmt::Display for BadDialect {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Invalid Dialect")
+    }
+}
+
+// endregion BadDialect
+
+// region rnd syllable count
 static SYLLABLE_COUNTS: [u8; 4] = [2, 3, 4, 5];
 static SYLLABLE_WEIGHTS: [u8; 4] = [4, 10, 3, 1];
 
-fn gen_syllable_count() -> u8 {
+fn gen_rnd_syllable_count() -> u8 {
     let dist = WeightedIndex::new(&SYLLABLE_WEIGHTS).unwrap();
     let mut rng = thread_rng();
     SYLLABLE_COUNTS[dist.sample(&mut rng)]
 }
+// endregion
 
 #[cfg(test)]
 mod test_weight {
@@ -53,12 +93,19 @@ mod test_weight {
     use super::*;
     use std::string::ToString;
 
-    proptest! {
-        #[test]
-        fn test_gen_syllable_count(_ in 0..100i32) {
-            let count = gen_syllable_count();
-            assert!((count < 6) && (count > 1), count);
-        }
+    #[test]
+    fn dialect__new_from_path() {
+        let result = Dialect::new_from_path(Dialects::Fantasy.get_path(), Dialects::Fantasy.to_string()).unwrap();
+
+        assert_eq!(result.name, Dialects::Fantasy.to_string());
+    }
+
+    #[test]
+    fn dialect__new_from_path__invalid() {
+        let result =
+            Dialect::new_from_path("NO_THERE_THERE".to_string(), "NO_THERE_THERE".to_string());
+
+        assert_eq!(result.unwrap_err(), BadDialect);
     }
 
     #[test]
@@ -91,9 +138,11 @@ mod test_weight {
         assert_eq!("./src/languages/Fantasy.txt".to_string(), Dialects::Fantasy.get_path());
     }
 
-    //
-    // #[test]
-    // fn file_path() {
-    //     assert_eq!("./src/languages/Demonic.txt".to_string(), lang_path(DEMONIC));
-    // }
+    proptest! {
+        #[test]
+        fn test_gen_rnd_syllable_count(_ in 0..100i32) {
+            let count = gen_rnd_syllable_count();
+            assert!((count < 6) && (count > 1), count);
+        }
+    }
 }
