@@ -9,14 +9,14 @@ static VOWELS: [char; 36] = [
     'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'ɯ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ø',
     'ə', 'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ'];
 
+// https://regex101.com/r/kvDj4I/2/
 lazy_static! {
-    static ref FULL_RE: Regex = Regex::new(r"^([-+]{0,1})([A-Za-z]+)\s{0,1}([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$").unwrap();
+    static ref FULL_RE: Regex = Regex::new(r"^([-+]{0,1})([A-Za-z]+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$").unwrap();
     static ref PREFIX_RE: Regex = Regex::new(r"(.+)(\-[vcVC]).*").unwrap();
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Syllable {
     value: String,
     classification: Classification,
@@ -107,8 +107,7 @@ impl fmt::Display for BadSyllable {
 
 // region Enums
 
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Classification {
     Prefix,
     Center,
@@ -125,8 +124,7 @@ impl Classification {
     }
 }
 
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Rule {
     Consonant,
     Vowel,
@@ -285,6 +283,7 @@ mod rs_tests {
         case("-ang +V -C", "-ang -c +v".to_string()),
         case("+ean -c", "+ean -c".to_string()),
         case("+emar ", "+emar".to_string()),
+        case("ladd  -v +v", "ladd -v +v".to_string()),
     )]
     fn to_string(input: &str, expected: String) {
         assert_eq!(Syllable::new(input).unwrap().to_string(), expected);

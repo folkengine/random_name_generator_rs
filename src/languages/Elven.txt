@@ -11,29 +11,29 @@
 -dae +c
 -dho
 -eir
+-ev
 -fi
 -fir
--la
--seh
--sel
--ev
 -fis
--hu
--ha
 -gar
 -gil
+-ha
+-hu
 -ka
 -kan
--ya
--za
--zy
--mara
--mai +c
+-la
 -lue +c
+-mai +c
+-mara
 -ny
+-seh
+-sel
 -she
 -sum
 -syl
+-ya
+-za
+-zy
 ae +c -c
 ael -c
 dar
@@ -47,15 +47,16 @@ emar
 hal
 iat -c
 mah
-ten
 que -v +c
 ria
 rail
+san
+ten
 ther
 thus
 thi
-san
 +ael -c
++ath
 +dar
 +deth
 +dre
@@ -64,21 +65,20 @@ san
 +ean -c
 +el
 +emar
++ess
++evar
++hal
++iat
++las
++lian
++mah
 +nes
 +nin
 +oth
-+hal
-+iat
-+mah
++ran
++san
 +ten
 +ther
 +thus
 +thi
-+ran
-+ath
-+ess
-+san
 +yth
-+las
-+lian
-+evar

@@ -8,11 +8,11 @@ use std::path::Path;
 
 use crate::rng_syllable::Syllable;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Dialect {
-    name: String,
-    syllables: Vec<Syllable>,
-    bad_syllables: Vec<String>,
+    pub name: String,
+    pub syllables: Vec<Syllable>,
+    pub bad_syllables: Vec<String>,
 }
 
 impl Dialect {
@@ -20,12 +20,31 @@ impl Dialect {
         self.bad_syllables.len() < 1
     }
 
+    pub fn new(dialect: Dialects) -> Result<Dialect, BadDialect> {
+        Dialect::new_from_path(dialect.get_path(), dialect.to_string())
+    }
+
     pub fn new_from_path(path: String, name: String) -> Result<Dialect, BadDialect> {
         if let Ok(lines) = Dialect::read_lines(path) {
+
+            let mut good: Vec<Syllable> = Vec::new();
+            let mut bad: Vec<String> = Vec::new();
+
+            for line in lines {
+                if let Ok(l) = line {
+                    let sy = Syllable::new(l.as_str());
+                    if sy.is_ok() {
+                        good.push(sy.unwrap());
+                    } else {
+                        bad.push(l);
+                    }
+                }
+            }
+
             let d = Dialect {
                 name,
-                syllables: vec![],
-                bad_syllables: vec![],
+                syllables: good.clone(),
+                bad_syllables: bad.clone(),
             };
             Ok(d)
         } else {
@@ -98,6 +117,8 @@ mod test_weight {
         let result = Dialect::new_from_path(Dialects::Fantasy.get_path(), Dialects::Fantasy.to_string()).unwrap();
 
         assert_eq!(result.name, Dialects::Fantasy.to_string());
+        assert!(result.bad_syllables.len() < 1);
+        assert!(result.syllables.len() > 0);
     }
 
     #[test]
@@ -106,6 +127,15 @@ mod test_weight {
             Dialect::new_from_path("NO_THERE_THERE".to_string(), "NO_THERE_THERE".to_string());
 
         assert_eq!(result.unwrap_err(), BadDialect);
+    }
+
+    #[test]
+    fn dialect__new() {
+        let result = Dialect::new(Dialects::Roman).unwrap();
+
+        assert_eq!(result.name, Dialects::Roman.to_string());
+        assert!(result.bad_syllables.len() < 1);
+        assert!(result.syllables.len() > 0);
     }
 
     #[test]
