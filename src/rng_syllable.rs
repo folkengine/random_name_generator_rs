@@ -87,11 +87,13 @@ impl Syllable {
             cap[2].to_string()
         )
     }
+}
 
-    pub fn to_string(&self) -> String {
-        format!("{}{}{}{}",
-                self.classification.value(), self.value,
-                self.previous.value_previous(), self.next.value_next())
+impl fmt::Display for Syllable {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}{}{}{}",
+               self.classification.value(), self.value,
+               self.previous.value_previous(), self.next.value_next())
     }
 }
 

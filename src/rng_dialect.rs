@@ -17,7 +17,7 @@ pub struct Dialect {
 
 impl Dialect {
     pub fn is_valid(&self) -> bool {
-        self.bad_syllables.len() < 1
+        self.bad_syllables.is_empty()
     }
 
     pub fn new(dialect: Dialects) -> Result<Dialect, BadDialect> {
@@ -32,9 +32,8 @@ impl Dialect {
 
             for line in lines {
                 if let Ok(l) = line {
-                    let sy = Syllable::new(l.as_str());
-                    if sy.is_ok() {
-                        good.push(sy.unwrap());
+                    if let Ok(sy) = Syllable::new(l.as_str()){
+                        good.push(sy);
                     } else {
                         bad.push(l);
                     }
@@ -43,8 +42,8 @@ impl Dialect {
 
             let d = Dialect {
                 name,
-                syllables: good.clone(),
-                bad_syllables: bad.clone(),
+                syllables: good,
+                bad_syllables: bad,
             };
             Ok(d)
         } else {
