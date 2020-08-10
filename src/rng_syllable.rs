@@ -18,10 +18,10 @@ lazy_static! {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Syllable {
-    value: String,
-    classification: Classification,
-    next: Rule,
-    previous: Rule,
+    pub value: String,
+    pub classification: Classification,
+    pub next: Rule,
+    pub previous: Rule,
 }
 
 impl Syllable {
@@ -97,8 +97,7 @@ impl fmt::Display for Syllable {
     }
 }
 
-#[derive(Debug, Clone)]
-#[derive(PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct BadSyllable;
 
 impl fmt::Display for BadSyllable {

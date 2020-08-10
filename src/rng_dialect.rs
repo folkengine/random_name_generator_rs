@@ -6,12 +6,14 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
-use crate::rng_syllable::Syllable;
+use crate::rng_syllable::{Syllable, Classification};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Dialect {
     pub name: String,
-    pub syllables: Vec<Syllable>,
+    pub prefixes: Vec<Syllable>,
+    pub centers: Vec<Syllable>,
+    pub suffixes: Vec<Syllable>,
     pub bad_syllables: Vec<String>,
 }
 
@@ -27,13 +29,19 @@ impl Dialect {
     pub fn new_from_path(path: String, name: String) -> Result<Dialect, BadDialect> {
         if let Ok(lines) = Dialect::read_lines(path) {
 
-            let mut good: Vec<Syllable> = Vec::new();
-            let mut bad: Vec<String> = Vec::new();
+            let mut prefixes: Vec<Syllable> = Vec::new();
+            let mut centers:  Vec<Syllable> = Vec::new();
+            let mut suffixes: Vec<Syllable> = Vec::new();
+            let mut bad:      Vec<String> = Vec::new();
 
             for line in lines {
                 if let Ok(l) = line {
                     if let Ok(sy) = Syllable::new(l.as_str()){
-                        good.push(sy);
+                        match sy.classification {
+                            Classification::Prefix => prefixes.push(sy),
+                            Classification::Center => centers.push(sy),
+                            Classification::Suffix => suffixes.push(sy),
+                        }
                     } else {
                         bad.push(l);
                     }
@@ -42,13 +50,19 @@ impl Dialect {
 
             let d = Dialect {
                 name,
-                syllables: good,
+                prefixes,
+                centers,
+                suffixes,
                 bad_syllables: bad,
             };
             Ok(d)
         } else {
             Err(BadDialect)
         }
+    }
+
+    pub fn syllables(&self) -> Vec<Syllable> {
+        [self.prefixes.clone(), self.centers.clone(), self.suffixes.clone()].concat()
     }
 
     fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
@@ -117,7 +131,9 @@ mod test_weight {
 
         assert_eq!(result.name, Dialects::Fantasy.to_string());
         assert!(result.bad_syllables.len() < 1);
-        assert!(result.syllables.len() > 0);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
     }
 
     #[test]
@@ -134,14 +150,18 @@ mod test_weight {
 
         assert_eq!(result.name, Dialects::Roman.to_string());
         assert!(result.bad_syllables.len() < 1);
-        assert!(result.syllables.len() > 0);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
     }
 
     #[test]
     fn dialect__is_valid() {
         let elven = Dialect {
             name: "".to_string(),
-            syllables: vec![],
+            prefixes: vec![],
+            centers: vec![],
+            suffixes: vec![],
             bad_syllables: vec![],
         };
         assert!(elven.is_valid())
@@ -151,7 +171,9 @@ mod test_weight {
     fn dialect__is_valid__not() {
         let bad = Dialect {
             name: "bad".to_string(),
-            syllables: vec![],
+            prefixes: vec![],
+            centers: vec![],
+            suffixes: vec![],
             bad_syllables: vec!["#$@!".to_string()]
         };
         assert!(!bad.is_valid())
