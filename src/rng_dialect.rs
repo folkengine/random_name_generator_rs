@@ -130,6 +130,8 @@ mod test_weight {
     use super::*;
     use std::string::ToString;
 
+    // region old tests
+
     #[test]
     fn dialect__new_from_path() {
         let result = Dialect::new_from_path(Dialects::Fantasy.get_path(), Dialects::Fantasy.to_string()).unwrap();
@@ -211,4 +213,5 @@ mod test_weight {
             assert!((count < 6) && (count > 1), count);
         }
     }
+    // endregion
 }

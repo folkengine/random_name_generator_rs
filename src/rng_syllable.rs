@@ -87,6 +87,10 @@ impl Syllable {
             cap[2].to_string()
         )
     }
+
+    // pub fn next(&self, syllables: &Vec<Syllable>) -> Syllable {
+    //
+    // }
 }
 
 impl fmt::Display for Syllable {
