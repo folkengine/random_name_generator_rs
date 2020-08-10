@@ -88,9 +88,9 @@ impl Syllable {
         )
     }
 
-    // pub fn next(&self, syllables: &Vec<Syllable>) -> Syllable {
-    //
-    // }
+    pub fn next(&self, syllables: &Vec<Syllable>) -> Syllable {
+        return Syllable::new("boop").unwrap()
+    }
 }
 
 impl fmt::Display for Syllable {
@@ -161,7 +161,7 @@ mod syllable_tests {
     use super::*;
 
     #[test]
-    fn new_center() {
+    fn new__center() {
         let expected = Syllable {
             value: "idr".to_string(),
             classification: Classification::Center,
@@ -175,7 +175,7 @@ mod syllable_tests {
     }
 
     #[test]
-    fn new_prefix_any() {
+    fn new__prefix__any() {
         let expected = Syllable {
             value: "asd".to_string(),
             classification: Classification::Prefix,
@@ -189,7 +189,7 @@ mod syllable_tests {
     }
 
     #[test]
-    fn new_suffix_any() {
+    fn new__suffix__any() {
         let expected = Syllable {
             value: "adly".to_string(),
             classification: Classification::Suffix,
@@ -263,13 +263,21 @@ mod rs_tests {
 
     use super::*;
     use rstest::rstest;
+    
+    fn micro() -> Vec<Syllable> {
+        vec![
+            Syllable::new("-a").unwrap(),
+            Syllable::new("b").unwrap(),
+            Syllable::new("+c").unwrap(),
+        ]
+    }
 
     #[rstest(input,
         case("!"),
         case("+-"),
         case("+123asfd3ew"),
     )]
-    fn new_invalid_error(input: &str) {
+    fn new__invalid__error(input: &str) {
         assert_eq!(Syllable::new(input).unwrap_err(), BadSyllable);
     }
 
@@ -342,7 +350,7 @@ mod rs_tests {
         case("-aby +c", Rule::Consonant),
         case("dra +c", Rule::Consonant),
     )]
-    fn to_next_rule(input: &str, expected: Rule) {
+    fn determine_next_rule(input: &str, expected: Rule) {
         assert_eq!(expected, Syllable::determine_next_rule(input));
     }
 
@@ -356,7 +364,7 @@ mod rs_tests {
         case("ay -c", Rule::Consonant),
         case("it -c +v", Rule::Consonant),
     )]
-    fn to_previous_rule(input: &str, expected: Rule) {
+    fn determine_previous_rule(input: &str, expected: Rule) {
         assert_eq!(expected, Syllable::determine_previous_rule(input))
     }
 }
