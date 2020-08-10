@@ -157,6 +157,7 @@ impl Rule {
 // endregion
 
 #[cfg(test)]
+#[allow(non_snake_case)]
 mod syllable_tests {
     use super::*;
 
@@ -259,6 +260,7 @@ mod syllable_tests {
 }
 
 #[cfg(test)]
+#[allow(non_snake_case)]
 mod rs_tests {
 
     use super::*;
@@ -307,7 +309,7 @@ mod rs_tests {
         case(Rule::Vowel, " +v".to_string()),
         case(Rule::Either, "".to_string()),
     )]
-    fn rule_value_next(input: Rule, expected: String) {
+    fn rule__value_next(input: Rule, expected: String) {
         assert_eq!(input.value_next(), expected);
     }
 
@@ -316,7 +318,7 @@ mod rs_tests {
         case(Rule::Vowel, " -v".to_string()),
         case(Rule::Either, "".to_string()),
     )]
-    fn rule_value_previous(input: Rule, expected: String) {
+    fn rule__value_previous(input: Rule, expected: String) {
         assert_eq!(input.value_previous(), expected);
     }
 
@@ -325,7 +327,7 @@ mod rs_tests {
         case(Classification::Center, "".to_string()),
         case(Classification::Suffix, "+".to_string()),
     )]
-    fn classification_value(input: Classification, expected: String) {
+    fn classification__value(input: Classification, expected: String) {
         assert_eq!(input.value(), expected);
     }
 

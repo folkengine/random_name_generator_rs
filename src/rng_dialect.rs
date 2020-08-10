@@ -125,6 +125,7 @@ fn gen_rnd_syllable_count() -> u8 {
 // endregion
 
 #[cfg(test)]
+#[allow(non_snake_case)]
 mod test_weight {
     use proptest::prelude::*;
     use super::*;
