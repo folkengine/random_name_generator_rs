@@ -1,5 +1,6 @@
 use rand::prelude::*;
 use rand::distributions::WeightedIndex;
+use rand::seq::SliceRandom;
 use std::string::ToString;
 use std::fmt;
 use std::fs::File;
@@ -63,6 +64,10 @@ impl Dialect {
 
     pub fn syllables(&self) -> Vec<Syllable> {
         [self.prefixes.clone(), self.centers.clone(), self.suffixes.clone()].concat()
+    }
+
+    fn rand_prefix(&self) -> Option<&Syllable> {
+        self.prefixes.choose(&mut rand::thread_rng())
     }
 
     fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
@@ -187,6 +192,16 @@ mod test_weight {
     #[test]
     fn dialect_get_path() {
         assert_eq!("./src/languages/Fantasy.txt".to_string(), Dialects::Fantasy.get_path());
+    }
+
+    #[test]
+    fn test_rand_prefix() {
+        let result = Dialect::new(Dialects::Roman).unwrap();
+
+        for _ in 1..100 {
+            let sy = result.rand_prefix().unwrap();
+            assert_eq!(Classification::Prefix, sy.classification);
+        }
     }
 
     proptest! {
