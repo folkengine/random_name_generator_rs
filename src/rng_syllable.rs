@@ -1,4 +1,5 @@
 use lazy_static::lazy_static;
+use rand::seq::SliceRandom;
 use regex::Regex;
 use std::fmt;
 
@@ -88,8 +89,9 @@ impl Syllable {
         )
     }
 
-    pub fn next(&self, syllables: &Vec<Syllable>) -> Syllable {
-        return Syllable::new("boop").unwrap()
+    pub fn next(&self, _syllables: &Vec<Syllable>) -> Syllable {
+        // syllables.choose(&mut rand::thread_rng())
+        Syllable::new("boop").unwrap()
     }
 }
 
@@ -160,6 +162,17 @@ impl Rule {
 #[allow(non_snake_case)]
 mod syllable_tests {
     use super::*;
+
+    #[test]
+    fn next__single() {
+        let b = Syllable::new("b").unwrap();
+        let v = vec![b.clone()];
+        let s = Syllable::new("-a").unwrap();
+
+        let actual = s.next(&v);
+
+        assert_eq!(b, actual);
+    }
 
     #[test]
     fn new__center() {
