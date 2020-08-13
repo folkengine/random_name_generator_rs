@@ -12,5 +12,4 @@ pub fn test() {
 #[cfg(test)]
 mod lib_tests {
     use super::*;
-
 }

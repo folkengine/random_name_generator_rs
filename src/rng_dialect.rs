@@ -1,13 +1,13 @@
-use rand::prelude::*;
 use rand::distributions::WeightedIndex;
+use rand::prelude::*;
 use rand::seq::SliceRandom;
-use std::string::ToString;
 use std::fmt;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
+use std::string::ToString;
 
-use crate::rng_syllable::{Syllable, Classification};
+use crate::rng_syllable::{Classification, Syllable};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Dialect {
@@ -29,15 +29,14 @@ impl Dialect {
 
     pub fn new_from_path(path: String, name: String) -> Result<Dialect, BadDialect> {
         if let Ok(lines) = Dialect::read_lines(path) {
-
             let mut prefixes: Vec<Syllable> = Vec::new();
-            let mut centers:  Vec<Syllable> = Vec::new();
+            let mut centers: Vec<Syllable> = Vec::new();
             let mut suffixes: Vec<Syllable> = Vec::new();
-            let mut bad:      Vec<String> = Vec::new();
+            let mut bad: Vec<String> = Vec::new();
 
             for line in lines {
                 if let Ok(l) = line {
-                    if let Ok(sy) = Syllable::new(l.as_str()){
+                    if let Ok(sy) = Syllable::new(l.as_str()) {
                         match sy.classification {
                             Classification::Prefix => prefixes.push(sy),
                             Classification::Center => centers.push(sy),
@@ -63,7 +62,12 @@ impl Dialect {
     }
 
     pub fn syllables(&self) -> Vec<Syllable> {
-        [self.prefixes.clone(), self.centers.clone(), self.suffixes.clone()].concat()
+        [
+            self.prefixes.clone(),
+            self.centers.clone(),
+            self.suffixes.clone(),
+        ]
+        .concat()
     }
 
     fn rand_prefix(&self) -> Option<&Syllable> {
@@ -71,7 +75,9 @@ impl Dialect {
     }
 
     fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-        where P: AsRef<Path>, {
+    where
+        P: AsRef<Path>,
+    {
         let file = File::open(filename)?;
         Ok(io::BufReader::new(file).lines())
     }
@@ -101,8 +107,7 @@ impl Dialects {
 // endregion
 
 // region BadDialect
-#[derive(Debug, Clone)]
-#[derive(PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct BadDialect;
 
 impl fmt::Display for BadDialect {
@@ -125,16 +130,19 @@ fn gen_rnd_syllable_count() -> u8 {
 // endregion
 
 #[cfg(test)]
+#[allow(non_snake_case)]
 mod test_weight {
-    use proptest::prelude::*;
     use super::*;
+    use proptest::prelude::*;
     use std::string::ToString;
 
     // region old tests
 
     #[test]
     fn dialect__new_from_path() {
-        let result = Dialect::new_from_path(Dialects::Fantasy.get_path(), Dialects::Fantasy.to_string()).unwrap();
+        let result =
+            Dialect::new_from_path(Dialects::Fantasy.get_path(), Dialects::Fantasy.to_string())
+                .unwrap();
 
         assert_eq!(result.name, Dialects::Fantasy.to_string());
         assert!(result.bad_syllables.len() < 1);
@@ -181,11 +189,11 @@ mod test_weight {
             prefixes: vec![],
             centers: vec![],
             suffixes: vec![],
-            bad_syllables: vec!["#$@!".to_string()]
+            bad_syllables: vec!["#$@!".to_string()],
         };
         assert!(!bad.is_valid())
     }
-    
+
     #[test]
     fn dialect_to_string() {
         assert_eq!(String::from("Elven"), Dialects::Elven.to_string());
@@ -193,7 +201,10 @@ mod test_weight {
 
     #[test]
     fn dialect_get_path() {
-        assert_eq!("./src/languages/Fantasy.txt".to_string(), Dialects::Fantasy.get_path());
+        assert_eq!(
+            "./src/languages/Fantasy.txt".to_string(),
+            Dialects::Fantasy.get_path()
+        );
     }
 
     #[test]
