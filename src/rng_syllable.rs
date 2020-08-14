@@ -96,6 +96,13 @@ impl Syllable {
     pub fn next(&self, syllables: &Vec<Syllable>) -> Syllable {
         return syllables.choose(&mut rand::thread_rng()).unwrap().clone();
     }
+
+    fn connects(&self, syllable: &Syllable) -> bool {
+        // if (self.next == Rule::Consonant) && !syllable.starts_with_vowel() {
+        //     true
+        // }
+        false
+    }
 }
 
 impl fmt::Display for Syllable {
@@ -173,12 +180,36 @@ mod syllable_tests {
     use rstest::rstest;
 
     #[test]
+    fn connects__plain() {
+        let first = Syllable::new("a").unwrap();
+        let second = Syllable::new("b").unwrap();
+
+        assert!(first.connects(&second));
+    }
+
+    #[test]
+    fn connects__needs_vowel__is_vowel() {
+        let first = Syllable::new("a +v").unwrap();
+        let second = Syllable::new("e").unwrap();
+
+        assert!(first.connects(&second));
+    }
+
+    #[test]
+    fn connects__needs_vowel__is_consonant() {
+        let first = Syllable::new("a +v").unwrap();
+        let second = Syllable::new("b").unwrap();
+
+        assert!(!first.connects(&second));
+    }
+
+    #[test]
     fn next() {
         let b = Syllable::new("b").unwrap();
         let v = vec![b.clone()];
-        let sut = Syllable::new("a").unwrap();
+        let a = Syllable::new("a").unwrap();
 
-        let actual = sut.next(&v);
+        let actual = a.next(&v);
 
         assert_eq!(actual, b);
     }
