@@ -1,5 +1,9 @@
+mod rng_join;
 mod rng_dialect;
 mod rng_syllable;
+
+#[macro_use]
+extern crate bitflags;
 
 pub fn test() {
     let elven = rng_dialect::Dialect::new(rng_dialect::Dialects::Elven).unwrap();

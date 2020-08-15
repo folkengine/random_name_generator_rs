@@ -2,6 +2,7 @@
 
 ## Dependencies
 
+* [Bitflags](https://github.com/bitflags/bitflags)
 * [Clippy](https://rust-lang.github.io/rust-clippy/)
 
 ## Ideas

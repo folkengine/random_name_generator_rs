@@ -19,6 +19,7 @@ name = "rng"
 path = "src/main.rs"
 
 [dependencies]
+bitflags = "1.0"
 lazy_static = "1.4.0"
 log = "*"
 rand = "0.7.3"
