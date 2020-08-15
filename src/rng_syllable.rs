@@ -179,29 +179,29 @@ mod syllable_tests {
     use super::*;
     use rstest::rstest;
 
-    #[test]
-    fn connects__plain() {
-        let first = Syllable::new("a").unwrap();
-        let second = Syllable::new("b").unwrap();
-
-        assert!(first.connects(&second));
-    }
-
-    #[test]
-    fn connects__needs_vowel__is_vowel() {
-        let first = Syllable::new("a +v").unwrap();
-        let second = Syllable::new("e").unwrap();
-
-        assert!(first.connects(&second));
-    }
-
-    #[test]
-    fn connects__needs_vowel__is_consonant() {
-        let first = Syllable::new("a +v").unwrap();
-        let second = Syllable::new("b").unwrap();
-
-        assert!(!first.connects(&second));
-    }
+    // #[test]
+    // fn connects__plain() {
+    //     let first = Syllable::new("a").unwrap();
+    //     let second = Syllable::new("b").unwrap();
+    //
+    //     assert!(first.connects(&second));
+    // }
+    //
+    // #[test]
+    // fn connects__needs_vowel__is_vowel() {
+    //     let first = Syllable::new("a +v").unwrap();
+    //     let second = Syllable::new("e").unwrap();
+    //
+    //     assert!(first.connects(&second));
+    // }
+    //
+    // #[test]
+    // fn connects__needs_vowel__is_consonant() {
+    //     let first = Syllable::new("a +v").unwrap();
+    //     let second = Syllable::new("b").unwrap();
+    //
+    //     assert!(!first.connects(&second));
+    // }
 
     #[test]
     fn next() {
