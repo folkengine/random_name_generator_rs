@@ -43,14 +43,15 @@ impl Joint {
                 Joint::NONE => false,
                 Joint::NO_CONSONANT => false,
                 Joint::NO_VOWEL => true,
-                _ => true,
+                Joint::SOME => true,
+                _ => false,
             }
         } else {
             match to {
                 Joint::NONE => false,
                 Joint::NO_CONSONANT => true,
                 Joint::NO_VOWEL => false,
-                _ => true,
+                _ => false,
             }
         }
     }
@@ -62,14 +63,21 @@ mod join_tests {
     use super::*;
     use rstest::rstest;
 
-    #[rstest(input,
-        case(Joint::NO_CONSONANT),
-        case(Joint::SOME),
+    #[rstest(joiner, input,
+        case(Joint::SOME, Joint::NO_CONSONANT),
+        case(Joint::SOME, Joint::SOME),
+        case(Joint::SOME, Joint::SOME | Joint::NO_CONSONANT),
     )]
-    fn joins_to(input: Joint) {
-        let joint = Joint::SOME;
+    fn joins_to__vowel__joinable(joiner: Joint, input: Joint) {
+        assert!(joiner.joins_to(input));
+    }
 
-        assert!(joint.joins_to(input));
+    #[rstest(joiner, input,
+        case(Joint::SOME, Joint::SOME | Joint::NO_VOWEL),
+        case(Joint::SOME, Joint::SOME | Joint::NO_VOWEL),
+    )]
+    fn joins_to__vowel__not_joinable(joiner: Joint, input: Joint) {
+        assert!(!joiner.joins_to(input));
     }
 
     #[test]
@@ -79,6 +87,7 @@ mod join_tests {
         assert!(!joint.joins(&Joint::NONE));
     }
 
+    #[ignore]
     #[test]
     fn joint__some() {
         let joint = Joint::SOME;
