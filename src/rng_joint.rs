@@ -9,6 +9,17 @@ bitflags! {
     }
 }
 
+/// 00000001 won't work with 0b00001001
+///
+///
+
+/// 00000001 vowel with anything
+///     00000001
+///     00000011
+///     00000101
+///     00000111
+
+
 impl Joint {
     pub fn joins(&self, to: &Joint) -> bool {
         if to.is_empty() {
@@ -17,12 +28,41 @@ impl Joint {
             true
         }
     }
+
+    fn joins_to(&self, to: Joint) -> bool {
+        if self.contains(Joint::CONSONANT) {
+            match to {
+                Joint::NONE => false,
+                Joint::NO_CONSONANT => false,
+                Joint::NO_VOWEL => true,
+                _ => true,
+            }
+        } else {
+            match to {
+                Joint::NONE => false,
+                Joint::NO_CONSONANT => true,
+                Joint::NO_VOWEL => false,
+                _ => true,
+            }
+        }
+    }
 }
 
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod join_tests {
     use super::*;
+    use rstest::rstest;
+
+    #[rstest(input,
+        case(Joint::NO_CONSONANT),
+        case(Joint::SOME),
+    )]
+    fn joins_to(input: Joint) {
+        let joint = Joint::SOME;
+
+        assert!(joint.joins_to(input));
+    }
 
     #[test]
     fn joint__none() {

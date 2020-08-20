@@ -420,7 +420,7 @@ mod syllable_tests {
         case("gru -v +c", Rule::Vowel),
         case("+sakku -V", Rule::Vowel),
         case("ay -c", Rule::Consonant),
-        case("it -c +v", Rule::Consonant)
+        case("it -c +v", Rule::Consonant),
     )]
     fn determine_previous_rule(input: &str, expected: Rule) {
         assert_eq!(expected, Syllable::determine_previous_rule(input))
