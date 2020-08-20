@@ -25,7 +25,15 @@ impl Joint {
         if to.is_empty() {
             false
         } else {
-            true
+            if self.contains(Joint::CONSONANT) {
+                if to.contains(Joint::NO_CONSONANT) {
+                    self.contains(Joint::NO_CONSONANT)
+                } else {
+                    true
+                }
+            } else {
+                false
+            }
         }
     }
 
@@ -77,9 +85,11 @@ mod join_tests {
 
         let some = Joint::SOME;
         let no_consonant = Joint::SOME | Joint::NO_CONSONANT;
+        let no_vowel = Joint::SOME | Joint::NO_VOWEL;
 
         assert!(joint.joins(&some));
         assert!(joint.joins(&no_consonant));
+        assert!(!joint.joins(&no_vowel));
         // assert!(joint.joins(Joint::SOME | Joint::CONSONANT));
         // assert!(joint.joins(Joint::SOME | Joint::NO_CONSONANT));
         // assert!(!joint.contains(Joint::NO_VOWEL));
