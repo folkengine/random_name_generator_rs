@@ -1,4 +1,5 @@
 use regex::internal::Input;
+use std::fmt;
 
 bitflags! {
     pub struct Joint: u32 {
@@ -55,6 +56,16 @@ impl Joint {
                 _ => false,
             }
         }
+    }
+}
+
+impl fmt::Display for Joint {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{:b}",
+            self.bits,
+        )
     }
 }
 
