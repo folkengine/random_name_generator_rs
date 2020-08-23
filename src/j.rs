@@ -12,7 +12,7 @@ bitflags! {
 impl J {
     fn joins(&self, to: &J) -> bool {
         println!("{}.joins({})", self, to);
-        if to.is_empty() {
+        if !self.contains(J::SOME) {
             false
         } else {
             true
@@ -47,6 +47,7 @@ mod j_tests {
     }
 
     #[rstest(input,
+        case(J::NONE),
         case(J::CONSONANT),
     )]
     fn joins__some_ne(input: J) {
@@ -59,6 +60,6 @@ mod j_tests {
     fn joint__none() {
         let j = J::NONE;
 
-        assert!(j.joins(&J::SOME));
+        assert!(!j.joins(&J::SOME));
     }
 }
