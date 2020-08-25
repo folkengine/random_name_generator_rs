@@ -5,56 +5,36 @@ bitflags! {
     pub struct Joint: u32 {
         const NONE         = 0b00000000;
         const SOME         = 0b00000001;
-        const CONSONANT    = 0b00000010;
+        const VOWEL        = 0b00000010;
         const NO_CONSONANT = 0b00000100;
         const NO_VOWEL     = 0b00001000;
     }
 }
 
-/// 00000001 won't work with 0b00001001
-///
-///
-
-/// 00000001 vowel with anything
-///     00000001
-///     00000011
-///     00000101
-///     00000111
-
-
 impl Joint {
-    pub fn joins(&self, to: &Joint) -> bool {
-        if to.is_empty() {
-            false
-        } else {
-            if self.contains(Joint::CONSONANT) {
-                if to.contains(Joint::NO_CONSONANT) {
-                    self.contains(Joint::NO_CONSONANT)
-                } else {
-                    true
-                }
-            } else {
-                false
-            }
-        }
+    fn joins(&self, to: &Joint) -> bool {
+        println!("{}.joins({})", self, to);
+
+        let can_to = self.joins_to(to);
+        println!("can to: {}", can_to);
+        let can_from = to.joins_to(self);
+        println!("can from: {}", can_from);
+        can_to && can_from
     }
 
-    fn joins_to(&self, to: Joint) -> bool {
-        if self.contains(Joint::CONSONANT) {
-            match to {
-                Joint::NONE => false,
-                Joint::NO_CONSONANT => false,
-                Joint::NO_VOWEL => true,
-                Joint::SOME => true,
-                _ => false,
-            }
+    fn joins_to(&self, to: &Joint) -> bool {
+        if to.is_empty() {
+            println!("to is empty empty");
+            false
+        } else if !to.contains(Joint::SOME) {
+            println!("no some in to");
+            false
+        } else if self.contains(Joint::VOWEL) && to.contains(Joint::NO_VOWEL) {
+            false
+        } else if !self.contains(Joint::VOWEL) && to.contains(Joint::NO_CONSONANT) {
+            false
         } else {
-            match to {
-                Joint::NONE => false,
-                Joint::NO_CONSONANT => true,
-                Joint::NO_VOWEL => false,
-                _ => false,
-            }
+            true
         }
     }
 }
@@ -71,89 +51,138 @@ impl fmt::Display for Joint {
 
 #[cfg(test)]
 #[allow(non_snake_case)]
-mod join_tests {
+mod joint_tests {
     use super::*;
     use rstest::rstest;
 
-    #[rstest(joiner, input,
-        case(Joint::SOME, Joint::NO_CONSONANT),
-        case(Joint::SOME, Joint::SOME),
-        case(Joint::SOME, Joint::SOME | Joint::NO_CONSONANT),
+    #[rstest(input,
+    case(Joint::SOME),
+    case(Joint::SOME | Joint::VOWEL),
     )]
-    fn joins_to__vowel__joinable(joiner: Joint, input: Joint) {
-        assert!(joiner.joins_to(input));
+    fn joins__some(input: Joint) {
+        let j = Joint::SOME;
+
+        assert!(j.joins(&input));
     }
 
-    #[rstest(joiner, input,
-        case(Joint::SOME, Joint::SOME | Joint::NO_VOWEL),
-        case(Joint::SOME, Joint::SOME | Joint::NO_VOWEL),
+    #[rstest(input,
+    case(Joint::SOME | Joint::VOWEL),
     )]
-    fn joins_to__vowel__not_joinable(joiner: Joint, input: Joint) {
-        assert!(!joiner.joins_to(input));
+    fn joins__no_consonant(input: Joint) {
+        let j = Joint::SOME | Joint::NO_CONSONANT;
+
+        assert!(j.joins(&input));
+    }
+
+    #[rstest(input,
+    case(Joint::NONE),
+    case(Joint::SOME),
+    )]
+    fn joins__no_consonant_ne(input: Joint) {
+        let j = Joint::SOME | Joint::NO_CONSONANT;
+
+        assert!(!j.joins(&input));
+    }
+
+    #[rstest(input,
+    case(Joint::SOME),
+    case(Joint::SOME | Joint::NO_VOWEL),
+    )]
+    fn joins__no_vowel(input: Joint) {
+        let j = Joint::SOME | Joint::NO_VOWEL;
+
+        assert!(j.joins(&input));
+    }
+
+    #[rstest(input,
+    case(Joint::SOME | Joint::VOWEL),
+    case(Joint::SOME | Joint::NO_CONSONANT),
+    )]
+    fn joins__no_vowel_ne(input: Joint) {
+        let j = Joint::SOME | Joint::NO_VOWEL;
+
+        assert!(!j.joins(&input));
+    }
+
+    #[test]
+    fn joins__s() {
+        let j = Joint::SOME | Joint::NO_CONSONANT;
+        let input = Joint::SOME | Joint::VOWEL;
+
+        assert!(j.joins(&input));
+    }
+
+    #[test]
+    fn joins_to__s() {
+        let j = Joint::SOME | Joint::VOWEL;
+        let input = Joint::SOME | Joint::NO_CONSONANT;
+
+        assert!(j.joins_to(&input));
+    }
+
+    #[rstest(input,
+    case(Joint::NONE),
+    case(Joint::VOWEL), // Joint::SOME is required
+    )]
+    fn joins__some_ne(input: Joint) {
+        let j = Joint::SOME;
+
+        assert!(!j.joins(&input));
+    }
+
+    #[rstest(input,
+    case(Joint::NONE),
+    case(Joint::SOME),
+    case(Joint::VOWEL),
+    case(Joint::SOME | Joint::NO_CONSONANT),
+    case(Joint::SOME | Joint::NO_VOWEL),
+    case(Joint::SOME | Joint::VOWEL),
+    case(Joint::SOME | Joint::VOWEL | Joint::NO_CONSONANT),
+    case(Joint::SOME | Joint::VOWEL | Joint::NO_VOWEL),
+    )]
+    fn joins__none_ne(input: Joint) {
+        let j = Joint::NONE;
+
+        assert!(!j.joins(&input));
+    }
+
+    #[test]
+    fn contains() {
+        let j = Joint::SOME;
+        let input = Joint::VOWEL;
+
+        assert!(!j.contains(input));
+    }
+
+    #[test]
+    fn no_some() {
+        let j = Joint::SOME;
+        let input = Joint::VOWEL;
+
+        assert!(!j.contains(input));
+    }
+
+    #[test]
+    fn joins__no_ome() {
+        let j = Joint::VOWEL;
+        let input = Joint::SOME | Joint::VOWEL;
+
+        assert!(!j.joins(&input));
+    }
+
+    /// delete me when all are covered
+    #[test]
+    fn joins__holding() {
+        let j = Joint::SOME;
+        let input = Joint::VOWEL;
+
+        assert!(!j.joins(&input));
     }
 
     #[test]
     fn joint__none() {
-        let joint = Joint::SOME;
+        let j = Joint::NONE;
 
-        assert!(!joint.joins(&Joint::NONE));
-    }
-
-    #[ignore]
-    #[test]
-    fn joint__some() {
-        let joint = Joint::SOME;
-
-        let some = Joint::SOME;
-        let no_consonant = Joint::SOME | Joint::NO_CONSONANT;
-        let no_vowel = Joint::SOME | Joint::NO_VOWEL;
-
-        assert!(joint.joins(&some));
-        assert!(joint.joins(&no_consonant));
-        assert!(!joint.joins(&no_vowel));
-        // assert!(joint.joins(Joint::SOME | Joint::CONSONANT));
-        // assert!(joint.joins(Joint::SOME | Joint::NO_CONSONANT));
-        // assert!(!joint.contains(Joint::NO_VOWEL));
-    }
-
-    #[test]
-    fn contains__none() {
-        let joint = Joint::NONE;
-
-        assert!(!joint.contains(Joint::SOME));
-        assert!(!joint.contains(Joint::CONSONANT));
-        assert!(!joint.contains(Joint::NO_CONSONANT));
-        assert!(!joint.contains(Joint::NO_VOWEL));
-    }
-    //
-    // #[test]
-    // fn joint__some__no_none() {
-    //     let joint = Joint::SOME;
-    //
-    //     assert!(!joint.contains(Joint::NONE));
-    // }
-
-    #[test]
-    fn foo() {
-        let join = Joint::SOME | Joint::CONSONANT;
-
-        println!("{:?}", join);
-
-        assert!(join.contains(Joint::NONE));
-        assert_eq!(join, Joint::SOME | Joint::CONSONANT);
-    }
-
-    #[test]
-    fn no_consonant() {
-        let join = Joint::NONE;
-
-        assert!(!join.contains(Joint::CONSONANT));
-    }
-
-    #[test]
-    fn contains_consonant() {
-        let join = Joint::CONSONANT;
-
-        assert!(join.contains(Joint::CONSONANT));
+        assert!(!j.joins(&Joint::SOME));
     }
 }
