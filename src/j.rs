@@ -84,6 +84,26 @@ mod j_tests {
         assert!(!j.joins(&input));
     }
 
+    #[rstest(input,
+        case(J::SOME),
+        case(J::SOME | J::NO_VOWEL),
+    )]
+    fn joins__no_vowel(input: J) {
+        let j = J::SOME | J::NO_VOWEL;
+
+        assert!(j.joins(&input));
+    }
+
+    #[rstest(input,
+        case(J::SOME | J::VOWEL),
+        case(J::SOME | J::NO_CONSONANT),
+    )]
+    fn joins__no_vowel_ne(input: J) {
+        let j = J::SOME | J::NO_VOWEL;
+
+        assert!(!j.joins(&input));
+    }
+
     #[test]
     fn joins__s() {
         let j = J::SOME | J::NO_CONSONANT;
@@ -102,7 +122,7 @@ mod j_tests {
 
     #[rstest(input,
         case(J::NONE),
-        case(J::VOWEL),
+        case(J::VOWEL), // J::SOME is required
     )]
     fn joins__some_ne(input: J) {
         let j = J::SOME;
@@ -114,7 +134,11 @@ mod j_tests {
         case(J::NONE),
         case(J::SOME),
         case(J::VOWEL),
+        case(J::SOME | J::NO_CONSONANT),
+        case(J::SOME | J::NO_VOWEL),
         case(J::SOME | J::VOWEL),
+        case(J::SOME | J::VOWEL | J::NO_CONSONANT),
+        case(J::SOME | J::VOWEL | J::NO_VOWEL),
     )]
     fn joins__none_ne(input: J) {
         let j = J::NONE;
