@@ -30,6 +30,7 @@ pub struct Syllable {
     pub next: Rule,
     pub previous: Rule,
     pub jnext: Joiner,
+    pub jprevious: Joiner,
 }
 
 impl Syllable {
@@ -41,7 +42,9 @@ impl Syllable {
                 classification,
                 next: Syllable::determine_next_rule(raw),
                 previous: Syllable::determine_previous_rule(raw),
-                jnext: Syllable::determine_next_joint(raw),
+                jnext: Syllable::determine_next_joiner(raw),
+                jprevious: Syllable::determine_previous_joiner(raw),
+
             };
             Ok(syllable)
         } else {
@@ -53,8 +56,16 @@ impl Syllable {
         VOWELS.contains(&self.value.chars().last().unwrap())
     }
 
+    pub fn str_ends_with_vowel(s: &str) -> bool {
+        VOWELS.contains(&s.chars().last().unwrap())
+    }
+
     pub fn starts_with_vowel(&self) -> bool {
         VOWELS.contains(&self.value.chars().next().unwrap())
+    }
+
+    pub fn str_starts_with_vowel(s: &str) -> bool {
+        VOWELS.contains(&s.chars().next().unwrap())
     }
 
     fn determine_classification(s: &str) -> Classification {
@@ -65,8 +76,22 @@ impl Syllable {
         }
     }
 
-    fn determine_next_joint(s: &str) -> Joiner {
-        Joiner::NONE
+    fn determine_next_joiner(s: &str) -> Joiner {
+        let ends = if Syllable::str_ends_with_vowel(s) { Joiner::VOWEL } else { Joiner::SOME };
+        if SUFFIX_RE.is_match(s) {
+            Joiner::SOME | ends | Syllable::vowel_or_consonant_only_joiner(s, "+v")
+        } else {
+            Joiner::SOME | ends
+        }
+    }
+
+    fn determine_previous_joiner(s: &str) -> Joiner {
+        let starts = if Syllable::str_starts_with_vowel(s) { Joiner::VOWEL } else { Joiner::SOME };
+        if SUFFIX_RE.is_match(s) {
+            Joiner::SOME | starts | Syllable::vowel_or_consonant_only_joiner(s, "-v")
+        } else {
+            Joiner::SOME | starts
+        }
     }
 
     fn determine_next_rule(s: &str) -> Rule {
@@ -82,6 +107,14 @@ impl Syllable {
             Syllable::vowel_or_consonant_flag(s, "-v")
         } else {
             Rule::Either
+        }
+    }
+
+    fn vowel_or_consonant_only_joiner(s: &str, matcher: &str) -> Joiner {
+        if s.to_ascii_lowercase().contains(matcher) {
+            Joiner::ONLY_VOWEL
+        } else {
+            Joiner::ONLY_CONSONANT
         }
     }
 
@@ -230,7 +263,8 @@ mod syllable_tests {
             classification: Classification::Center,
             next: Rule::Vowel,
             previous: Rule::Consonant,
-            jnext: Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL,
+            jnext: Joiner::SOME | Joiner::ONLY_VOWEL,
+            jprevious: Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT,
         };
 
         let actual = Syllable::new("idr -c +v");
@@ -245,7 +279,8 @@ mod syllable_tests {
             classification: Classification::Prefix,
             next: Rule::Either,
             previous: Rule::Either,
-            jnext: Joiner::SOME | Joiner::VOWEL,
+            jnext: Joiner::SOME,
+            jprevious: Joiner::SOME
         };
 
         let actual = Syllable::new("-asd");
@@ -261,6 +296,7 @@ mod syllable_tests {
             next: Rule::Either,
             previous: Rule::Vowel,
             jnext: Joiner::SOME,
+            jprevious: Joiner::SOME
         };
 
         let actual = Syllable::new("+adly -v");

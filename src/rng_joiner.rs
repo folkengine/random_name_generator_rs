@@ -3,16 +3,16 @@ use std::fmt;
 
 bitflags! {
     pub struct Joiner: u32 {
-        const NONE         = 0b00000000;
-        const SOME         = 0b00000001;
-        const VOWEL        = 0b00000010;
-        const ONLY_VOWEL = 0b00000100;
-        const ONLY_CONSONANT     = 0b00001000;
+        const NONE           = 0b00000000;
+        const SOME           = 0b00000001;
+        const VOWEL          = 0b00000010;
+        const ONLY_VOWEL     = 0b00000100;
+        const ONLY_CONSONANT = 0b00001000;
     }
 }
 
 impl Joiner {
-    fn joins(&self, to: &Joiner) -> bool {
+    pub fn joins(&self, to: &Joiner) -> bool {
         println!("{}.joins({})", self, to);
 
         let can_to = self.joins_to(to);
