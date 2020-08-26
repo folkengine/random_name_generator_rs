@@ -1,4 +1,4 @@
-mod rng_joint;
+mod rng_joiner;
 mod rng_dialect;
 mod rng_syllable;
 

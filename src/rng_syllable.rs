@@ -3,6 +3,8 @@ use rand::seq::SliceRandom;
 use regex::Regex;
 use std::fmt;
 
+use crate::rng_joiner::{Joiner};
+
 static CONSONANTS: [char; 30] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l', 'ł', 'm', 'ɱ', 'n',
     'ɳ', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
@@ -27,6 +29,7 @@ pub struct Syllable {
     pub classification: Classification,
     pub next: Rule,
     pub previous: Rule,
+    pub jnext: Joiner,
 }
 
 impl Syllable {
@@ -38,6 +41,7 @@ impl Syllable {
                 classification,
                 next: Syllable::determine_next_rule(raw),
                 previous: Syllable::determine_previous_rule(raw),
+                jnext: Syllable::determine_next_joint(raw),
             };
             Ok(syllable)
         } else {
@@ -59,6 +63,10 @@ impl Syllable {
             "+" => Classification::Suffix,
             _ => Classification::Center,
         }
+    }
+
+    fn determine_next_joint(s: &str) -> Joiner {
+        Joiner::NONE
     }
 
     fn determine_next_rule(s: &str) -> Rule {
@@ -178,6 +186,7 @@ impl Rule {
 mod syllable_tests {
     use super::*;
     use rstest::rstest;
+    // use proc_macro::Spacing::Joint;
 
     // #[test]
     // fn connects__plain() {
@@ -221,6 +230,7 @@ mod syllable_tests {
             classification: Classification::Center,
             next: Rule::Vowel,
             previous: Rule::Consonant,
+            jnext: Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL,
         };
 
         let actual = Syllable::new("idr -c +v");
@@ -235,6 +245,7 @@ mod syllable_tests {
             classification: Classification::Prefix,
             next: Rule::Either,
             previous: Rule::Either,
+            jnext: Joiner::SOME | Joiner::VOWEL,
         };
 
         let actual = Syllable::new("-asd");
@@ -249,6 +260,7 @@ mod syllable_tests {
             classification: Classification::Suffix,
             next: Rule::Either,
             previous: Rule::Vowel,
+            jnext: Joiner::SOME,
         };
 
         let actual = Syllable::new("+adly -v");
