@@ -27,8 +27,6 @@ lazy_static! {
 pub struct Syllable {
     pub value: String,
     pub classification: Classification,
-    pub next: Rule,
-    pub previous: Rule,
     pub jnext: Joiner,
     pub jprevious: Joiner,
 }
@@ -40,11 +38,8 @@ impl Syllable {
             let syllable = Syllable {
                 value,
                 classification,
-                next: Syllable::determine_next_rule(raw),
-                previous: Syllable::determine_previous_rule(raw),
                 jnext: Syllable::determine_next_joiner(raw),
                 jprevious: Syllable::determine_previous_joiner(raw),
-
             };
             Ok(syllable)
         } else {
@@ -153,8 +148,8 @@ impl fmt::Display for Syllable {
             "{}{}{}{}",
             self.classification.value(),
             self.value,
-            self.previous.value_previous(),
-            self.next.value_next()
+            self.jprevious.value_previous(),
+            self.jnext.value_next()
         )
     }
 }
@@ -219,31 +214,6 @@ impl Rule {
 mod syllable_tests {
     use super::*;
     use rstest::rstest;
-    // use proc_macro::Spacing::Joint;
-
-    // #[test]
-    // fn connects__plain() {
-    //     let first = Syllable::new("a").unwrap();
-    //     let second = Syllable::new("b").unwrap();
-    //
-    //     assert!(first.connects(&second));
-    // }
-    //
-    // #[test]
-    // fn connects__needs_vowel__is_vowel() {
-    //     let first = Syllable::new("a +v").unwrap();
-    //     let second = Syllable::new("e").unwrap();
-    //
-    //     assert!(first.connects(&second));
-    // }
-    //
-    // #[test]
-    // fn connects__needs_vowel__is_consonant() {
-    //     let first = Syllable::new("a +v").unwrap();
-    //     let second = Syllable::new("b").unwrap();
-    //
-    //     assert!(!first.connects(&second));
-    // }
 
     #[test]
     fn next() {
@@ -261,8 +231,6 @@ mod syllable_tests {
         let expected = Syllable {
             value: "idr".to_string(),
             classification: Classification::Center,
-            next: Rule::Vowel,
-            previous: Rule::Consonant,
             jnext: Joiner::SOME | Joiner::ONLY_VOWEL,
             jprevious: Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT,
         };
@@ -277,8 +245,6 @@ mod syllable_tests {
         let expected = Syllable {
             value: "asd".to_string(),
             classification: Classification::Prefix,
-            next: Rule::Either,
-            previous: Rule::Either,
             jnext: Joiner::SOME,
             jprevious: Joiner::SOME
         };
@@ -293,8 +259,6 @@ mod syllable_tests {
         let expected = Syllable {
             value: "adly".to_string(),
             classification: Classification::Suffix,
-            next: Rule::Either,
-            previous: Rule::Vowel,
             jnext: Joiner::SOME,
             jprevious: Joiner::SOME
         };
