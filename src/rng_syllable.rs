@@ -148,8 +148,8 @@ impl fmt::Display for Syllable {
             "{}{}{}{}",
             self.classification.value(),
             self.value,
+            self.jnext.value_next(),
             self.jprevious.value_previous(),
-            self.jnext.value_next()
         )
     }
 }
@@ -366,6 +366,18 @@ mod syllable_tests {
     )]
     fn to_string(input: &str, expected: String) {
         assert_eq!(Syllable::new(input).unwrap().to_string(), expected);
+    }
+
+    #[test]
+    fn to_string_tmp() {
+        assert_eq!(Syllable::new("-ang +v").unwrap().to_string(), "-ang +v".to_string());
+    }
+
+    #[test]
+    fn value_next() {
+        let syl = Syllable::new("-ang +v").unwrap();
+        // assert_eq!(syl.jnext.value_next(), " +v".to_string());
+        assert_eq!(syl.jprevious.value_previous(), "".to_string());
     }
 
     #[rstest(input, expected,

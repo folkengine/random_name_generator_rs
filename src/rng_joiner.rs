@@ -1,7 +1,6 @@
 use regex::internal::Input;
 use std::fmt;
 
-#[derive(Debug)]
 bitflags! {
     pub struct Joiner: u32 {
         const NONE           = 0b00000000;
@@ -39,19 +38,25 @@ impl Joiner {
         }
     }
 
-    fn value_next(&self) -> String {
-        match *self {
-            Joiner::ONLY_CONSONANT => " +c".to_string(),
-            Joiner::ONLY_Vowel => " +v".to_string(),
-            _ => "".to_string(),
+    pub fn value_next(&self) -> String {
+        println!("value_next {:b})", self);
+        if self.contains(Joiner::ONLY_CONSONANT) {
+            " +c".to_string()
+        } else if self.contains(Joiner::ONLY_VOWEL) {
+            " +v".to_string()
+        } else {
+            "".to_string()
         }
     }
 
-    fn value_previous(&self) -> String {
-        match *self {
-            Joiner::ONLY_Consonant => " -c".to_string(),
-            Joiner::ONLY_Vowel => " -v".to_string(),
-            _ => "".to_string(),
+    pub fn value_previous(&self) -> String {
+        println!("value_previous {:b}", self);
+        if self.contains(Joiner::ONLY_CONSONANT) {
+            " -c".to_string()
+        } else if self.contains(Joiner::ONLY_VOWEL) {
+            " -v".to_string()
+        } else {
+            "".to_string()
         }
     }
 }
