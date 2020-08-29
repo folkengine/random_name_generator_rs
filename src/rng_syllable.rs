@@ -27,8 +27,8 @@ lazy_static! {
 pub struct Syllable {
     pub value: String,
     pub classification: Classification,
-    pub jnext: Joiner,
     pub jprevious: Joiner,
+    pub jnext: Joiner,
 }
 
 impl Syllable {
@@ -72,7 +72,8 @@ impl Syllable {
     }
 
     fn determine_next_joiner(s: &str) -> Joiner {
-        let ends = if Syllable::str_ends_with_vowel(s) { Joiner::VOWEL } else { Joiner::SOME };
+        let (_, pure) = Syllable::classify(s);
+        let ends = if Syllable::str_ends_with_vowel(pure.as_str()) { Joiner::VOWEL } else { Joiner::SOME };
         if SUFFIX_RE.is_match(s) {
             Joiner::SOME | ends | Syllable::vowel_or_consonant_only_joiner(s, "+v")
         } else {
@@ -81,27 +82,12 @@ impl Syllable {
     }
 
     fn determine_previous_joiner(s: &str) -> Joiner {
-        let starts = if Syllable::str_starts_with_vowel(s) { Joiner::VOWEL } else { Joiner::SOME };
-        if SUFFIX_RE.is_match(s) {
+        let (_, pure) = Syllable::classify(s);
+        let starts = if Syllable::str_starts_with_vowel(pure.as_str()) { Joiner::VOWEL } else { Joiner::SOME };
+        if PREFIX_RE.is_match(s) {
             Joiner::SOME | starts | Syllable::vowel_or_consonant_only_joiner(s, "-v")
         } else {
             Joiner::SOME | starts
-        }
-    }
-
-    fn determine_next_rule(s: &str) -> Rule {
-        if SUFFIX_RE.is_match(s) {
-            Syllable::vowel_or_consonant_flag(s, "+v")
-        } else {
-            Rule::Either
-        }
-    }
-
-    fn determine_previous_rule(s: &str) -> Rule {
-        if PREFIX_RE.is_match(s) {
-            Syllable::vowel_or_consonant_flag(s, "-v")
-        } else {
-            Rule::Either
         }
     }
 
@@ -110,14 +96,6 @@ impl Syllable {
             Joiner::ONLY_VOWEL
         } else {
             Joiner::ONLY_CONSONANT
-        }
-    }
-
-    fn vowel_or_consonant_flag(s: &str, matcher: &str) -> Rule {
-        if s.to_ascii_lowercase().contains(matcher) {
-            Rule::Vowel
-        } else {
-            Rule::Consonant
         }
     }
 
@@ -148,8 +126,8 @@ impl fmt::Display for Syllable {
             "{}{}{}{}",
             self.classification.value(),
             self.value,
-            self.jnext.value_next(),
             self.jprevious.value_previous(),
+            self.jnext.value_next(),
         )
     }
 }
@@ -177,31 +155,6 @@ impl Classification {
         match *self {
             Classification::Prefix => "-".to_string(),
             Classification::Suffix => "+".to_string(),
-            _ => "".to_string(),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum Rule {
-    Consonant,
-    Vowel,
-    Either,
-}
-
-impl Rule {
-    fn value_next(&self) -> String {
-        match *self {
-            Rule::Consonant => " +c".to_string(),
-            Rule::Vowel => " +v".to_string(),
-            _ => "".to_string(),
-        }
-    }
-
-    fn value_previous(&self) -> String {
-        match *self {
-            Rule::Consonant => " -c".to_string(),
-            Rule::Vowel => " -v".to_string(),
             _ => "".to_string(),
         }
     }
@@ -246,7 +199,7 @@ mod syllable_tests {
             value: "asd".to_string(),
             classification: Classification::Prefix,
             jnext: Joiner::SOME,
-            jprevious: Joiner::SOME
+            jprevious: Joiner::SOME | Joiner::VOWEL
         };
 
         let actual = Syllable::new("-asd");
@@ -259,8 +212,8 @@ mod syllable_tests {
         let expected = Syllable {
             value: "adly".to_string(),
             classification: Classification::Suffix,
-            jnext: Joiner::SOME,
-            jprevious: Joiner::SOME
+            jprevious: Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL,
+            jnext: Joiner::SOME | Joiner::VOWEL,
         };
 
         let actual = Syllable::new("+adly -v");
@@ -370,7 +323,9 @@ mod syllable_tests {
 
     #[test]
     fn to_string_tmp() {
-        assert_eq!(Syllable::new("-ang +v").unwrap().to_string(), "-ang +v".to_string());
+        let s = Syllable::new("-ang +v").unwrap();
+
+        assert_eq!(s.to_string(), "-ang +v".to_string());
     }
 
     #[test]
@@ -378,24 +333,6 @@ mod syllable_tests {
         let syl = Syllable::new("-ang +v").unwrap();
         // assert_eq!(syl.jnext.value_next(), " +v".to_string());
         assert_eq!(syl.jprevious.value_previous(), "".to_string());
-    }
-
-    #[rstest(input, expected,
-        case(Rule::Consonant, " +c".to_string()),
-        case(Rule::Vowel, " +v".to_string()),
-        case(Rule::Either, "".to_string()),
-    )]
-    fn rule_value_next(input: Rule, expected: String) {
-        assert_eq!(input.value_next(), expected);
-    }
-
-    #[rstest(input, expected,
-        case(Rule::Consonant, " -c".to_string()),
-        case(Rule::Vowel, " -v".to_string()),
-        case(Rule::Either, "".to_string()),
-    )]
-    fn rule_value_previous(input: Rule, expected: String) {
-        assert_eq!(input.value_previous(), expected);
     }
 
     #[rstest(input, expected,
@@ -416,37 +353,5 @@ mod syllable_tests {
         let (actual_classification, actual_value) = Syllable::classify(input);
         assert_eq!(classification, actual_classification);
         assert_eq!(value, actual_value);
-    }
-
-    #[rstest(
-        input,
-        expected,
-        case("", Rule::Either),
-        case("-ahr", Rule::Either),
-        case("dus", Rule::Either),
-        case("+zou ", Rule::Either),
-        case("ez -c +V", Rule::Vowel),
-        case("-ahr +v", Rule::Vowel),
-        case("-aby +c", Rule::Consonant),
-        case("dra +c", Rule::Consonant)
-    )]
-    fn determine_next_rule(input: &str, expected: Rule) {
-        assert_eq!(expected, Syllable::determine_next_rule(input));
-    }
-
-    #[rstest(
-        input,
-        expected,
-        case("", Rule::Either),
-        case("-ahr", Rule::Either),
-        case("dus", Rule::Either),
-        case("+zou ", Rule::Either),
-        case("gru -v +c", Rule::Vowel),
-        case("+sakku -V", Rule::Vowel),
-        case("ay -c", Rule::Consonant),
-        case("it -c +v", Rule::Consonant),
-    )]
-    fn determine_previous_rule(input: &str, expected: Rule) {
-        assert_eq!(expected, Syllable::determine_previous_rule(input))
     }
 }
