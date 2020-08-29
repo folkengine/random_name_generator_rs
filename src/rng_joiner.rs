@@ -37,6 +37,28 @@ impl Joiner {
             true
         }
     }
+
+    pub fn value_next(&self) -> String {
+        println!("value_next {:b})", self);
+        if self.contains(Joiner::ONLY_CONSONANT) {
+            " +c".to_string()
+        } else if self.contains(Joiner::ONLY_VOWEL) {
+            " +v".to_string()
+        } else {
+            "".to_string()
+        }
+    }
+
+    pub fn value_previous(&self) -> String {
+        println!("value_previous {:b}", self);
+        if self.contains(Joiner::ONLY_CONSONANT) {
+            " -c".to_string()
+        } else if self.contains(Joiner::ONLY_VOWEL) {
+            " -v".to_string()
+        } else {
+            "".to_string()
+        }
+    }
 }
 
 impl fmt::Display for Joiner {
@@ -54,6 +76,67 @@ impl fmt::Display for Joiner {
 mod joiner_tests {
     use super::*;
     use rstest::rstest;
+
+    #[test]
+    fn value_previous__blank() {
+        let j = Joiner::SOME | Joiner::VOWEL;
+
+        assert_eq!(j.value_previous(), "".to_string());
+        assert_eq!(Joiner::SOME.value_previous(), "".to_string());
+    }
+
+    #[test]
+    fn value_previous__only_consonant() {
+        let j1 = Joiner::SOME | Joiner::ONLY_CONSONANT;
+        let j2 = Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT;
+
+        assert_eq!(j1.value_previous(), " -c".to_string());
+        assert_eq!(j2.value_previous(), " -c".to_string());
+    }
+
+    #[test]
+    fn value_previous__only_vowel() {
+        let j1 = Joiner::SOME | Joiner::ONLY_VOWEL;
+        let j2 = Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL;
+
+        assert_eq!(j1.value_previous(), " -v".to_string());
+        assert_eq!(j2.value_previous(), " -v".to_string());
+    }
+
+
+
+
+
+
+
+
+
+
+    #[test]
+    fn value_next__blank() {
+        let j = Joiner::SOME | Joiner::VOWEL;
+
+        assert_eq!(j.value_next(), "".to_string());
+        assert_eq!(Joiner::SOME.value_next(), "".to_string());
+    }
+
+    #[test]
+    fn value_next__only_consonant() {
+        let j1 = Joiner::SOME | Joiner::ONLY_CONSONANT;
+        let j2 = Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT;
+
+        assert_eq!(j1.value_next(), " +c".to_string());
+        assert_eq!(j2.value_next(), " +c".to_string());
+    }
+
+    #[test]
+    fn value_next__only_vowel() {
+        let j1 = Joiner::SOME | Joiner::ONLY_VOWEL;
+        let j2 = Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL;
+
+        assert_eq!(j1.value_next(), " +v".to_string());
+        assert_eq!(j2.value_next(), " +v".to_string());
+    }
 
     #[rstest(input,
         case(Joiner::SOME),
