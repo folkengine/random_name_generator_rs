@@ -115,11 +115,8 @@ impl Syllable {
         return syllables.choose(&mut rand::thread_rng()).unwrap().clone();
     }
 
-    fn connects(&self, syllable: &Syllable) -> bool {
-        // if (self.next == Rule::Consonant) && !syllable.starts_with_vowel() {
-        //     true
-        // }
-        false
+    pub fn connects(&self, syllable: &Syllable) -> bool {
+        self.jnext.joins(&syllable.jprevious)
     }
 }
 
@@ -171,6 +168,39 @@ impl Classification {
 mod syllable_tests {
     use super::*;
     use rstest::rstest;
+
+    #[test]
+    fn connects__simple() {
+        let a = Syllable::new("a").unwrap();
+        let b = Syllable::new("b").unwrap();
+
+        assert!(a.connects(&b));
+        assert!(b.connects(&a));
+    }
+
+    #[test]
+    fn connects__simple__neg() {
+        let a = Syllable::new("a +v").unwrap();
+        let b = Syllable::new("b +c").unwrap();
+
+        assert!(!a.connects(&b));
+        assert!(!b.connects(&a));
+    }
+
+    #[test]
+    fn connects__simple__lneg() {
+        let a = Syllable::new("a +c").unwrap();
+        let b = Syllable::new("b -c").unwrap();
+        let c = Syllable::new("c -c").unwrap();
+        let d = Syllable::new("d -v").unwrap();
+
+        assert!(!a.connects(&b));
+        assert!(!a.connects(&c));
+        assert!(!d.connects(&b));
+        assert!(!d.connects(&c));
+        assert!(c.connects(&b));
+        assert!(d.connects(&a));
+    }
 
     #[test]
     fn next() {
