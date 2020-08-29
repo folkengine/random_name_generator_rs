@@ -5,16 +5,17 @@ use std::fmt;
 
 use crate::rng_joiner::{Joiner};
 
-static CONSONANTS: [char; 38] = [
+static _CONSONANTS: [char; 57] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l', 'ł', 'm', 'ɱ', 'n',
     'ɳ', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
-    'б', 'в', 'г', 'д', 'ж', 'з', 'к',
-    'ѕ', // Russian https://en.wikipedia.org/wiki/Russian_alphabet
+    'б', 'в', 'г', 'д', 'ж', 'з', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш',
+    'щ', 'ъ', 'ы', 'ь',
+    'ѕ', 'ѳ',  'ѯ', 'ѱ', // Russian https://en.wikipedia.org/wiki/Russian_alphabet
 ];
-static VOWELS: [char; 47] = [
+static VOWELS: [char; 54] = [
     'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'ɯ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ø', 'ə',
     'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ',
-    'е', 'ё', 'и', 'й', 'ю', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', // Russian
+    'е', 'ё', 'э', 'и', 'й', 'ю', 'ѭ', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', 'ѩ', 'і', 'ѣ', 'ѵ', 'ѡ', // Russian
 ];
 
 // https://regex101.com/r/kvDj4I/2/
@@ -294,7 +295,7 @@ mod syllable_tests {
         );
     }
 
-    fn micro() -> Vec<Syllable> {
+    fn _micro() -> Vec<Syllable> {
         vec![
             Syllable::new("-a").unwrap(),
             Syllable::new("b").unwrap(),

@@ -160,6 +160,17 @@ mod test_weight {
     }
 
     #[test]
+    fn dialect__new__goblin() {
+        let result = Dialect::new(Dialects::Goblin).unwrap();
+
+        assert_eq!(result.name, Dialects::Goblin.to_string());
+        assert!(result.bad_syllables.len() < 1);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
+    }
+
+    #[test]
     fn dialect__new() {
         let result = Dialect::new(Dialects::Roman).unwrap();
 

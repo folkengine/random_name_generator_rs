@@ -1,3 +1,4 @@
+use log::{info, warn, debug, trace};
 use regex::internal::Input;
 use std::fmt;
 
@@ -13,21 +14,21 @@ bitflags! {
 
 impl Joiner {
     pub fn joins(&self, to: &Joiner) -> bool {
-        println!("{}.joins({})", self, to);
+        debug!("{}.joins({})", self, to);
 
         let can_to = self.joins_to(to);
-        println!("can to: {}", can_to);
+        debug!("can to: {}", can_to);
         let can_from = to.joins_to(self);
-        println!("can from: {}", can_from);
+        debug!("can from: {}", can_from);
         can_to && can_from
     }
 
     fn joins_to(&self, to: &Joiner) -> bool {
         if to.is_empty() {
-            println!("to is empty empty");
+            trace!("to is empty empty");
             false
         } else if !to.contains(Joiner::SOME) {
-            println!("no some in to");
+            trace!("no some in to");
             false
         } else if self.contains(Joiner::VOWEL) && to.contains(Joiner::ONLY_CONSONANT) {
             false
@@ -39,7 +40,7 @@ impl Joiner {
     }
 
     pub fn value_next(&self) -> String {
-        println!("value_next {:b})", self);
+        debug!("value_next {:b})", self);
         if self.contains(Joiner::ONLY_CONSONANT) {
             " +c".to_string()
         } else if self.contains(Joiner::ONLY_VOWEL) {
@@ -50,7 +51,7 @@ impl Joiner {
     }
 
     pub fn value_previous(&self) -> String {
-        println!("value_previous {:b}", self);
+        debug!("value_previous {:b}", self);
         if self.contains(Joiner::ONLY_CONSONANT) {
             " -c".to_string()
         } else if self.contains(Joiner::ONLY_VOWEL) {
@@ -102,15 +103,6 @@ mod joiner_tests {
         assert_eq!(j1.value_previous(), " -v".to_string());
         assert_eq!(j2.value_previous(), " -v".to_string());
     }
-
-
-
-
-
-
-
-
-
 
     #[test]
     fn value_next__blank() {
