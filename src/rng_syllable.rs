@@ -141,7 +141,7 @@ impl fmt::Display for BadSyllable {
     }
 }
 
-// region Enums
+// region Classification
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Classification {
