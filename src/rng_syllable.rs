@@ -27,7 +27,6 @@ lazy_static! {
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
 }
 
-
 /// rng_syllable: Struct for managing properties of individual syllables with in a language file. Each line within a file
 /// translates into a syllable struct. The reason behind it is to take over most of the complexity of parsing each
 /// syllable, greatly simplifying the work done by Random Name Generator. This code is not meant to be called directly as a
@@ -61,7 +60,7 @@ lazy_static! {
 /// 2) +c means that next syllable must definitely start with a consonant.
 /// 3) -v means that this syllable can only be added to another syllable, that ends with a vocal.
 /// 4) -c means that this syllable can only be added to another syllable, that ends with a consonant.
-
+///
 #[derive(Clone, Debug, PartialEq)]
 pub struct Syllable {
     pub value: String,
@@ -256,49 +255,6 @@ mod syllable_tests {
     }
 
     #[test]
-    fn connects__simple() {
-        let a = Syllable::new("a").unwrap();
-        let b = Syllable::new("b").unwrap();
-
-        assert!(a.connects(&b));
-        assert!(b.connects(&a));
-    }
-
-    #[test]
-    fn connects__simple__neg() {
-        let a = Syllable::new("a +v").unwrap();
-        let b = Syllable::new("b +c").unwrap();
-
-        assert!(!a.connects(&b));
-        assert!(!b.connects(&a));
-    }
-
-    #[test]
-    fn connects__simple__lneg() {
-        let a = Syllable::new("a -c +c").unwrap();
-        let b = Syllable::new("b -c").unwrap();
-        let c = Syllable::new("c -c").unwrap();
-        let d = Syllable::new("d -v").unwrap();
-        let e = Syllable::new("e -v").unwrap();
-
-        assert!(!a.connects(&b));
-        assert!(!a.connects(&c));
-        assert!(!e.connects(&b));
-        assert!(c.connects(&b));
-        assert!(d.connects(&a));
-        assert!(d.connects(&b));
-        assert!(d.connects(&c));
-    }
-
-    #[test]
-    fn connects__simple__lneg1() {
-        let c = Syllable::new("c -c").unwrap();
-        let d = Syllable::new("d -v").unwrap();
-
-        assert!(d.connects(&c));
-    }
-
-    #[test]
     fn next() {
         let b = Syllable::new("b").unwrap();
         let v = vec![b.clone()];
@@ -429,12 +385,22 @@ mod syllable_tests {
         ]
     }
 
-    #[rstest(input, case("!"), case("+-"), case("+123asfd3ew"))]
+    #[rstest(input,
+        case(""),
+        case("!"),
+        case("+-"),
+        case("++asda"),
+        case("+123asfd3ew"),
+    )]
     fn new__invalid__error(input: &str) {
         assert_eq!(Syllable::new(input).unwrap_err(), BadSyllable);
     }
 
-    #[rstest(input, case("!"), case("+-"), case("+123asfd3ew"))]
+    #[rstest(input,
+        case("!"),
+        case("+-"),
+        case("+123asfd3ew"),
+    )]
     fn full_re(input: &str) {
         assert!(!FULL_RE.is_match(input))
     }

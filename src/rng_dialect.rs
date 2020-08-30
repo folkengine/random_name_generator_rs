@@ -1,6 +1,7 @@
 use rand::distributions::WeightedIndex;
 use rand::prelude::*;
 use rand::seq::SliceRandom;
+use rust_embed::RustEmbed;
 use std::fmt;
 use std::fs::File;
 use std::io::{self, BufRead};
@@ -103,6 +104,10 @@ impl Dialects {
         format!("./src/languages/{}.txt", self.to_string())
     }
 }
+
+#[derive(RustEmbed)]
+#[folder = "src/languages/"]
+struct Asset;
 
 // endregion
 
