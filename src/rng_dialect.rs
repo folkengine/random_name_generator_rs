@@ -105,10 +105,6 @@ impl Dialects {
     }
 }
 
-#[derive(RustEmbed)]
-#[folder = "src/languages/"]
-struct Asset;
-
 // endregion
 
 // region BadDialect
@@ -134,12 +130,29 @@ fn gen_rnd_syllable_count() -> u8 {
 }
 // endregion
 
+#[derive(RustEmbed)]
+#[folder = "src/languages/"]
+struct Asset;
+
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod test_weight {
     use super::*;
     use proptest::prelude::*;
     use std::string::ToString;
+
+    #[test]
+    fn read_asset() {
+        let txt = Asset::get("Demonic.txt").unwrap();
+        let l = std::str::from_utf8(txt.as_ref()).unwrap();
+
+        for line in l.lines() {
+            println!("{}", line);
+        }
+
+        // println!("{:?}", l);
+        assert!(true);
+    }
 
     // region old tests
 

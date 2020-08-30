@@ -6,6 +6,7 @@
 
 * [Bitflags](https://github.com/bitflags/bitflags)
 * [Clippy](https://rust-lang.github.io/rust-clippy/)
+* [rust-embed](https://github.com/pyros2097/rust-embed)
 
 ## Ideas
 
