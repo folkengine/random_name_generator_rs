@@ -93,7 +93,7 @@ impl Dialects {
     }
 
     pub fn get_path(&self) -> String {
-        format!("./src/languages/{}.txt", self.to_string())
+        format!("./src/languages/{}", self.get_filename())
     }
 }
 
