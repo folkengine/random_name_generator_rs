@@ -172,7 +172,7 @@ mod joiner_tests {
         case(Joiner::SOME, Joiner::SOME | Joiner::ONLY_VOWEL),                                                              // 1 to 5
         case(Joiner::SOME | Joiner::VOWEL, Joiner::SOME | Joiner::ONLY_CONSONANT),                                          // 3 to 9
         case(Joiner::SOME | Joiner::VOWEL, Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT),                          // 3 to 11
-        case(Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL, Joiner::SOME),                                              // 5 to 1
+        case(Joiner::SOME | Joiner::ONLY_VOWEL, Joiner::SOME),                                                              // 5 to 1
         case(Joiner::SOME | Joiner::ONLY_VOWEL, Joiner::SOME | Joiner::ONLY_VOWEL),                                         // 5 to 5
         case(Joiner::SOME | Joiner::ONLY_VOWEL, Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL),                         // 5 to 7
         case(Joiner::SOME | Joiner::ONLY_VOWEL, Joiner::SOME | Joiner::ONLY_CONSONANT),                                     // 5 to 9

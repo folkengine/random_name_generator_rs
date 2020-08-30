@@ -204,6 +204,57 @@ mod syllable_tests {
     use super::*;
     use rstest::rstest;
 
+    #[rstest(from, to, from_i, to_i,
+        case(Syllable::new("ch").unwrap(), Syllable::new("ch").unwrap(), 1, 1),
+        case(Syllable::new("ch").unwrap(), Syllable::new("abc").unwrap(), 1, 3),
+        case(Syllable::new("ch").unwrap(), Syllable::new("ch -c").unwrap(), 1, 9),
+        case(Syllable::new("ch").unwrap(), Syllable::new("ach -c").unwrap(), 1, 11),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ch").unwrap(), 3, 1),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ach").unwrap(), 3, 3),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ch -v").unwrap(), 3, 5),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ich -v").unwrap(), 3, 7),
+        case(Syllable::new("ch +v").unwrap(), Syllable::new("ich").unwrap(), 5, 3),
+        case(Syllable::new("ch +v").unwrap(), Syllable::new("ich -c").unwrap(), 5, 11),
+        case(Syllable::new("chi +v").unwrap(), Syllable::new("abc").unwrap(), 7, 3),
+        case(Syllable::new("chi +v").unwrap(), Syllable::new("abc -v").unwrap(), 7, 7),
+        case(Syllable::new("ch +c").unwrap(), Syllable::new("ch").unwrap(), 9, 1),
+        case(Syllable::new("ch +c").unwrap(), Syllable::new("ch -c").unwrap(), 9, 9),
+        case(Syllable::new("chi +c").unwrap(), Syllable::new("ch").unwrap(), 11, 1),
+        case(Syllable::new("chi +c").unwrap(), Syllable::new("ch -v").unwrap(), 11, 5),
+    )]
+    fn connects_matrix(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
+        assert_eq!(from.jnext.bits(), from_i);
+        assert_eq!(to.jprevious.bits(), to_i);
+        assert!(from.connects(&to));
+    }
+
+    #[rstest(from, to, from_i, to_i,
+        case(Syllable::new("ass").unwrap(), Syllable::new("hole -v").unwrap(), 1, 5),
+        case(Syllable::new("fu").unwrap(), Syllable::new("ck -c").unwrap(), 3, 9),
+        case(Syllable::new("bi").unwrap(), Syllable::new("atch -c").unwrap(), 3, 11),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch").unwrap(), 5, 1),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch -v").unwrap(), 5, 5),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ach -v").unwrap(), 5, 7),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch -c").unwrap(), 5, 9),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("ch").unwrap(), 7, 1),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("ts -v").unwrap(), 7, 5),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("tty -c").unwrap(), 7, 9),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("ach -c").unwrap(), 7, 11),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("ach").unwrap(), 9, 3),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("ch -v").unwrap(), 9, 5),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("it -v").unwrap(), 9, 7),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("it -c").unwrap(), 9, 11),
+        case(Syllable::new("bo +c").unwrap(), Syllable::new("oty").unwrap(), 11, 3),
+        case(Syllable::new("bo +c").unwrap(), Syllable::new("oty -v").unwrap(), 11, 7),
+        case(Syllable::new("boo +c").unwrap(), Syllable::new("ty -c").unwrap(), 11, 9),
+        case(Syllable::new("bo +c").unwrap(), Syllable::new("oger -c").unwrap(), 11, 11),
+    )]
+    fn connects_matrix__neg(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
+        assert_eq!(from.jnext.bits(), from_i);
+        assert_eq!(to.jprevious.bits(), to_i);
+        assert!(!from.connects(&to));
+    }
+
     #[test]
     fn connects__simple() {
         let a = Syllable::new("a").unwrap();
