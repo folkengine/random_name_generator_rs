@@ -24,41 +24,36 @@ impl Dialect {
         self.bad_syllables.is_empty()
     }
 
-    pub fn new(dialect: Dialects) -> Result<Dialect, BadDialect> {
-        Dialect::new_from_path(dialect.get_path(), dialect.to_string())
-    }
+    pub fn new(dialect: Dialects) -> Result<Dialect, Dialect> {
+        let txt = Asset::get(dialect.get_filename().as_str()).unwrap();
+        let mut prefixes: Vec<Syllable> = Vec::new();
+        let mut centers: Vec<Syllable> = Vec::new();
+        let mut suffixes: Vec<Syllable> = Vec::new();
+        let mut bad: Vec<String> = Vec::new();
 
-    pub fn new_from_path(path: String, name: String) -> Result<Dialect, BadDialect> {
-        if let Ok(lines) = Dialect::read_lines(path) {
-            let mut prefixes: Vec<Syllable> = Vec::new();
-            let mut centers: Vec<Syllable> = Vec::new();
-            let mut suffixes: Vec<Syllable> = Vec::new();
-            let mut bad: Vec<String> = Vec::new();
-
-            for line in lines {
-                if let Ok(l) = line {
-                    if let Ok(sy) = Syllable::new(l.as_str()) {
-                        match sy.classification {
-                            Classification::Prefix => prefixes.push(sy),
-                            Classification::Center => centers.push(sy),
-                            Classification::Suffix => suffixes.push(sy),
-                        }
-                    } else {
-                        bad.push(l);
-                    }
+        for line in std::str::from_utf8(txt.as_ref()).unwrap().lines() {
+            if let Ok(sy) = Syllable::new(line) {
+                match sy.classification {
+                    Classification::Prefix => prefixes.push(sy),
+                    Classification::Center => centers.push(sy),
+                    Classification::Suffix => suffixes.push(sy),
                 }
+            } else {
+                bad.push(line.to_string());
             }
+        }
+        let d = Dialect {
+            name: dialect.to_string(),
+            prefixes,
+            centers,
+            suffixes,
+            bad_syllables: bad,
+        };
 
-            let d = Dialect {
-                name,
-                prefixes,
-                centers,
-                suffixes,
-                bad_syllables: bad,
-            };
-            Ok(d)
+        if d.bad_syllables.len() > 0 {
+            Err(d)
         } else {
-            Err(BadDialect)
+            Ok(d)
         }
     }
 
@@ -74,19 +69,12 @@ impl Dialect {
     fn rand_prefix(&self) -> Option<&Syllable> {
         self.prefixes.choose(&mut rand::thread_rng())
     }
-
-    fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-    where
-        P: AsRef<Path>,
-    {
-        let file = File::open(filename)?;
-        Ok(io::BufReader::new(file).lines())
-    }
 }
 
 // region Dialects
 #[derive(Debug, PartialEq)]
 pub enum Dialects {
+    Demonic,
     Elven,
     Fantasy,
     Goblin,
@@ -100,7 +88,7 @@ impl fmt::Display for Dialects {
 }
 
 impl Dialects {
-    pub fn get_filename(&self) ->String {
+    pub fn get_filename(&self) -> String {
         format!("{}.txt", self.to_string())
     }
 
@@ -145,26 +133,11 @@ mod test_weight {
     use proptest::prelude::*;
     use std::string::ToString;
 
-    #[test]
-    fn read_asset() {
-        let txt = Asset::get("Demonic.txt").unwrap();
-        let l = std::str::from_utf8(txt.as_ref()).unwrap();
-
-        for line in l.lines() {
-            println!("{}", line);
-        }
-
-        // println!("{:?}", l);
-        assert!(true);
-    }
-
     // region old tests
 
     #[test]
-    fn dialect__new_from_path() {
-        let result =
-            Dialect::new_from_path(Dialects::Fantasy.get_path(), Dialects::Fantasy.to_string())
-                .unwrap();
+    fn new() {
+        let result = Dialect::new(Dialects::Fantasy).unwrap();
 
         assert_eq!(result.name, Dialects::Fantasy.to_string());
         assert!(result.bad_syllables.len() < 1);
@@ -174,15 +147,18 @@ mod test_weight {
     }
 
     #[test]
-    fn dialect__new_from_path__invalid() {
-        let result =
-            Dialect::new_from_path("NO_THERE_THERE".to_string(), "NO_THERE_THERE".to_string());
+    fn new__demonic() {
+        let result = Dialect::new(Dialects::Demonic).unwrap_err();
 
-        assert_eq!(result.unwrap_err(), BadDialect);
+        assert_eq!(result.name, Dialects::Demonic.to_string());
+        assert!(result.bad_syllables.len() > 0);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
     }
 
     #[test]
-    fn dialect__new__goblin() {
+    fn new__goblin() {
         let result = Dialect::new(Dialects::Goblin).unwrap();
 
         assert_eq!(result.name, Dialects::Goblin.to_string());
@@ -193,7 +169,7 @@ mod test_weight {
     }
 
     #[test]
-    fn dialect__new() {
+    fn new__roman() {
         let result = Dialect::new(Dialects::Roman).unwrap();
 
         assert_eq!(result.name, Dialects::Roman.to_string());
@@ -228,7 +204,12 @@ mod test_weight {
     }
 
     #[test]
-    fn dialect_to_string() {
+    fn dialects_to_filename() {
+        assert_eq!(String::from("Elven.txt"), Dialects::Elven.get_filename());
+    }
+
+    #[test]
+    fn dialects_to_string() {
         assert_eq!(String::from("Elven"), Dialects::Elven.to_string());
     }
 
