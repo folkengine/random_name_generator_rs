@@ -100,6 +100,10 @@ impl fmt::Display for Dialects {
 }
 
 impl Dialects {
+    pub fn get_filename(&self) ->String {
+        format!("{}.txt", self.to_string())
+    }
+
     pub fn get_path(&self) -> String {
         format!("./src/languages/{}.txt", self.to_string())
     }
