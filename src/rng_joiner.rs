@@ -3,7 +3,7 @@ use regex::internal::Input;
 use std::fmt;
 
 bitflags! {
-    pub struct Joiner: u32 {
+    pub struct Joiner: u8 {
         const NONE           = 0b00000000;
         const SOME           = 0b00000001;
         const VOWEL          = 0b00000010;
@@ -12,7 +12,15 @@ bitflags! {
     }
 }
 
+// 1  = b00000001 = Joiner::Some
+// 3  = b00000011 = Joiner::Some | Joiner::VOWEL
+// 5  = b00000101 = Joiner::Some | Joiner::ONLY_VOWEL
+// 7  = b00000111 = Joiner::Some | Joiner::VOWEL | Joiner::ONLY_VOWEL
+// 9  = b00001001 = Joiner::Some | Joiner::ONLY_CONSONANT
+// 11 = b00001011 = Joiner::Some | Joiner::VOWEL | Joiner::ONLY_CONSONANT
+
 impl Joiner {
+    #[allow(dead_code)]
     pub fn joins(&self, to: &Joiner) -> bool {
         debug!("{}.joins({})", self, to);
 
@@ -130,14 +138,36 @@ mod joiner_tests {
         assert_eq!(j2.value_next(), " +v".to_string());
     }
 
-    #[rstest(input,
-        case(Joiner::SOME),
-        case(Joiner::SOME | Joiner::VOWEL),
-    )]
-    fn joins__some(input: Joiner) {
+    #[test]
+    fn joins_1_to_9__neg() {
         let j = Joiner::SOME;
+        let t = Joiner::SOME | Joiner::ONLY_VOWEL;
 
+        assert!(!j.joins(&t));
+    }
+
+    #[rstest(j, input,
+        case(Joiner::SOME, Joiner::SOME),                                                           // 1 to 1
+        case(Joiner::SOME, Joiner::SOME | Joiner::VOWEL),                                           // 1 to 3
+        case(Joiner::SOME, Joiner::SOME | Joiner::ONLY_CONSONANT),                                  // 1 to 9
+        case(Joiner::SOME, Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT),                  // 1 to 11
+        case(Joiner::SOME | Joiner::VOWEL, Joiner::SOME),                                           // 3 to 1
+        case(Joiner::SOME | Joiner::VOWEL, Joiner::SOME | Joiner::ONLY_VOWEL),                      // 3 to 5
+        case(Joiner::SOME | Joiner::VOWEL, Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL),      // 3 to 7
+        case(Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL, Joiner::SOME | Joiner::VOWEL),      // 5 to 3
+    )]
+    fn joins_matrix(j: Joiner, input: Joiner) {
         assert!(j.joins(&input));
+    }
+
+    #[rstest(j, input,
+        case(Joiner::SOME, Joiner::SOME | Joiner::ONLY_VOWEL),                                      // 1 to 5
+        case(Joiner::SOME | Joiner::VOWEL, Joiner::SOME | Joiner::ONLY_CONSONANT),                  // 3 to 9
+        case(Joiner::SOME | Joiner::VOWEL, Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT),  // 3 to 11
+        case(Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_VOWEL, Joiner::SOME),                      // 5 to 1
+    )]
+    fn joins_matrix_neg(j: Joiner, input: Joiner) {
+        assert!(!j.joins(&input));
     }
 
     #[rstest(input,

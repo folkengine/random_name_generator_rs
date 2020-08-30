@@ -18,14 +18,49 @@ static VOWELS: [char; 54] = [
     'е', 'ё', 'э', 'и', 'й', 'ю', 'ѭ', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', 'ѩ', 'і', 'ѣ', 'ѵ', 'ѡ', // Russian
 ];
 
-// https://regex101.com/r/kvDj4I/2/
 lazy_static! {
+    // https://regex101.com/r/kvDj4I/2/
     static ref FULL_RE: Regex =
         Regex::new(r"^([-+]{0,1})([A-Za-z]+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
             .unwrap();
     static ref PREFIX_RE: Regex = Regex::new(r"(.+)(\-[vcVC]).*").unwrap();
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
 }
+
+
+/// rng_syllable: Struct for managing properties of individual syllables with in a language file. Each line within a file
+/// translates into a syllable struct. The reason behind it is to take over most of the complexity of parsing each
+/// syllable, greatly simplifying the work done by Random Name Generator. This code is not meant to be called directly as a
+/// part of standard usage.
+///
+/// Examples
+///
+/// let syllable = Syllable::new("-foo +c").unwrap();
+///
+/// This creates a foo syllable struct that needs to be the first syllable and followed by a constant.
+///
+/// For testing purposes, passing in another RNGSyllable object will create a clone:
+///
+/// SYLLABLE CLASSIFICATION:
+/// Name is usually composed from 3 different class of syllables, which include prefix, middle part and suffix.
+/// To declare syllable as a prefix in the file, insert "-" as a first character of the line.
+/// To declare syllable as a suffix in the file, insert "+" as a first character of the line.
+/// everything else is read as a middle part.
+///
+/// NUMBER OF SYLLABLES:
+/// Names may have any positive number of syllables. In case of 2 syllables, name will be composed from prefix and suffix.
+/// In case of 1 syllable, name will be chosen from amongst the prefixes.
+/// In case of 3 and more syllables, name will begin with prefix, is filled with middle parts and ended with suffix.
+///
+/// ASSIGNING RULES:
+/// I included a way to set 4 kind of rules for every syllable. To add rules to the syllables, write them right after the
+/// syllable and SEPARATE WITH WHITESPACE. (example: "aad +v -c"). The order of rules is not important.
+///
+/// RULES:
+/// 1) +v means that next syllable must definitely start with a vocal.
+/// 2) +c means that next syllable must definitely start with a consonant.
+/// 3) -v means that this syllable can only be added to another syllable, that ends with a vocal.
+/// 4) -c means that this syllable can only be added to another syllable, that ends with a consonant.
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Syllable {
@@ -189,17 +224,27 @@ mod syllable_tests {
 
     #[test]
     fn connects__simple__lneg() {
-        let a = Syllable::new("a +c").unwrap();
+        let a = Syllable::new("a -c +c").unwrap();
         let b = Syllable::new("b -c").unwrap();
         let c = Syllable::new("c -c").unwrap();
         let d = Syllable::new("d -v").unwrap();
+        let e = Syllable::new("e -v").unwrap();
 
         assert!(!a.connects(&b));
         assert!(!a.connects(&c));
-        assert!(!d.connects(&b));
-        assert!(!d.connects(&c));
+        assert!(!e.connects(&b));
         assert!(c.connects(&b));
         assert!(d.connects(&a));
+        assert!(d.connects(&b));
+        assert!(d.connects(&c));
+    }
+
+    #[test]
+    fn connects__simple__lneg1() {
+        let c = Syllable::new("c -c").unwrap();
+        let d = Syllable::new("d -v").unwrap();
+
+        assert!(d.connects(&c));
     }
 
     #[test]
