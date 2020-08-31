@@ -3,6 +3,7 @@
 mod rng_joiner;
 mod rng_dialect;
 mod rng_syllable;
+mod rng_syllables;
 
 #[macro_use]
 extern crate bitflags;

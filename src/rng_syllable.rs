@@ -146,10 +146,6 @@ impl Syllable {
         )
     }
 
-    pub fn next(&self, syllables: &Syllables) -> Syllable {
-        return syllables.all().choose(&mut rand::thread_rng()).unwrap().clone();
-    }
-
     pub fn connects(&self, syllable: &Syllable) -> bool {
         self.jnext.joins(&syllable.jprevious)
     }
@@ -198,65 +194,11 @@ impl Classification {
 
 // endregion
 
-
-// region Syllables
-
-#[derive(Debug)]
-struct Syllables(Vec<Syllable>);
-
-impl Syllables {
-    pub fn new() -> Syllables {
-        Syllables(Vec::new())
-    }
-
-    pub fn add(&mut self, elem: Syllable) {
-        self.0.push(elem);
-    }
-
-    pub fn all(&self) -> &Vec<Syllable> {
-        &self.0
-    }
-
-    pub fn get(&self, index: usize) -> Option<&Syllable> {
-        self.0.get(index)
-    }
-
-    pub fn len(&self) -> usize {
-        self.0.len()
-    }
-}
-
-impl IntoIterator for Syllables {
-    type Item = Syllable;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
-    }
-}
-
-// endregion
-
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod syllable_tests {
     use super::*;
     use rstest::rstest;
-
-    #[test]
-    fn syllables__add_len_and_get() {
-        let mut c = Syllables::new();
-        c.add(Syllable::new("ch").unwrap());
-        c.add(Syllable::new("abc").unwrap());
-        let all: &Vec<Syllable> = c.all();
-
-        assert_eq!(c.len(), 2);
-        assert_eq!(c.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(c.get(1).unwrap(), &Syllable::new("abc").unwrap());
-        assert_eq!(all.len(), 2);
-        assert_eq!(all.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(all.get(1).unwrap(), &Syllable::new("abc").unwrap());
-    }
 
     #[rstest(from, to, from_i, to_i,
         case(Syllable::new("ch").unwrap(), Syllable::new("ch").unwrap(), 1, 1),
@@ -307,18 +249,6 @@ mod syllable_tests {
         assert_eq!(from.jnext.bits(), from_i);
         assert_eq!(to.jprevious.bits(), to_i);
         assert!(!from.connects(&to));
-    }
-
-    #[test]
-    fn next() {
-        let b = Syllable::new("b").unwrap();
-        let mut v = Syllables::new();
-        v.add(b.clone());
-        let a = Syllable::new("a").unwrap();
-
-        let actual = a.next(&v);
-
-        assert_eq!(actual, b);
     }
 
     #[test]
