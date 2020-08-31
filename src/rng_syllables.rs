@@ -34,6 +34,10 @@ impl Syllables {
         &self.0
     }
 
+    pub fn contains(&self, syllable: &Syllable) -> bool {
+        self.0.contains(syllable)
+    }
+
     pub fn get(&self, index: usize) -> Option<&Syllable> {
         self.0.get(index)
     }
@@ -79,6 +83,16 @@ mod syllables_tests {
         c.add(Syllable::new("hij").unwrap());
 
         assert_eq!(c.len(), 4);
+    }
+
+    #[test]
+    fn contains() {
+        let mut syllables = Syllables::new_from_array(&["ch", "abc"]);
+        let efg = Syllable::new("efg").unwrap();
+        assert!(!syllables.contains(&efg));
+
+        syllables.add(efg.clone());
+        assert!(syllables.contains(&efg));
     }
 
     #[test]
