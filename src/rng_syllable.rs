@@ -2,6 +2,7 @@ use lazy_static::lazy_static;
 use rand::seq::SliceRandom;
 use regex::Regex;
 use std::fmt;
+use std::iter::ExactSizeIterator;
 
 use crate::rng_joiner::{Joiner};
 
@@ -197,11 +198,58 @@ impl Classification {
 
 // endregion
 
+
+// region Syllables
+
+#[derive(Debug)]
+struct Syllables(Vec<Syllable>);
+
+impl Syllables {
+    pub fn new() -> Syllables {
+        Syllables(Vec::new())
+    }
+
+    pub fn add(&mut self, elem: Syllable) {
+        self.0.push(elem);
+    }
+
+    pub fn len(&self) -> usize {
+        return self.0.len()
+    }
+}
+
+impl IntoIterator for Syllables {
+    type Item = Syllable;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+// impl ExactSizeIterator for Syllables {
+//     // We can easily calculate the remaining number of iterations.
+//     fn len(&self) -> usize {
+//         5 - self.count
+//     }
+// }
+
+// endregion
+
 #[cfg(test)]
 #[allow(non_snake_case)]
 mod syllable_tests {
     use super::*;
     use rstest::rstest;
+
+    #[test]
+    fn syllables() {
+        let mut c = Syllables::new();
+        c.add(Syllable::new("ch").unwrap());
+        c.add(Syllable::new("abc").unwrap());
+
+        assert_eq!(c.len(), 2);
+    }
 
     #[rstest(from, to, from_i, to_i,
         case(Syllable::new("ch").unwrap(), Syllable::new("ch").unwrap(), 1, 1),

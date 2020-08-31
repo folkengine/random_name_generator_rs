@@ -8,6 +8,7 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use std::string::ToString;
 
+use crate::rng_joiner::{Joiner};
 use crate::rng_syllable::{Classification, Syllable};
 
 #[derive(Clone, Debug, PartialEq)]
@@ -69,6 +70,18 @@ impl Dialect {
     fn rand_prefix(&self) -> Option<&Syllable> {
         self.prefixes.choose(&mut rand::thread_rng())
     }
+    //
+    // fn filtered_syllables(joiner: Joiner, syllables: Vec<Syllable>) {
+    //     syllables
+    //         .into_iter()
+    //         .filter(|syl| joiner.joins(&syl.jprevious))
+    //         .cloned()
+    //         .collect()
+    // }
+
+    // fn rand_next_center(&self, syllable: &Syllable) -> Syllable {
+    //     let possibles: Vec<&Syllable> =
+    // }
 }
 
 // region Dialects
