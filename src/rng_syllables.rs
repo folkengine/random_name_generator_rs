@@ -45,6 +45,10 @@ impl Syllables {
         Syllables::new_from_vector(v)
     }
 
+    pub fn first(&self) -> Option<&Syllable> {
+        self.0.first()
+    }
+
     pub fn get(&self, index: usize) -> Option<&Syllable> {
         self.0.get(index)
     }
@@ -133,6 +137,15 @@ mod syllables_tests {
 
         assert!(!filtered.contains(&Syllable::new("ch").unwrap()));
         assert!(filtered.contains(&Syllable::new("abc").unwrap()));
+    }
+
+    #[test]
+    fn first() {
+        let zero = Syllables::new();
+        let three = Syllables::new_from_array(&["ch", "abc", "efg"]);
+
+        assert!(zero.first().is_none());
+        assert_eq!(three.first().unwrap(), &Syllable::new("ch").unwrap());
     }
 
     #[test]
