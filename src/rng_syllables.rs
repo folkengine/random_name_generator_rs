@@ -42,6 +42,10 @@ impl Syllables {
         self.0.get(index)
     }
 
+    pub fn get_random(&self) -> Option<&Syllable> {
+        self.0.get(self.rnd())
+    }
+
     pub fn len(&self) -> usize {
         self.0.len()
     }
@@ -78,11 +82,24 @@ mod syllables_tests {
 
     #[test]
     fn add() {
-        let mut c = Syllables::new_from_array(&["ch", "abc"]);
-        c.add(Syllable::new("efg").unwrap());
-        c.add(Syllable::new("hij").unwrap());
+        let mut syllables = Syllables::new_from_array(&["ch", "abc"]);
+        syllables.add(Syllable::new("efg").unwrap());
+        syllables.add(Syllable::new("hij").unwrap());
 
-        assert_eq!(c.len(), 4);
+        assert_eq!(syllables.len(), 4);
+    }
+
+    #[test]
+    fn all() {
+        let c = Syllables::new_from_array(&["ch", "abc"]);
+        let all: &Vec<Syllable> = c.all();
+
+        assert_eq!(c.len(), 2);
+        assert_eq!(c.get(0).unwrap(), &Syllable::new("ch").unwrap());
+        assert_eq!(c.get(1).unwrap(), &Syllable::new("abc").unwrap());
+        assert_eq!(all.len(), 2);
+        assert_eq!(all.get(0).unwrap(), &Syllable::new("ch").unwrap());
+        assert_eq!(all.get(1).unwrap(), &Syllable::new("abc").unwrap());
     }
 
     #[test]
@@ -106,28 +123,15 @@ mod syllables_tests {
 
     #[test]
     fn get() {
-        let c = Syllables::new_from_array(&["ch", "abc", "er", "go", "to"]);
+        let syllables = Syllables::new_from_array(&["ch", "abc", "er", "go", "to"]);
 
-        assert_eq!(c.len(), 5);
-        assert_eq!(c.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(c.get(1).unwrap(), &Syllable::new("abc").unwrap());
-        assert_eq!(c.get(2).unwrap(), &Syllable::new("er").unwrap());
-        assert_eq!(c.get(3).unwrap(), &Syllable::new("go").unwrap());
-        assert_eq!(c.get(4).unwrap(), &Syllable::new("to").unwrap());
-        assert!(c.get(5).is_none());
-    }
-
-    #[test]
-    fn all() {
-        let c = Syllables::new_from_array(&["ch", "abc"]);
-        let all: &Vec<Syllable> = c.all();
-
-        assert_eq!(c.len(), 2);
-        assert_eq!(c.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(c.get(1).unwrap(), &Syllable::new("abc").unwrap());
-        assert_eq!(all.len(), 2);
-        assert_eq!(all.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(all.get(1).unwrap(), &Syllable::new("abc").unwrap());
+        assert_eq!(syllables.len(), 5);
+        assert_eq!(syllables.get(0).unwrap(), &Syllable::new("ch").unwrap());
+        assert_eq!(syllables.get(1).unwrap(), &Syllable::new("abc").unwrap());
+        assert_eq!(syllables.get(2).unwrap(), &Syllable::new("er").unwrap());
+        assert_eq!(syllables.get(3).unwrap(), &Syllable::new("go").unwrap());
+        assert_eq!(syllables.get(4).unwrap(), &Syllable::new("to").unwrap());
+        assert!(syllables.get(5).is_none());
     }
 
     #[test]
@@ -144,10 +148,21 @@ mod syllables_tests {
 
     proptest! {
         #[test]
-        fn rnd(_ in 0..100i32) {
+        fn rnd_test(_ in 0..20i32) {
             let c = Syllables::new_from_array(&["ch", "abc", "er", "go", "to"]);
             let n = c.rnd();
-            assert!((n < c.len()) && (n >= 0));
+            assert!(n < c.len());
+        }
+
+        #[test]
+        fn get_random(_ in 0..20i32) {
+            let syllables = Syllables::new_from_array(&["ch", "abc", "er", "go", "to"]);
+
+            let rnd = syllables.get_random().unwrap();
+            let non = Syllable::new("efg").unwrap();
+
+            assert!(syllables.contains(rnd));
+            assert!(!syllables.contains(&non));
         }
     }
 }
