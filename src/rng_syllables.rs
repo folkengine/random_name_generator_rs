@@ -6,7 +6,7 @@ use crate::rng_syllable::{Classification, Syllable};
 
 // region Syllables
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Syllables(Vec<Syllable>);
 
 impl Syllables {
@@ -55,6 +55,10 @@ impl Syllables {
 
     pub fn get_random(&self) -> Option<&Syllable> {
         self.0.get(self.rnd())
+    }
+
+    pub fn last(&self) -> Option<&Syllable> {
+        self.0.last()
     }
 
     pub fn len(&self) -> usize {
@@ -146,6 +150,15 @@ mod syllables_tests {
 
         assert!(zero.first().is_none());
         assert_eq!(three.first().unwrap(), &Syllable::new("ch").unwrap());
+    }
+
+    #[test]
+    fn last() {
+        let zero = Syllables::new();
+        let three = Syllables::new_from_array(&["ch", "abc", "efg"]);
+
+        assert!(zero.last().is_none());
+        assert_eq!(three.last().unwrap(), &Syllable::new("efg").unwrap());
     }
 
     #[test]

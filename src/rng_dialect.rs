@@ -10,13 +10,14 @@ use std::string::ToString;
 
 use crate::rng_joiner::{Joiner};
 use crate::rng_syllable::{Classification, Syllable};
+use crate::rng_syllables::{Syllables};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Dialect {
     pub name: String,
-    pub prefixes: Vec<Syllable>,
-    pub centers: Vec<Syllable>,
-    pub suffixes: Vec<Syllable>,
+    pub prefixes: Syllables,
+    pub centers: Syllables,
+    pub suffixes: Syllables,
     pub bad_syllables: Vec<String>,
 }
 
@@ -45,9 +46,9 @@ impl Dialect {
         }
         let d = Dialect {
             name: dialect.to_string(),
-            prefixes,
-            centers,
-            suffixes,
+            prefixes: Syllables::new_from_vector(prefixes),
+            centers: Syllables::new_from_vector(centers),
+            suffixes: Syllables::new_from_vector(suffixes),
             bad_syllables: bad,
         };
 
@@ -58,30 +59,19 @@ impl Dialect {
         }
     }
 
-    pub fn syllables(&self) -> Vec<Syllable> {
-        [
-            self.prefixes.clone(),
-            self.centers.clone(),
-            self.suffixes.clone(),
+    pub fn syllables(&self) -> Syllables {
+        let v = [
+            self.prefixes.all().clone(),
+            self.centers.all().clone(),
+            self.suffixes.all().clone(),
         ]
-        .concat()
+        .concat();
+        Syllables::new_from_vector(v)
     }
 
     fn rand_prefix(&self) -> Option<&Syllable> {
-        self.prefixes.choose(&mut rand::thread_rng())
+        self.prefixes.get_random()
     }
-    //
-    // fn filtered_syllables(joiner: Joiner, syllables: Vec<Syllable>) {
-    //     syllables
-    //         .into_iter()
-    //         .filter(|syl| joiner.joins(&syl.jprevious))
-    //         .cloned()
-    //         .collect()
-    // }
-
-    // fn rand_next_center(&self, syllable: &Syllable) -> Syllable {
-    //     let possibles: Vec<&Syllable> =
-    // }
 }
 
 // region Dialects
@@ -196,9 +186,9 @@ mod test_weight {
     fn dialect__is_valid() {
         let elven = Dialect {
             name: "".to_string(),
-            prefixes: vec![],
-            centers: vec![],
-            suffixes: vec![],
+            prefixes: Syllables::new(),
+            centers: Syllables::new(),
+            suffixes: Syllables::new(),
             bad_syllables: vec![],
         };
         assert!(elven.is_valid())
@@ -208,9 +198,9 @@ mod test_weight {
     fn dialect__is_valid__not() {
         let bad = Dialect {
             name: "bad".to_string(),
-            prefixes: vec![],
-            centers: vec![],
-            suffixes: vec![],
+            prefixes: Syllables::new(),
+            centers: Syllables::new(),
+            suffixes: Syllables::new(),
             bad_syllables: vec!["#$@!".to_string()],
         };
         assert!(!bad.is_valid())
