@@ -1,3 +1,4 @@
+use rand::distributions::{Distribution, Uniform};
 use rand::seq::SliceRandom;
 
 use crate::rng_joiner::{Joiner};
@@ -44,6 +45,14 @@ impl Syllables {
     pub fn next_from(&self, _from: Syllable) -> Syllable {
         return self.0.choose(&mut rand::thread_rng()).unwrap().clone();
     }
+
+    /// Generates a random value from 0 to the length of the Syllable Vector - 1.
+    /// https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html#generate-random-numbers-within-a-range
+    fn rnd(&self) -> usize {
+        let mut rng = rand::thread_rng();
+        let die = Uniform::from(0..self.len() - 1);
+        die.sample(&mut rng)
+    }
 }
 
 impl IntoIterator for Syllables {
@@ -61,9 +70,10 @@ impl IntoIterator for Syllables {
 #[allow(non_snake_case)]
 mod syllables_tests {
     use super::*;
+    use proptest::prelude::*;
 
     #[test]
-    fn syllables__add() {
+    fn add() {
         let mut c = Syllables::new_from_array(&["ch", "abc"]);
         c.add(Syllable::new("efg").unwrap());
         c.add(Syllable::new("hij").unwrap());
@@ -118,4 +128,12 @@ mod syllables_tests {
         assert_eq!(actual, b);
     }
 
+    proptest! {
+        #[test]
+        fn rnd(_ in 0..100i32) {
+            let c = Syllables::new_from_array(&["ch", "abc", "er", "go", "to"]);
+            let n = c.rnd();
+            assert!((n < c.len()) && (n >= 0));
+        }
+    }
 }
