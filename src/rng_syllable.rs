@@ -146,8 +146,8 @@ impl Syllable {
         )
     }
 
-    pub fn next(&self, syllables: &Vec<Syllable>) -> Syllable {
-        return syllables.choose(&mut rand::thread_rng()).unwrap().clone();
+    pub fn next(&self, syllables: &Syllables) -> Syllable {
+        return syllables.all().choose(&mut rand::thread_rng()).unwrap().clone();
     }
 
     pub fn connects(&self, syllable: &Syllable) -> bool {
@@ -213,8 +213,16 @@ impl Syllables {
         self.0.push(elem);
     }
 
+    pub fn all(&self) -> &Vec<Syllable> {
+        &self.0
+    }
+
+    pub fn get(&self, index: usize) -> Option<&Syllable> {
+        self.0.get(index)
+    }
+
     pub fn len(&self) -> usize {
-        return self.0.len()
+        self.0.len()
     }
 }
 
@@ -227,13 +235,6 @@ impl IntoIterator for Syllables {
     }
 }
 
-// impl ExactSizeIterator for Syllables {
-//     // We can easily calculate the remaining number of iterations.
-//     fn len(&self) -> usize {
-//         5 - self.count
-//     }
-// }
-
 // endregion
 
 #[cfg(test)]
@@ -243,12 +244,18 @@ mod syllable_tests {
     use rstest::rstest;
 
     #[test]
-    fn syllables() {
+    fn syllables__add_len_and_get() {
         let mut c = Syllables::new();
         c.add(Syllable::new("ch").unwrap());
         c.add(Syllable::new("abc").unwrap());
+        let all: &Vec<Syllable> = c.all();
 
         assert_eq!(c.len(), 2);
+        assert_eq!(c.get(0).unwrap(), &Syllable::new("ch").unwrap());
+        assert_eq!(c.get(1).unwrap(), &Syllable::new("abc").unwrap());
+        assert_eq!(all.len(), 2);
+        assert_eq!(all.get(0).unwrap(), &Syllable::new("ch").unwrap());
+        assert_eq!(all.get(1).unwrap(), &Syllable::new("abc").unwrap());
     }
 
     #[rstest(from, to, from_i, to_i,
@@ -305,7 +312,8 @@ mod syllable_tests {
     #[test]
     fn next() {
         let b = Syllable::new("b").unwrap();
-        let v = vec![b.clone()];
+        let mut v = Syllables::new();
+        v.add(b.clone());
         let a = Syllable::new("a").unwrap();
 
         let actual = a.next(&v);
