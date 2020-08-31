@@ -38,6 +38,13 @@ impl Syllables {
         self.0.contains(syllable)
     }
 
+    pub fn filter_from(&self, from: Joiner) -> Syllables {
+        let v = self.0.iter().filter(|s| from.joins(&s.jprevious))
+            .cloned()
+            .collect();
+        Syllables::new_from_vector(v)
+    }
+
     pub fn get(&self, index: usize) -> Option<&Syllable> {
         self.0.get(index)
     }
@@ -50,16 +57,21 @@ impl Syllables {
         self.0.len()
     }
 
-    pub fn next_from(&self, _from: Syllable) -> Syllable {
-        return self.0.choose(&mut rand::thread_rng()).unwrap().clone();
+    pub fn next_from(&self, from_syllable: Syllable) -> Syllable {
+        self.filter_from(from_syllable.jnext).get_random().unwrap().clone()
     }
 
     /// Generates a random value from 0 to the length of the Syllable Vector - 1.
     /// https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html#generate-random-numbers-within-a-range
     fn rnd(&self) -> usize {
         let mut rng = rand::thread_rng();
-        let die = Uniform::from(0..self.len() - 1);
-        die.sample(&mut rng)
+        let length = self.len();
+        if length < 2 {
+            0
+        } else {
+            let die = Uniform::from(0..self.len() - 1);
+            die.sample(&mut rng)
+        }
     }
 }
 
@@ -110,6 +122,17 @@ mod syllables_tests {
 
         syllables.add(efg.clone());
         assert!(syllables.contains(&efg));
+    }
+
+    #[test]
+    fn filter_from() {
+        let syllables = Syllables::new_from_array(&["ch", "abc"]);
+        let joiner = Joiner::SOME | Joiner::ONLY_VOWEL;
+
+        let filtered = syllables.filter_from(joiner);
+
+        assert!(!filtered.contains(&Syllable::new("ch").unwrap()));
+        assert!(filtered.contains(&Syllable::new("abc").unwrap()));
     }
 
     #[test]
