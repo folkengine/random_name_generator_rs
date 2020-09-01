@@ -1,5 +1,4 @@
-use log::{info, warn, debug, trace};
-use regex::internal::Input;
+use log::{debug, trace};
 use std::fmt;
 
 bitflags! {

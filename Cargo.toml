@@ -20,11 +20,13 @@ path = "src/main.rs"
 
 [dependencies]
 bitflags = "1.2"
+clap = "3.0.0-beta.1"
 lazy_static = "1.4.0"
 log = "*"
 rand = "0.7.3"
 regex = "1"
 rust-embed = "5.6.0"
+titlecase = "1.1.0"
 
 [dev-dependencies]
 proptest = "0.10.0"
