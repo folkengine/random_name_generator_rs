@@ -1,19 +1,18 @@
 mod rng_joiner;
 mod rng_syllable;
 mod rng_syllables;
-pub mod rng_language;
 
 #[macro_use]
 extern crate bitflags;
 extern crate log;
 
 use rand::{
-    distributions::{Distribution, WeightedIndex},
+    distributions::{Distribution, Standard, WeightedIndex},
     prelude::*,
 };
 use rust_embed::RustEmbed;
+use std::fmt;
 use titlecase::titlecase;
-use crate::rng_language::{Language};
 use crate::rng_syllable::{Classification, Syllable};
 use crate::rng_syllables::{Syllables};
 
@@ -22,8 +21,7 @@ use crate::rng_syllables::{Syllables};
 ///
 /// # Usage:
 /// ```
-/// use rnglib::RNG;
-/// use rnglib::rng_language::Language;
+/// use rnglib::{RNG, Language};
 ///
 /// let rng = RNG::new(&Language::Elven).unwrap();
 ///
@@ -367,5 +365,77 @@ mod lib_tests {
             let count = gen_rnd_syllable_count();
             assert!((count < 6) && (count > 1), count);
         }
+    }
+}
+
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Language {
+    Demonic,
+    Elven,
+    Fantasy,
+    Goblin,
+    Roman,
+}
+
+impl fmt::Display for Language {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl Distribution<Language> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Language {
+        match rng.gen_range(1, 5) {
+            // 0 => Dialects::Demonic,
+            1 => Language::Elven,
+            2 => Language::Fantasy,
+            3 => Language::Goblin,
+            _ => Language::Roman,
+        }
+    }
+}
+
+impl Language {
+    pub fn get_filename(&self) -> String {
+        format!("{}.txt", self.to_string())
+    }
+
+    pub fn get_path(&self) -> String {
+        format!("./src/languages/{}", self.get_filename())
+    }
+}
+
+/// This may come in handy some day.
+#[derive(Debug, Clone, PartialEq)]
+pub struct BadLanguage;
+
+impl fmt::Display for BadLanguage {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Invalid Language")
+    }
+}
+
+#[cfg(test)]
+#[allow(non_snake_case)]
+mod test_language {
+    use super::*;
+
+    #[test]
+    fn to_filename() {
+        assert_eq!(String::from("Elven.txt"), Language::Elven.get_filename());
+    }
+
+    #[test]
+    fn to_string() {
+        assert_eq!(String::from("Elven"), Language::Elven.to_string());
+    }
+
+    #[test]
+    fn get_path() {
+        assert_eq!(
+            "./src/languages/Fantasy.txt".to_string(),
+            Language::Fantasy.get_path()
+        );
     }
 }
