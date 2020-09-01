@@ -1,8 +1,7 @@
 use rand::distributions::{Distribution, Uniform};
-use rand::seq::SliceRandom;
 
-use crate::rng_joiner::{Joiner};
-use crate::rng_syllable::{Classification, Syllable};
+use crate::rng_joiner::Joiner;
+use crate::rng_syllable::Syllable;
 
 /// Syllables is a single field struct containing a Vector of Syllable structs. Syllables facilites
 /// filtering on Syllable Joiners allowing for dialects to easily determine the next syllable for

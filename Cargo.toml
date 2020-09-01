@@ -26,6 +26,7 @@ log = "*"
 rand = "0.7.3"
 regex = "1"
 rust-embed = "5.6.0"
+titlecase = "1.1.0"
 
 [dev-dependencies]
 proptest = "0.10.0"

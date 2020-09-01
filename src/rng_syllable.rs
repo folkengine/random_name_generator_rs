@@ -1,8 +1,6 @@
 use lazy_static::lazy_static;
-use rand::seq::SliceRandom;
 use regex::Regex;
 use std::fmt;
-use std::iter::ExactSizeIterator;
 
 use crate::rng_joiner::{Joiner};
 

@@ -2,6 +2,17 @@
 
 [![Build Status](https://api.travis-ci.com/folkengine/random_name_generator_rs.svg?branch=main)](https://travis-ci.com/github/folkengine/random_name_generator_rs)
 
+This is a rust port of the [Ruby port](https://github.com/folkengine/random_name_generator)  
+of the [Java Random Name Generator library](https://github.com/folkengine/java-random-name-generator).
+
+It generates it's results based upon which [language file](src/languages) is specified.
+Currently, the following are supported:
+
+* Elven
+* Fantasy
+* Goblin
+* Roman
+
 ## Running the binary
 
 To get information about the available options, run help.
@@ -34,8 +45,16 @@ or from the binary:
 $> rng --help
 ```
 
-Passing in one of the language flags will generate a name in using that Language's source file:
+Passing in one of the language flags will generate a name using that Language's source file.
 
+From cargo:
+
+```
+$> cargo run -- -g
+Goblin: zradogul bargodul
+```
+
+From the binary:
 
 ```
 $> rng -e
@@ -48,3 +67,8 @@ Elven: daedar latherdre
 * [Clap](https://github.com/clap-rs/clap)
 * [Clippy](https://rust-lang.github.io/rust-clippy/)
 * [rust-embed](https://github.com/pyros2097/rust-embed)
+
+## TODO
+
+* Add in Russian support available in the Ruby version.
+* Finish Demonic
