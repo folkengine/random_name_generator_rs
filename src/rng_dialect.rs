@@ -16,6 +16,8 @@ use crate::rng_joiner::{Joiner};
 use crate::rng_syllable::{Classification, Syllable};
 use crate::rng_syllables::{Syllables};
 
+/// A Dialect is a specific collection of Syllables parsed and sorted from one of the available
+/// language files.
 ///
 ///
 #[derive(Clone, Debug, PartialEq)]

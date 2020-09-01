@@ -20,6 +20,7 @@ path = "src/main.rs"
 
 [dependencies]
 bitflags = "1.2"
+clap = "3.0.0-beta.1"
 lazy_static = "1.4.0"
 log = "*"
 rand = "0.7.3"
