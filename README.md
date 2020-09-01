@@ -1,9 +1,12 @@
 # random_name_generator_rs
 
+[![Build Status](https://api.travis-ci.com/folkengine/random_name_generator_rs.svg?branch=main)](https://travis-ci.com/github/folkengine/random_name_generator_rs)
+
 ## Dependencies
 
 * [Bitflags](https://github.com/bitflags/bitflags)
 * [Clippy](https://rust-lang.github.io/rust-clippy/)
+* [rust-embed](https://github.com/pyros2097/rust-embed)
 
 ## Ideas
 

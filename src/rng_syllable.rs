@@ -2,20 +2,25 @@ use lazy_static::lazy_static;
 use rand::seq::SliceRandom;
 use regex::Regex;
 use std::fmt;
+use std::iter::ExactSizeIterator;
 
 use crate::rng_joiner::{Joiner};
 
-static CONSONANTS: [char; 30] = [
+static _CONSONANTS: [char; 57] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l', 'ł', 'm', 'ɱ', 'n',
     'ɳ', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
+    'б', 'в', 'г', 'д', 'ж', 'з', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш',
+    'щ', 'ъ', 'ы', 'ь',
+    'ѕ', 'ѳ',  'ѯ', 'ѱ', // Russian https://en.wikipedia.org/wiki/Russian_alphabet
 ];
-static VOWELS: [char; 36] = [
+static VOWELS: [char; 54] = [
     'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'ɯ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ø', 'ə',
     'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ',
+    'е', 'ё', 'э', 'и', 'й', 'ю', 'ѭ', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', 'ѩ', 'і', 'ѣ', 'ѵ', 'ѡ', // Russian
 ];
 
-// https://regex101.com/r/kvDj4I/2/
 lazy_static! {
+    // https://regex101.com/r/kvDj4I/2/
     static ref FULL_RE: Regex =
         Regex::new(r"^([-+]{0,1})([A-Za-z]+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
             .unwrap();
@@ -23,6 +28,40 @@ lazy_static! {
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
 }
 
+/// rng_syllable: Struct for managing properties of individual syllables with in a language file. Each line within a file
+/// translates into a syllable struct. The reason behind it is to take over most of the complexity of parsing each
+/// syllable, greatly simplifying the work done by Random Name Generator. This code is not meant to be called directly as a
+/// part of standard usage.
+///
+/// Examples
+///
+/// let syllable = Syllable::new("-foo +c").unwrap();
+///
+/// This creates a foo syllable struct that needs to be the first syllable and followed by a constant.
+///
+/// For testing purposes, passing in another RNGSyllable object will create a clone:
+///
+/// SYLLABLE CLASSIFICATION:
+/// Name is usually composed from 3 different class of syllables, which include prefix, middle part and suffix.
+/// To declare syllable as a prefix in the file, insert "-" as a first character of the line.
+/// To declare syllable as a suffix in the file, insert "+" as a first character of the line.
+/// everything else is read as a middle part.
+///
+/// NUMBER OF SYLLABLES:
+/// Names may have any positive number of syllables. In case of 2 syllables, name will be composed from prefix and suffix.
+/// In case of 1 syllable, name will be chosen from amongst the prefixes.
+/// In case of 3 and more syllables, name will begin with prefix, is filled with middle parts and ended with suffix.
+///
+/// ASSIGNING RULES:
+/// I included a way to set 4 kind of rules for every syllable. To add rules to the syllables, write them right after the
+/// syllable and SEPARATE WITH WHITESPACE. (example: "aad +v -c"). The order of rules is not important.
+///
+/// RULES:
+/// 1) +v means that next syllable must definitely start with a vocal.
+/// 2) +c means that next syllable must definitely start with a consonant.
+/// 3) -v means that this syllable can only be added to another syllable, that ends with a vocal.
+/// 4) -c means that this syllable can only be added to another syllable, that ends with a consonant.
+///
 #[derive(Clone, Debug, PartialEq)]
 pub struct Syllable {
     pub value: String,
@@ -107,15 +146,8 @@ impl Syllable {
         )
     }
 
-    pub fn next(&self, syllables: &Vec<Syllable>) -> Syllable {
-        return syllables.choose(&mut rand::thread_rng()).unwrap().clone();
-    }
-
-    fn connects(&self, syllable: &Syllable) -> bool {
-        // if (self.next == Rule::Consonant) && !syllable.starts_with_vowel() {
-        //     true
-        // }
-        false
+    pub fn connects(&self, syllable: &Syllable) -> bool {
+        self.jnext.joins(&syllable.jprevious)
     }
 }
 
@@ -168,15 +200,55 @@ mod syllable_tests {
     use super::*;
     use rstest::rstest;
 
-    #[test]
-    fn next() {
-        let b = Syllable::new("b").unwrap();
-        let v = vec![b.clone()];
-        let a = Syllable::new("a").unwrap();
+    #[rstest(from, to, from_i, to_i,
+        case(Syllable::new("ch").unwrap(), Syllable::new("ch").unwrap(), 1, 1),
+        case(Syllable::new("ch").unwrap(), Syllable::new("abc").unwrap(), 1, 3),
+        case(Syllable::new("ch").unwrap(), Syllable::new("ch -c").unwrap(), 1, 9),
+        case(Syllable::new("ch").unwrap(), Syllable::new("ach -c").unwrap(), 1, 11),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ch").unwrap(), 3, 1),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ach").unwrap(), 3, 3),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ch -v").unwrap(), 3, 5),
+        case(Syllable::new("cha").unwrap(), Syllable::new("ich -v").unwrap(), 3, 7),
+        case(Syllable::new("ch +v").unwrap(), Syllable::new("ich").unwrap(), 5, 3),
+        case(Syllable::new("ch +v").unwrap(), Syllable::new("ich -c").unwrap(), 5, 11),
+        case(Syllable::new("chi +v").unwrap(), Syllable::new("abc").unwrap(), 7, 3),
+        case(Syllable::new("chi +v").unwrap(), Syllable::new("abc -v").unwrap(), 7, 7),
+        case(Syllable::new("ch +c").unwrap(), Syllable::new("ch").unwrap(), 9, 1),
+        case(Syllable::new("ch +c").unwrap(), Syllable::new("ch -c").unwrap(), 9, 9),
+        case(Syllable::new("chi +c").unwrap(), Syllable::new("ch").unwrap(), 11, 1),
+        case(Syllable::new("chi +c").unwrap(), Syllable::new("ch -v").unwrap(), 11, 5),
+    )]
+    fn connects_matrix(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
+        assert_eq!(from.jnext.bits(), from_i);
+        assert_eq!(to.jprevious.bits(), to_i);
+        assert!(from.connects(&to));
+    }
 
-        let actual = a.next(&v);
-
-        assert_eq!(actual, b);
+    #[rstest(from, to, from_i, to_i,
+        case(Syllable::new("ass").unwrap(), Syllable::new("hole -v").unwrap(), 1, 5),
+        case(Syllable::new("fu").unwrap(), Syllable::new("ck -c").unwrap(), 3, 9),
+        case(Syllable::new("bi").unwrap(), Syllable::new("atch -c").unwrap(), 3, 11),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch").unwrap(), 5, 1),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch -v").unwrap(), 5, 5),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ach -v").unwrap(), 5, 7),
+        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch -c").unwrap(), 5, 9),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("ch").unwrap(), 7, 1),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("ts -v").unwrap(), 7, 5),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("tty -c").unwrap(), 7, 9),
+        case(Syllable::new("shi +v").unwrap(), Syllable::new("ach -c").unwrap(), 7, 11),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("ach").unwrap(), 9, 3),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("ch -v").unwrap(), 9, 5),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("it -v").unwrap(), 9, 7),
+        case(Syllable::new("sh +c").unwrap(), Syllable::new("it -c").unwrap(), 9, 11),
+        case(Syllable::new("bo +c").unwrap(), Syllable::new("oty").unwrap(), 11, 3),
+        case(Syllable::new("bo +c").unwrap(), Syllable::new("oty -v").unwrap(), 11, 7),
+        case(Syllable::new("boo +c").unwrap(), Syllable::new("ty -c").unwrap(), 11, 9),
+        case(Syllable::new("bo +c").unwrap(), Syllable::new("oger -c").unwrap(), 11, 11),
+    )]
+    fn connects_matrix__neg(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
+        assert_eq!(from.jnext.bits(), from_i);
+        assert_eq!(to.jprevious.bits(), to_i);
+        assert!(!from.connects(&to));
     }
 
     #[test]
@@ -291,7 +363,7 @@ mod syllable_tests {
         );
     }
 
-    fn micro() -> Vec<Syllable> {
+    fn _micro() -> Vec<Syllable> {
         vec![
             Syllable::new("-a").unwrap(),
             Syllable::new("b").unwrap(),
@@ -299,12 +371,22 @@ mod syllable_tests {
         ]
     }
 
-    #[rstest(input, case("!"), case("+-"), case("+123asfd3ew"))]
+    #[rstest(input,
+        case(""),
+        case("!"),
+        case("+-"),
+        case("++asda"),
+        case("+123asfd3ew"),
+    )]
     fn new__invalid__error(input: &str) {
         assert_eq!(Syllable::new(input).unwrap_err(), BadSyllable);
     }
 
-    #[rstest(input, case("!"), case("+-"), case("+123asfd3ew"))]
+    #[rstest(input,
+        case("!"),
+        case("+-"),
+        case("+123asfd3ew"),
+    )]
     fn full_re(input: &str) {
         assert!(!FULL_RE.is_match(input))
     }
