@@ -19,6 +19,19 @@ use crate::rng_syllables::{Syllables};
 
 /// RNG (Random Name Generator) is a library that generates random
 /// names based upon one of the available Languages.
+///
+/// # Usage:
+/// ```
+/// use rnglib::RNG;
+/// use rnglib::rng_language::Language;
+///
+/// let rng = RNG::new(&Language::Elven).unwrap();
+///
+/// let first_name = rng.generate_name();
+/// let last_name = rng.generate_name();
+///
+/// println!("{}: {} {}", rng.name, first_name, last_name)
+/// ```
 #[derive(Clone, Debug, PartialEq)]
 pub struct RNG {
     pub name: String,
@@ -67,7 +80,7 @@ impl RNG {
         self.bad_syllables.is_empty()
     }
 
-    pub fn generate_dialect(language: &Language) -> RNG {
+    pub fn generate(language: &Language) -> RNG {
         RNG::new(language).unwrap()
     }
 
@@ -231,7 +244,7 @@ mod lib_tests {
 
     #[test]
     fn generate() {
-        let rng = RNG::generate_dialect(&Language::Elven);
+        let rng = RNG::generate(&Language::Elven);
 
         assert_eq!(rng.name, "Elven");
     }
