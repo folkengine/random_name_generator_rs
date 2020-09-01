@@ -4,8 +4,9 @@ use rand::seq::SliceRandom;
 use crate::rng_joiner::{Joiner};
 use crate::rng_syllable::{Classification, Syllable};
 
-// region Syllables
-
+/// Syllables is a single field struct containing a Vector of Syllable structs. Syllables facilites
+/// filtering on Syllable Joiners allowing for dialects to easily determine the next syllable for
+/// a generated name.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Syllables(Vec<Syllable>);
 
@@ -32,6 +33,14 @@ impl Syllables {
 
     pub fn all(&self) -> &Vec<Syllable> {
         &self.0
+    }
+
+    pub fn collapse(&self) -> String {
+        let mut s = "".to_string();
+        for i in 0..self.len() {
+            s.push_str(self.get(i).unwrap().value.as_str())
+        }
+        s
     }
 
     pub fn contains(&self, syllable: &Syllable) -> bool {
@@ -69,7 +78,7 @@ impl Syllables {
         self.filter_from(from_syllable.jnext).get_random().unwrap().clone()
     }
 
-    /// Generates a random value from 0 to the length of the Syllable Vector - 1.
+    /// Generates a random value from 2=1 to the length of the Syllable Vector - 1.
     /// https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html#generate-random-numbers-within-a-range
     fn rnd(&self) -> usize {
         let mut rng = rand::thread_rng();
@@ -91,8 +100,6 @@ impl IntoIterator for Syllables {
         self.0.into_iter()
     }
 }
-
-// endregion
 
 #[cfg(test)]
 #[allow(non_snake_case)]
@@ -120,6 +127,15 @@ mod syllables_tests {
         assert_eq!(all.len(), 2);
         assert_eq!(all.get(0).unwrap(), &Syllable::new("ch").unwrap());
         assert_eq!(all.get(1).unwrap(), &Syllable::new("abc").unwrap());
+    }
+
+    #[test]
+    fn collapse() {
+        let syllables = Syllables::new_from_array(&["ch", "abc"]);
+
+        let s = syllables.collapse();
+
+        assert_eq!("chabc".to_string(), s);
     }
 
     #[test]

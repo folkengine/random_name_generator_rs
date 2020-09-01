@@ -19,6 +19,12 @@ bitflags! {
 // 9  = b00001001 = Joiner::Some | Joiner::ONLY_CONSONANT
 // 11 = b00001011 = Joiner::Some | Joiner::VOWEL | Joiner::ONLY_CONSONANT
 
+/// Joiner is a bitflag representation of the properties that will allow for a Syllable
+/// to join with another.
+///
+/// Joiners themselves have no awareness if they represent what's joinable previously or
+/// subsequently to it. That is determined by the Syllable using it.
+///
 impl Joiner {
     #[allow(dead_code)]
     pub fn joins(&self, to: &Joiner) -> bool {
