@@ -59,6 +59,16 @@ impl Dialect {
         }
     }
 
+    pub fn generate_name_syllables(&self) -> Syllables {
+        let mut syllables = Syllables::new();
+        let one = self.prefixes.get_random().unwrap().clone();
+        syllables.add(one);
+
+        let syllable_count = gen_rnd_syllable_count();
+
+        syllables
+    }
+
     pub fn syllables(&self) -> Syllables {
         let v = [
             self.prefixes.all().clone(),
@@ -137,6 +147,17 @@ mod test_weight {
     use std::string::ToString;
 
     // region old tests
+
+    #[test]
+    fn generate_name_syllables() {
+        let fantasy = Dialect::new(Dialects::Fantasy).unwrap();
+
+        let name = fantasy.generate_name_syllables();
+
+        assert!(fantasy.prefixes.contains(name.first().unwrap()));
+        assert!(!fantasy.centers.contains(name.first().unwrap()));
+        assert!(!fantasy.suffixes.contains(name.first().unwrap()));
+    }
 
     #[test]
     fn new() {
