@@ -13,6 +13,11 @@ Currently, the following are supported:
 * Goblin
 * Roman
 
+The following are in progress:
+
+* Curse
+* Demonic
+
 ## Running the binary
 
 To get information about the available options, run help.
@@ -21,7 +26,7 @@ Using cargo:
 
 ```
 $> cargo run -- --help
-RandomNameGenerator 0.0.1
+RandomNameGenerator 0.0.2
 Christoph <gaoler@electronicpanopticon.com>
 Generates random names in various languages
 
@@ -29,6 +34,9 @@ USAGE:
     rng [FLAGS]
 
 FLAGS:
+    -c, --curse       Use the Curse language [UNDER CONSTRUCTION]
+    -d, --demonic     Use the Demonic language [UNDER CONSTRUCTION]
+        --dump        Print out the raw lanuage file
     -e, --elven       Use the Elven language
     -f, --fantasy     Use the Fantasy language
     -x, --flipmode    Use a random language
