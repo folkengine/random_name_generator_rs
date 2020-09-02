@@ -6,6 +6,7 @@ mod rng_syllables;
 extern crate bitflags;
 extern crate log;
 
+use lazy_static::lazy_static;
 use rand::{
     distributions::{Distribution, Standard, WeightedIndex},
     prelude::*,
@@ -13,6 +14,7 @@ use rand::{
 use rust_embed::RustEmbed;
 use std::fmt;
 use titlecase::titlecase;
+
 use crate::rng_syllable::{Classification, Syllable};
 use crate::rng_syllables::{Syllables};
 
@@ -83,12 +85,20 @@ impl RNG {
     }
 
     pub fn generate_name(&self)  -> String {
-        let name = self.generate_syllables_by_count(gen_rnd_syllable_count()).collapse().clone();
+        self.generate_name_by_count(NORMAL_WEIGHT.gen())
+    }
+
+    pub fn generate_short(&self)  -> String {
+        self.generate_name_by_count(SHORT_WEIGHT.gen())
+    }
+
+    pub fn generate_name_by_count(&self, count: u8)  -> String {
+        let name = self.generate_syllables_by_count(count).collapse().clone();
         titlecase(name.as_str()).to_string()
     }
 
     pub fn generate_syllables(&self)  -> Syllables {
-        self.generate_syllables_by_count(gen_rnd_syllable_count())
+        self.generate_syllables_by_count(NORMAL_WEIGHT.gen())
     }
 
     pub fn generate_syllables_by_count(&self, mut syllable_count: u8) -> Syllables {
@@ -125,17 +135,16 @@ impl RNG {
 #[folder = "src/languages/"]
 struct Asset;
 
-// region rnd syllable count
-static SYLLABLE_COUNTS: [u8; 4] = [2, 3, 4, 5];
-static SYLLABLE_WEIGHTS: [u8; 4] = [4, 10, 3, 1];
-
-fn gen_rnd_syllable_count() -> u8 {
-    let dist = WeightedIndex::new(&SYLLABLE_WEIGHTS).unwrap();
-    let mut rng = thread_rng();
-    SYLLABLE_COUNTS[dist.sample(&mut rng)]
-}
-// endregion
-
+// // region rnd syllable count
+// static SYLLABLE_COUNTS: [u8; 4] = [2, 3, 4, 5];
+// static SYLLABLE_WEIGHTS: [u8; 4] = [4, 10, 3, 1];
+//
+// fn gen_rnd_syllable_count() -> u8 {
+//     let dist = WeightedIndex::new(&SYLLABLE_WEIGHTS).unwrap();
+//     let mut rng = thread_rng();
+//     SYLLABLE_COUNTS[dist.sample(&mut rng)]
+// }
+// // endregion
 
 #[cfg(test)]
 #[allow(non_snake_case)]
@@ -187,18 +196,44 @@ mod lib_tests {
         assert!(result.suffixes.len() > 0);
     }
 
-    #[test]
-    fn generate_name() {
-        let min = RNG {
+    fn create_min() -> RNG {
+        RNG {
             name: "Min".to_string(),
             prefixes: Syllables::new_from_array(&["a"]),
             centers: Syllables::new_from_array(&["b"]),
             suffixes: Syllables::new_from_array(&["c"]),
             bad_syllables: vec![],
-        };
+        }
+    }
+
+    #[test]
+    fn generate_name() {
+        let min = create_min();
 
         for _ in 0..9 {
             let name = min.generate_name();
+            assert!(name.as_str().starts_with("A"));
+            assert!(name.as_str().ends_with("c"))
+        }
+    }
+
+    #[test]
+    fn generate_short() {
+        let min = create_min();
+
+        for _ in 0..9 {
+            let name = min.generate_short();
+            assert!(name.as_str().starts_with("A"));
+            assert!(name.as_str().ends_with("c"))
+        }
+    }
+
+    #[test]
+    fn generate_name_by_count() {
+        let min = create_min();
+
+        for _ in 0..9 {
+            let name = min.generate_name_by_count(NORMAL_WEIGHT.gen());
             assert!(name.as_str().starts_with("A"));
             assert!(name.as_str().ends_with("c"))
         }
@@ -362,15 +397,17 @@ mod lib_tests {
     proptest! {
         #[test]
         fn test_gen_rnd_syllable_count(_ in 0..100i32) {
-            let count = gen_rnd_syllable_count();
+            let count = NORMAL_WEIGHT.gen();
             assert!((count < 6) && (count > 1), count);
         }
     }
 }
 
+// region Language
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Language {
+    Curse,
     Demonic,
     Elven,
     Fantasy,
@@ -439,3 +476,31 @@ mod test_language {
         );
     }
 }
+// endregion
+
+// region WeightedRnd
+lazy_static! {
+    pub static ref NORMAL_WEIGHT: WeightedRnd = WeightedRnd {
+        counts: vec![2, 3, 4, 5],
+        weights: vec![4, 10, 3, 1],
+    };
+
+    pub static ref SHORT_WEIGHT: WeightedRnd = WeightedRnd {
+        counts: vec![2, 3],
+        weights: vec![4, 1],
+    };
+}
+
+pub struct WeightedRnd {
+    counts: Vec<u8>,
+    weights: Vec<u8>,
+}
+
+impl WeightedRnd {
+    pub fn gen(&self) -> u8 {
+        let dist = WeightedIndex::new(self.weights.as_slice()).unwrap();
+        let mut rng = thread_rng();
+        self.counts.as_slice()[dist.sample(&mut rng)]
+    }
+}
+// endregion
