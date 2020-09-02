@@ -8,6 +8,8 @@ fn main() {
 
     if matches.is_present("dump") {
         dump(rng)
+    } else if matches.is_present("curse") {
+        curse(rng)
     } else {
         generate_name(rng)
     }
@@ -17,6 +19,11 @@ fn dump(rng: rnglib::RNG) {
     for s in rng.syllables().into_iter() {
         println!("{}", s.to_string())
     }
+}
+
+fn curse(rng: rnglib::RNG) {
+    let word = rng.generate_short();
+    println!("{}", word)
 }
 
 fn generate_name(rng: rnglib::RNG) {
@@ -37,6 +44,8 @@ fn determine_language(matches: &ArgMatches) -> RNG {
         RNG::new(&Language::Roman).unwrap()
     } else if matches.is_present("demonic") {
         RNG::new(&Language::Demonic).unwrap_err()
+    } else if matches.is_present("curse") {
+        RNG::new(&Language::Curse).unwrap()
     } else {
         let my_dialect_type: Language = rand::random();
         RNG::new(&my_dialect_type).unwrap()
@@ -48,6 +57,7 @@ fn get_matches() -> ArgMatches {
         .version("0.0.1")
         .author("Christoph <gaoler@electronicpanopticon.com>")
         .about("Generates random names in various languages")
+        .arg("-c, --curse 'Use the Curse language [UNDER CONSTRUCTION]'")
         .arg("-d, --demonic 'Use the Demonic language [UNDER CONSTRUCTION]'")
         .arg("-e, --elven 'Use the Elven language'")
         .arg("-f, --fantasy 'Use the Fantasy language'")
