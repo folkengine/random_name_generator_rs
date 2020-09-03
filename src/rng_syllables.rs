@@ -65,6 +65,10 @@ impl Syllables {
         self.0.get(self.rnd())
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     pub fn last(&self) -> Option<&Syllable> {
         self.0.last()
     }

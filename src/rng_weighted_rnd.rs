@@ -17,8 +17,8 @@ lazy_static! {
 }
 
 pub struct WeightedRnd {
-    counts: Vec<u8>,
-    weights: Vec<u8>,
+    pub counts: Vec<u8>,
+    pub weights: Vec<u8>,
 }
 
 impl WeightedRnd {
