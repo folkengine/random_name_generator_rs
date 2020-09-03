@@ -82,6 +82,14 @@ impl RNG {
         }
     }
 
+    fn is_empty(&self) -> bool {
+        self.name.is_empty() &&
+            self.prefixes.is_empty() &&
+            self.centers.is_empty() &&
+            self.suffixes.is_empty() &&
+            self.bad_syllables.is_empty()
+    }
+
     pub fn is_valid(&self) -> bool {
         !self.name.is_empty() &&
             !self.prefixes.is_empty() &&
@@ -244,6 +252,12 @@ mod lib_tests {
 
         chain.iter().for_each(|i| assert!(NORMAL_WEIGHT.counts.contains(&(i.len() as u8))));
         chain.iter().for_each(|i| assert!(!non.contains(&(i.len() as u8))));
+    }
+
+    #[test]
+    fn is_empty() {
+        assert!(RNG::empty("".to_string()).is_empty());
+        assert!(!create_min().is_empty());
     }
 
     #[test]
