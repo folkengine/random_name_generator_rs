@@ -56,13 +56,7 @@ impl RNG {
     fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
 
-        let mut rng = RNG {
-            name: language.to_string(),
-            prefixes: Syllables::new(),
-            centers: Syllables::new(),
-            suffixes: Syllables::new(),
-            bad_syllables: Vec::new(),
-        };
+        let mut rng = RNG::empty(language.to_string());
 
         for line in std::str::from_utf8(txt.as_ref()).unwrap().lines() {
             if let Ok(sy) = Syllable::new(line) {
@@ -76,6 +70,16 @@ impl RNG {
             }
         }
         rng
+    }
+
+    fn empty(name: String) -> RNG {
+        RNG {
+            name,
+            prefixes: Syllables::new(),
+            centers: Syllables::new(),
+            suffixes: Syllables::new(),
+            bad_syllables: Vec::new(),
+        }
     }
 
     pub fn is_valid(&self) -> bool {
