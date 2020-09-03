@@ -1,14 +1,14 @@
 mod rng_joiner;
 mod rng_syllable;
 mod rng_syllables;
+mod rng_weighted_rnd;
 
 #[macro_use]
 extern crate bitflags;
 extern crate log;
 
-use lazy_static::lazy_static;
 use rand::{
-    distributions::{Distribution, Standard, WeightedIndex},
+    distributions::{Distribution, Standard},
     prelude::*,
 };
 use rust_embed::RustEmbed;
@@ -17,6 +17,7 @@ use titlecase::titlecase;
 
 use crate::rng_syllable::{Classification, Syllable};
 use crate::rng_syllables::{Syllables};
+use crate::rng_weighted_rnd::{NORMAL_WEIGHT, SHORT_WEIGHT};
 
 /// RNG (Random Name Generator) is a library that generates random
 /// names based upon one of the available Languages.
@@ -44,40 +45,57 @@ pub struct RNG {
 impl RNG {
 
     pub fn new(language: &Language) -> Result<RNG, RNG> {
+        let rng = RNG::process(language);
+
+        match rng.is_valid() {
+            true => Ok(rng),
+            false => Err(rng),
+        }
+    }
+
+    fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
-        let mut prefixes: Vec<Syllable> = Vec::new();
-        let mut centers: Vec<Syllable> = Vec::new();
-        let mut suffixes: Vec<Syllable> = Vec::new();
-        let mut bad: Vec<String> = Vec::new();
+
+        let mut rng = RNG::empty(language.to_string());
 
         for line in std::str::from_utf8(txt.as_ref()).unwrap().lines() {
             if let Ok(sy) = Syllable::new(line) {
                 match sy.classification {
-                    Classification::Prefix => prefixes.push(sy),
-                    Classification::Center => centers.push(sy),
-                    Classification::Suffix => suffixes.push(sy),
+                    Classification::Prefix => rng.prefixes.add(sy),
+                    Classification::Center => rng.centers.add(sy),
+                    Classification::Suffix => rng.suffixes.add(sy),
                 }
             } else {
-                bad.push(line.to_string());
+                rng.bad_syllables.push(line.to_string());
             }
         }
-        let d = RNG {
-            name: language.to_string(),
-            prefixes: Syllables::new_from_vector(prefixes),
-            centers: Syllables::new_from_vector(centers),
-            suffixes: Syllables::new_from_vector(suffixes),
-            bad_syllables: bad,
-        };
+        rng
+    }
 
-        if d.bad_syllables.len() > 0 {
-            Err(d)
-        } else {
-            Ok(d)
+    fn empty(name: String) -> RNG {
+        RNG {
+            name,
+            prefixes: Syllables::new(),
+            centers: Syllables::new(),
+            suffixes: Syllables::new(),
+            bad_syllables: Vec::new(),
         }
     }
 
+    fn is_empty(&self) -> bool {
+        self.name.is_empty() &&
+            self.prefixes.is_empty() &&
+            self.centers.is_empty() &&
+            self.suffixes.is_empty() &&
+            self.bad_syllables.is_empty()
+    }
+
     pub fn is_valid(&self) -> bool {
-        self.bad_syllables.is_empty()
+        !self.name.is_empty() &&
+            !self.prefixes.is_empty() &&
+            !self.centers.is_empty() &&
+            !self.suffixes.is_empty() &&
+            self.bad_syllables.is_empty()
     }
 
     pub fn generate(language: &Language) -> RNG {
@@ -134,17 +152,6 @@ impl RNG {
 #[derive(RustEmbed)]
 #[folder = "src/languages/"]
 struct Asset;
-
-// // region rnd syllable count
-// static SYLLABLE_COUNTS: [u8; 4] = [2, 3, 4, 5];
-// static SYLLABLE_WEIGHTS: [u8; 4] = [4, 10, 3, 1];
-//
-// fn gen_rnd_syllable_count() -> u8 {
-//     let dist = WeightedIndex::new(&SYLLABLE_WEIGHTS).unwrap();
-//     let mut rng = thread_rng();
-//     SYLLABLE_COUNTS[dist.sample(&mut rng)]
-// }
-// // endregion
 
 #[cfg(test)]
 #[allow(non_snake_case)]
@@ -210,57 +217,59 @@ mod lib_tests {
     fn generate_name() {
         let min = create_min();
 
-        for _ in 0..9 {
-            let name = min.generate_name();
-            assert!(name.as_str().starts_with("A"));
-            assert!(name.as_str().ends_with("c"))
-        }
+        let chain: Vec<String> = (1..10).map(|_| min.generate_name()).collect();
+
+        chain.iter().for_each(|name| assert!(name.as_str().starts_with("A")));
+        chain.iter().for_each(|name| assert!(name.as_str().ends_with("c")));
     }
 
     #[test]
     fn generate_short() {
         let min = create_min();
 
-        for _ in 0..9 {
-            let name = min.generate_short();
-            assert!(name.as_str().starts_with("A"));
-            assert!(name.as_str().ends_with("c"))
-        }
+        let chain: Vec<String> = (1..10).map(|_| min.generate_short()).collect();
+
+        chain.iter().for_each(|name| assert!(name.as_str().starts_with("A")));
+        chain.iter().for_each(|name| assert!(name.as_str().ends_with("c")));
     }
 
     #[test]
     fn generate_name_by_count() {
         let min = create_min();
 
-        for _ in 0..9 {
-            let name = min.generate_name_by_count(NORMAL_WEIGHT.gen());
-            assert!(name.as_str().starts_with("A"));
-            assert!(name.as_str().ends_with("c"))
-        }
+        let chain: Vec<String> = (1..10).map(|_| min.generate_name_by_count(NORMAL_WEIGHT.gen())).collect();
+
+        chain.iter().for_each(|name| assert!(name.as_str().starts_with("A")));
+        chain.iter().for_each(|name| assert!(name.as_str().ends_with("c")));
     }
 
     #[test]
     fn generate_syllables() {
-        for _ in 0..9 {
-            let rng = RNG::new(&Language::Elven).unwrap();
+        let rng = RNG::new(&Language::Elven).unwrap();
+        let non: Vec<u8> = vec![0, 1, 6, 7, 8];
 
-            let syllables = rng.generate_syllables();
+        let chain: Vec<Syllables> = (1..10).map(|_| rng.generate_syllables()).collect();
 
-            assert!(syllables.len() > 1);
-            assert!(syllables.len() < 6);
-        }
+        chain.iter().for_each(|i| assert!(NORMAL_WEIGHT.counts.contains(&(i.len() as u8))));
+        chain.iter().for_each(|i| assert!(!non.contains(&(i.len() as u8))));
+    }
+
+    #[test]
+    fn is_empty() {
+        assert!(RNG::empty("".to_string()).is_empty());
+        assert!(!create_min().is_empty());
     }
 
     #[test]
     fn is_valid() {
-        let elven = RNG {
-            name: "".to_string(),
-            prefixes: Syllables::new(),
-            centers: Syllables::new(),
-            suffixes: Syllables::new(),
+        let min = RNG {
+            name: "Min".to_string(),
+            prefixes: Syllables::new_from_array(&["a"]),
+            centers: Syllables::new_from_array(&["b"]),
+            suffixes: Syllables::new_from_array(&["c"]),
             bad_syllables: vec![],
         };
-        assert!(elven.is_valid())
+        assert!(min.is_valid())
     }
 
     #[test]
@@ -474,33 +483,6 @@ mod test_language {
             "./src/languages/Fantasy.txt".to_string(),
             Language::Fantasy.get_path()
         );
-    }
-}
-// endregion
-
-// region WeightedRnd
-lazy_static! {
-    pub static ref NORMAL_WEIGHT: WeightedRnd = WeightedRnd {
-        counts: vec![2, 3, 4, 5],
-        weights: vec![4, 10, 3, 1],
-    };
-
-    pub static ref SHORT_WEIGHT: WeightedRnd = WeightedRnd {
-        counts: vec![2, 3],
-        weights: vec![4, 1],
-    };
-}
-
-pub struct WeightedRnd {
-    counts: Vec<u8>,
-    weights: Vec<u8>,
-}
-
-impl WeightedRnd {
-    pub fn gen(&self) -> u8 {
-        let dist = WeightedIndex::new(self.weights.as_slice()).unwrap();
-        let mut rng = thread_rng();
-        self.counts.as_slice()[dist.sample(&mut rng)]
     }
 }
 // endregion

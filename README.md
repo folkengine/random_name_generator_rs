@@ -101,3 +101,9 @@ Elven: daedar latherdre
 
 * Add in Russian support available in the Ruby version.
 * Finish Demonic
+
+## Further Interest
+
+* [Constructed Languages for Language Geeks](https://www.reddit.com/r/conlangs/)
+* [Phonotactics](https://en.wikipedia.org/wiki/Phonotactics)
+* [Vulgar's Atlas](https://www.vulgarlang.com/atlas/)
