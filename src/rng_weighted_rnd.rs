@@ -28,3 +28,26 @@ impl WeightedRnd {
         self.counts.as_slice()[dist.sample(&mut rng)]
     }
 }
+
+#[cfg(test)]
+mod test_language {
+    use super::*;
+
+    #[test]
+    fn normal_weight() {
+        let chain: Vec<u8> = (1..100).map(|_| NORMAL_WEIGHT.gen()).collect();
+        let non: Vec<u8> = vec![0, 1, 6, 7, 8];
+
+        chain.iter().for_each(|i| assert!(NORMAL_WEIGHT.counts.contains(i)));
+        chain.iter().for_each(|i| assert!(!non.contains(i)));
+    }
+
+    #[test]
+    fn short_weight() {
+        let chain: Vec<u8> = (1..100).map(|_| SHORT_WEIGHT.gen()).collect();
+        let non: Vec<u8> = vec![0, 1, 4, 5, 6];
+
+        chain.iter().for_each(|i| assert!(SHORT_WEIGHT.counts.contains(i)));
+        chain.iter().for_each(|i| assert!(!non.contains(i)));
+    }
+}
