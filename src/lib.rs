@@ -1,14 +1,14 @@
 mod rng_joiner;
 mod rng_syllable;
 mod rng_syllables;
+mod rng_weighted_rnd;
 
 #[macro_use]
 extern crate bitflags;
 extern crate log;
 
-use lazy_static::lazy_static;
 use rand::{
-    distributions::{Distribution, Standard, WeightedIndex},
+    distributions::{Distribution, Standard},
     prelude::*,
 };
 use rust_embed::RustEmbed;
@@ -17,6 +17,7 @@ use titlecase::titlecase;
 
 use crate::rng_syllable::{Classification, Syllable};
 use crate::rng_syllables::{Syllables};
+use crate::rng_weighted_rnd::{NORMAL_WEIGHT, SHORT_WEIGHT};
 
 /// RNG (Random Name Generator) is a library that generates random
 /// names based upon one of the available Languages.
@@ -44,36 +45,37 @@ pub struct RNG {
 impl RNG {
 
     pub fn new(language: &Language) -> Result<RNG, RNG> {
+        let rng = RNG::process(language);
+
+        match rng.bad_syllables.len() {
+            0 => Ok(rng),
+            _ => Err(rng),
+        }
+    }
+
+    fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
-        let mut prefixes: Vec<Syllable> = Vec::new();
-        let mut centers: Vec<Syllable> = Vec::new();
-        let mut suffixes: Vec<Syllable> = Vec::new();
-        let mut bad: Vec<String> = Vec::new();
+
+        let mut rng = RNG {
+            name: language.to_string(),
+            prefixes: Syllables::new(),
+            centers: Syllables::new(),
+            suffixes: Syllables::new(),
+            bad_syllables: Vec::new(),
+        };
 
         for line in std::str::from_utf8(txt.as_ref()).unwrap().lines() {
             if let Ok(sy) = Syllable::new(line) {
                 match sy.classification {
-                    Classification::Prefix => prefixes.push(sy),
-                    Classification::Center => centers.push(sy),
-                    Classification::Suffix => suffixes.push(sy),
+                    Classification::Prefix => rng.prefixes.add(sy),
+                    Classification::Center => rng.centers.add(sy),
+                    Classification::Suffix => rng.suffixes.add(sy),
                 }
             } else {
-                bad.push(line.to_string());
+                rng.bad_syllables.push(line.to_string());
             }
         }
-        let d = RNG {
-            name: language.to_string(),
-            prefixes: Syllables::new_from_vector(prefixes),
-            centers: Syllables::new_from_vector(centers),
-            suffixes: Syllables::new_from_vector(suffixes),
-            bad_syllables: bad,
-        };
-
-        if d.bad_syllables.len() > 0 {
-            Err(d)
-        } else {
-            Ok(d)
-        }
+        rng
     }
 
     pub fn is_valid(&self) -> bool {
@@ -134,17 +136,6 @@ impl RNG {
 #[derive(RustEmbed)]
 #[folder = "src/languages/"]
 struct Asset;
-
-// // region rnd syllable count
-// static SYLLABLE_COUNTS: [u8; 4] = [2, 3, 4, 5];
-// static SYLLABLE_WEIGHTS: [u8; 4] = [4, 10, 3, 1];
-//
-// fn gen_rnd_syllable_count() -> u8 {
-//     let dist = WeightedIndex::new(&SYLLABLE_WEIGHTS).unwrap();
-//     let mut rng = thread_rng();
-//     SYLLABLE_COUNTS[dist.sample(&mut rng)]
-// }
-// // endregion
 
 #[cfg(test)]
 #[allow(non_snake_case)]
@@ -474,33 +465,6 @@ mod test_language {
             "./src/languages/Fantasy.txt".to_string(),
             Language::Fantasy.get_path()
         );
-    }
-}
-// endregion
-
-// region WeightedRnd
-lazy_static! {
-    pub static ref NORMAL_WEIGHT: WeightedRnd = WeightedRnd {
-        counts: vec![2, 3, 4, 5],
-        weights: vec![4, 10, 3, 1],
-    };
-
-    pub static ref SHORT_WEIGHT: WeightedRnd = WeightedRnd {
-        counts: vec![2, 3],
-        weights: vec![4, 1],
-    };
-}
-
-pub struct WeightedRnd {
-    counts: Vec<u8>,
-    weights: Vec<u8>,
-}
-
-impl WeightedRnd {
-    pub fn gen(&self) -> u8 {
-        let dist = WeightedIndex::new(self.weights.as_slice()).unwrap();
-        let mut rng = thread_rng();
-        self.counts.as_slice()[dist.sample(&mut rng)]
     }
 }
 // endregion

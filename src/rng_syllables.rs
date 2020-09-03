@@ -77,7 +77,7 @@ impl Syllables {
         self.filter_from(from_syllable.jnext).get_random().unwrap().clone()
     }
 
-    /// Generates a random value from 2=1 to the length of the Syllable Vector - 1.
+    /// Generates a random value from the length of the Syllable Vector - 1.
     /// https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html#generate-random-numbers-within-a-range
     fn rnd(&self) -> usize {
         let mut rng = rand::thread_rng();

@@ -2,6 +2,7 @@
 -bast
 -bo
 -boll
+-bro
 -bugg
 -cho
 -choad
@@ -9,6 +10,7 @@
 -crike +c
 -cunt
 -dick
+-eff
 -effing
 -frig
 -fuck
@@ -18,6 +20,7 @@
 -shit
 -stuff
 -suck
+-tiddly
 -wank
 arse +c
 ass
@@ -38,6 +41,7 @@ wank
 +damn
 +er
 +erd
++fuck
 +fucker
 +hole
 +ing
@@ -51,7 +55,9 @@ wank
 +stuffed
 +suck
 +twat
++uck
 +wank
++wink
 +wipe
 +wit
 +y
