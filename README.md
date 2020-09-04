@@ -23,20 +23,26 @@ The following are in progress:
 ```rust
 use rnglib::{RNG, Language};
 
-let rng = RNG::new(&Language::Elven).unwrap();
-
-let first_name = rng.generate_name();
-let last_name = rng.generate_name();
-
-println!("{}: {} {}", rng.name, first_name, last_name)
+fn main() {
+    let rng = RNG::new(&Language::Elven).unwrap();
+    
+    let first_name = rng.generate_name();
+    let last_name = rng.generate_name();
+    
+    println!("{}: {} {}", rng.name, first_name, last_name)
+}
 ```
 
 It is possible to control the number of syllables for a generated name:
 
 ```rust
-let rng = RNG::new(&Language::Fantasy).unwrap();
+use rnglib::{RNG, Language};
 
-let name = rng.generate_name_by_count(3);
+fn main() {
+    let rng = RNG::new(&Language::Fantasy).unwrap();
+    
+    let name = rng.generate_name_by_count(3);
+}
 ```
 
 ## Running the binary
