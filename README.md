@@ -2,7 +2,7 @@
 
 [![Build Status](https://api.travis-ci.com/folkengine/random_name_generator_rs.svg?branch=main)](https://travis-ci.com/github/folkengine/random_name_generator_rs)
 
-This is a rust port of the [Ruby port](https://github.com/folkengine/random_name_generator)  
+This is a rust port of the [Ruby port](https://github.com/folkengine/random_name_generator)
 of the [Java Random Name Generator library](https://github.com/folkengine/java-random-name-generator).
 
 It generates it's results based upon which [language file](src/languages) is specified.
@@ -121,4 +121,5 @@ Elven: daedar latherdre
 * [Constructed Languages for Language Geeks](https://www.reddit.com/r/conlangs/)
 * [Expletive infixation](https://en.wikipedia.org/wiki/Expletive_infixation)
 * [Phonotactics](https://en.wikipedia.org/wiki/Phonotactics)
+* [Stanley Unwin](https://en.wikipedia.org/wiki/Stanley_Unwin_(comedian))
 * [Vulgar's Atlas](https://www.vulgarlang.com/atlas/)

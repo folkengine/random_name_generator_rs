@@ -43,7 +43,6 @@ pub struct RNG {
 }
 
 impl RNG {
-
     pub fn new(language: &Language) -> Result<RNG, RNG> {
         let rng = RNG::process(language);
 
@@ -72,7 +71,7 @@ impl RNG {
         rng
     }
 
-    fn empty(name: String) -> RNG {
+    pub fn empty(name: String) -> RNG {
         RNG {
             name,
             prefixes: Syllables::new(),
@@ -82,7 +81,7 @@ impl RNG {
         }
     }
 
-    fn is_empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.name.is_empty() &&
             self.prefixes.is_empty() &&
             self.centers.is_empty() &&
@@ -102,20 +101,20 @@ impl RNG {
         RNG::new(language).unwrap()
     }
 
-    pub fn generate_name(&self)  -> String {
+    pub fn generate_name(&self) -> String {
         self.generate_name_by_count(NORMAL_WEIGHT.gen())
     }
 
-    pub fn generate_short(&self)  -> String {
+    pub fn generate_short(&self) -> String {
         self.generate_name_by_count(SHORT_WEIGHT.gen())
     }
 
-    pub fn generate_name_by_count(&self, count: u8)  -> String {
+    pub fn generate_name_by_count(&self, count: u8) -> String {
         let name = self.generate_syllables_by_count(count).collapse().clone();
         titlecase(name.as_str()).to_string()
     }
 
-    pub fn generate_syllables(&self)  -> Syllables {
+    pub fn generate_syllables(&self) -> Syllables {
         self.generate_syllables_by_count(NORMAL_WEIGHT.gen())
     }
 

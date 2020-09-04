@@ -1,4 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use rnglib::{RNG, Language};
 
 fn fibonacci(n: u64) -> u64 {
     match n {
