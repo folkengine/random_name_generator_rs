@@ -101,3 +101,10 @@ Elven: daedar latherdre
 
 * Add in Russian support available in the Ruby version.
 * Finish Demonic
+* Use [clap types](https://github.com/clap-rs/clap/blob/master/examples/12_typed_values.rs) for number of generated words and syllables.
+
+## Further Interest
+
+* [Constructed Languages for Language Geeks](https://www.reddit.com/r/conlangs/)
+* [Phonotactics](https://en.wikipedia.org/wiki/Phonotactics)
+* [Vulgar's Atlas](https://www.vulgarlang.com/atlas/)
