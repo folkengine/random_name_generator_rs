@@ -30,5 +30,10 @@ rust-embed = "5.6.0"
 titlecase = "1.1.0"
 
 [dev-dependencies]
+criterion = "0.3"
 proptest = "0.10.0"
 rstest = "0.6.4"
+
+[[bench]]
+name = "my_benchmark"
+harness = false
