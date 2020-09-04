@@ -103,6 +103,13 @@ Elven: daedar latherdre
 * [Clippy](https://rust-lang.github.io/rust-clippy/)
 * [rust-embed](https://github.com/pyros2097/rust-embed)
 
+## Dev Dependencies
+
+* [Criterion](https://github.com/bheisler/criterion.rs) for benchmarking
+  * [Getting Started](https://bheisler.github.io/criterion.rs/book/getting_started.html)
+* [Proptest](https://github.com/AltSysrq/proptest) - Hypothesis-like property testing for Rust
+* [Rstest](https://github.com/la10736/rstest) - Fixture-based test framework for Rust
+
 ## TODO
 
 * Add in Russian support available in the Ruby version.
@@ -112,5 +119,6 @@ Elven: daedar latherdre
 ## Further Interest
 
 * [Constructed Languages for Language Geeks](https://www.reddit.com/r/conlangs/)
+* [Expletive infixation](https://en.wikipedia.org/wiki/Expletive_infixation)
 * [Phonotactics](https://en.wikipedia.org/wiki/Phonotactics)
 * [Vulgar's Atlas](https://www.vulgarlang.com/atlas/)
