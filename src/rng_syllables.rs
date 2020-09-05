@@ -47,7 +47,10 @@ impl Syllables {
     }
 
     pub fn filter_from(&self, from: Joiner) -> Syllables {
-        let v = self.0.iter().filter(|s| from.joins(&s.jprevious))
+        let v = self
+            .0
+            .iter()
+            .filter(|s| from.joins(&s.jprevious))
             .cloned()
             .collect();
         Syllables::new_from_vector(v)
@@ -78,7 +81,10 @@ impl Syllables {
     }
 
     pub fn next_from(&self, from_syllable: Syllable) -> Syllable {
-        self.filter_from(from_syllable.jnext).get_random().unwrap().clone()
+        self.filter_from(from_syllable.jnext)
+            .get_random()
+            .unwrap()
+            .clone()
     }
 
     /// Generates a random value from the length of the Syllable Vector - 1.

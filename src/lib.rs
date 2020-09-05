@@ -16,7 +16,7 @@ use std::fmt;
 use titlecase::titlecase;
 
 use crate::rng_syllable::{Classification, Syllable};
-use crate::rng_syllables::{Syllables};
+use crate::rng_syllables::Syllables;
 use crate::rng_weighted_rnd::{NORMAL_WEIGHT, SHORT_WEIGHT};
 
 /// RNG (Random Name Generator) is a library that generates random
@@ -82,19 +82,19 @@ impl RNG {
     }
 
     pub fn is_empty(&self) -> bool {
-        self.name.is_empty() &&
-            self.prefixes.is_empty() &&
-            self.centers.is_empty() &&
-            self.suffixes.is_empty() &&
-            self.bad_syllables.is_empty()
+        self.name.is_empty()
+            && self.prefixes.is_empty()
+            && self.centers.is_empty()
+            && self.suffixes.is_empty()
+            && self.bad_syllables.is_empty()
     }
 
     pub fn is_valid(&self) -> bool {
-        !self.name.is_empty() &&
-            !self.prefixes.is_empty() &&
-            !self.centers.is_empty() &&
-            !self.suffixes.is_empty() &&
-            self.bad_syllables.is_empty()
+        !self.name.is_empty()
+            && !self.prefixes.is_empty()
+            && !self.centers.is_empty()
+            && !self.suffixes.is_empty()
+            && self.bad_syllables.is_empty()
     }
 
     pub fn generate(language: &Language) -> RNG {
@@ -143,7 +143,7 @@ impl RNG {
             self.centers.all().clone(),
             self.suffixes.all().clone(),
         ]
-            .concat();
+        .concat();
         Syllables::new_from_vector(v)
     }
 }
@@ -218,8 +218,12 @@ mod lib_tests {
 
         let chain: Vec<String> = (1..10).map(|_| min.generate_name()).collect();
 
-        chain.iter().for_each(|name| assert!(name.as_str().starts_with("A")));
-        chain.iter().for_each(|name| assert!(name.as_str().ends_with("c")));
+        chain
+            .iter()
+            .for_each(|name| assert!(name.as_str().starts_with("A")));
+        chain
+            .iter()
+            .for_each(|name| assert!(name.as_str().ends_with("c")));
     }
 
     #[test]
@@ -228,18 +232,28 @@ mod lib_tests {
 
         let chain: Vec<String> = (1..10).map(|_| min.generate_short()).collect();
 
-        chain.iter().for_each(|name| assert!(name.as_str().starts_with("A")));
-        chain.iter().for_each(|name| assert!(name.as_str().ends_with("c")));
+        chain
+            .iter()
+            .for_each(|name| assert!(name.as_str().starts_with("A")));
+        chain
+            .iter()
+            .for_each(|name| assert!(name.as_str().ends_with("c")));
     }
 
     #[test]
     fn generate_name_by_count() {
         let min = create_min();
 
-        let chain: Vec<String> = (1..10).map(|_| min.generate_name_by_count(NORMAL_WEIGHT.gen())).collect();
+        let chain: Vec<String> = (1..10)
+            .map(|_| min.generate_name_by_count(NORMAL_WEIGHT.gen()))
+            .collect();
 
-        chain.iter().for_each(|name| assert!(name.as_str().starts_with("A")));
-        chain.iter().for_each(|name| assert!(name.as_str().ends_with("c")));
+        chain
+            .iter()
+            .for_each(|name| assert!(name.as_str().starts_with("A")));
+        chain
+            .iter()
+            .for_each(|name| assert!(name.as_str().ends_with("c")));
     }
 
     #[test]
@@ -249,8 +263,12 @@ mod lib_tests {
 
         let chain: Vec<Syllables> = (1..10).map(|_| rng.generate_syllables()).collect();
 
-        chain.iter().for_each(|i| assert!(NORMAL_WEIGHT.counts.contains(&(i.len() as u8))));
-        chain.iter().for_each(|i| assert!(!non.contains(&(i.len() as u8))));
+        chain
+            .iter()
+            .for_each(|i| assert!(NORMAL_WEIGHT.counts.contains(&(i.len() as u8))));
+        chain
+            .iter()
+            .for_each(|i| assert!(!non.contains(&(i.len() as u8))));
     }
 
     #[test]

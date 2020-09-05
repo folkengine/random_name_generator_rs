@@ -77,11 +77,7 @@ impl Joiner {
 
 impl fmt::Display for Joiner {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{:b}",
-            self.bits,
-        )
+        write!(f, "{:b}", self.bits,)
     }
 }
 
@@ -198,10 +194,7 @@ mod joiner_tests {
         assert!(!j.joins(&input));
     }
 
-    #[rstest(input,
-        case(Joiner::NONE),
-        case(Joiner::SOME),
-    )]
+    #[rstest(input, case(Joiner::NONE), case(Joiner::SOME))]
     fn joins__only_vowel_ne(input: Joiner) {
         let j = Joiner::SOME | Joiner::ONLY_VOWEL;
 

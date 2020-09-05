@@ -1,5 +1,5 @@
 use clap::{App, ArgMatches};
-use rnglib::{RNG, Language};
+use rnglib::{Language, RNG};
 
 fn main() {
     let matches = get_matches();

@@ -2,19 +2,18 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use std::fmt;
 
-use crate::rng_joiner::{Joiner};
+use crate::rng_joiner::Joiner;
 
 static _CONSONANTS: [char; 57] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l', 'ł', 'm', 'ɱ', 'n',
-    'ɳ', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
-    'б', 'в', 'г', 'д', 'ж', 'з', 'к', 'л', 'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш',
-    'щ', 'ъ', 'ы', 'ь',
-    'ѕ', 'ѳ',  'ѯ', 'ѱ', // Russian https://en.wikipedia.org/wiki/Russian_alphabet
+    'ɳ', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z', 'б', 'в', 'г', 'д', 'ж', 'з', 'к', 'л',
+    'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'ѕ', 'ѳ', 'ѯ',
+    'ѱ', // Russian https://en.wikipedia.org/wiki/Russian_alphabet
 ];
 static VOWELS: [char; 54] = [
     'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'ɯ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ø', 'ə',
-    'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ',
-    'е', 'ё', 'э', 'и', 'й', 'ю', 'ѭ', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', 'ѩ', 'і', 'ѣ', 'ѵ', 'ѡ', // Russian
+    'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ', 'е', 'ё',
+    'э', 'и', 'й', 'ю', 'ѭ', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', 'ѩ', 'і', 'ѣ', 'ѵ', 'ѡ', // Russian
 ];
 
 lazy_static! {
@@ -110,7 +109,11 @@ impl Syllable {
 
     fn determine_next_joiner(s: &str) -> Joiner {
         let (_, pure) = Syllable::classify(s);
-        let ends = if Syllable::str_ends_with_vowel(pure.as_str()) { Joiner::VOWEL } else { Joiner::SOME };
+        let ends = if Syllable::str_ends_with_vowel(pure.as_str()) {
+            Joiner::VOWEL
+        } else {
+            Joiner::SOME
+        };
         if SUFFIX_RE.is_match(s) {
             Joiner::SOME | ends | Syllable::vowel_or_consonant_only_joiner(s, "+v")
         } else {
@@ -120,7 +123,11 @@ impl Syllable {
 
     fn determine_previous_joiner(s: &str) -> Joiner {
         let (_, pure) = Syllable::classify(s);
-        let starts = if Syllable::str_starts_with_vowel(pure.as_str()) { Joiner::VOWEL } else { Joiner::SOME };
+        let starts = if Syllable::str_starts_with_vowel(pure.as_str()) {
+            Joiner::VOWEL
+        } else {
+            Joiner::SOME
+        };
         if PREFIX_RE.is_match(s) {
             Joiner::SOME | starts | Syllable::vowel_or_consonant_only_joiner(s, "-v")
         } else {
@@ -269,7 +276,7 @@ mod syllable_tests {
             value: "asd".to_string(),
             classification: Classification::Prefix,
             jnext: Joiner::SOME,
-            jprevious: Joiner::SOME | Joiner::VOWEL
+            jprevious: Joiner::SOME | Joiner::VOWEL,
         };
 
         let actual = Syllable::new("-asd");
@@ -369,22 +376,19 @@ mod syllable_tests {
         ]
     }
 
-    #[rstest(input,
+    #[rstest(
+        input,
         case(""),
         case("!"),
         case("+-"),
         case("++asda"),
-        case("+123asfd3ew"),
+        case("+123asfd3ew")
     )]
     fn new__invalid__error(input: &str) {
         assert_eq!(Syllable::new(input).unwrap_err(), BadSyllable);
     }
 
-    #[rstest(input,
-        case("!"),
-        case("+-"),
-        case("+123asfd3ew"),
-    )]
+    #[rstest(input, case("!"), case("+-"), case("+123asfd3ew"))]
     fn full_re(input: &str) {
         assert!(!FULL_RE.is_match(input))
     }
