@@ -53,7 +53,7 @@ Using cargo:
 
 ```
 $> cargo run -- --help
-RandomNameGenerator 0.0.2
+RandomNameGenerator 0.1.0
 Christoph <gaoler@electronicpanopticon.com>
 Generates random names in various languages
 
