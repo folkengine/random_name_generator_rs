@@ -1,7 +1,7 @@
 [package]
-name = "rng"
+name = "random_name_generator"
 description = "Random Name Generator"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["folkengine <gaoler@electronicpanopticon.com>"]
 repository = "https://github.com/folkengine/random_name_generator_rs.git"
 homepage = "https://github.com/folkengine/random_name_generator_rs"
@@ -16,7 +16,7 @@ name = "rnglib"
 path = "src/lib.rs"
 
 [[bin]]
-name = "rng"
+name = "random_name_generator"
 path = "src/main.rs"
 
 [dependencies]
