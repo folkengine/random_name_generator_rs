@@ -17,7 +17,7 @@ static VOWELS: [char; 54] = [
 ];
 
 lazy_static! {
-    // https://regex101.com/r/kvDj4I/2/
+    // https://regex101.com/r/UZ4REr/1
     static ref FULL_RE: Regex =
         Regex::new(r"^([-+]{0,1})([A-Za-z]+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
             .unwrap();
