@@ -53,12 +53,16 @@ rax +v
 real
 roma -c +c
 sh
+sta
+su
 thi +c
 una -c +c
+za -v
 
 +al
 +akku -c
 +as
++aroth
 +b'el -c
 +bou -v
 +chon
@@ -80,9 +84,11 @@ una -c +c
 +nyu
 +on -c
 +phus -c
++ra -v
 +rept -v
 +res
 +ros
++roth
 +s -v
 +sag
 +sakku -v
@@ -91,14 +97,13 @@ una -c +c
 +xas -v
 +y -c
 +ym
-+zou
 +xu
++z'el -v
++zel -v
++zou
 
 # https://en.wikipedia.org/wiki/The_infernal_names
 
-Astaroth (Christian demonology)
-Asura (Hindu mythology)
-Azazel / Azaz'el (Jewish demonology)
 Azi Dahaka/Dahak (Zoroastrianism)
 
 Ahpuch - Mayan devil
