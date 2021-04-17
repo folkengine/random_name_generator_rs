@@ -36,6 +36,8 @@ impl Joiner {
         can_to && can_from
     }
 
+    #[allow(clippy::needless_bool)]
+    #[allow(clippy::if_same_then_else)]
     fn joins_to(&self, to: &Joiner) -> bool {
         if to.is_empty() {
             trace!("to is empty empty");

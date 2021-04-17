@@ -101,6 +101,12 @@ impl Syllables {
     }
 }
 
+impl Default for Syllables {
+    fn default() -> Self {
+        Syllables::new()
+    }
+}
+
 impl IntoIterator for Syllables {
     type Item = Syllable;
     type IntoIter = std::vec::IntoIter<Self::Item>;

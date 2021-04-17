@@ -33,6 +33,7 @@ use crate::rng_weighted_rnd::{NORMAL_WEIGHT, SHORT_WEIGHT};
 ///
 /// println!("{}: {} {}", rng.name, first_name, last_name)
 /// ```
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Clone, Debug, PartialEq)]
 pub struct RNG {
     pub name: String,
@@ -110,8 +111,8 @@ impl RNG {
     }
 
     pub fn generate_name_by_count(&self, count: u8) -> String {
-        let name = self.generate_syllables_by_count(count).collapse().clone();
-        titlecase(name.as_str()).to_string()
+        let name = self.generate_syllables_by_count(count).collapse();
+        titlecase(name.as_str())
     }
 
     pub fn generate_syllables(&self) -> Syllables {
@@ -424,7 +425,7 @@ mod lib_tests {
         #[test]
         fn test_gen_rnd_syllable_count(_ in 0..100i32) {
             let count = NORMAL_WEIGHT.gen();
-            assert!((count < 6) && (count > 1), count);
+            assert!((count < 6) && (count > 1), "count of {} should be less than 6 and greater than 1", count);
         }
     }
 }
