@@ -52,6 +52,11 @@ impl Joiner {
         } else {
             true
         }
+        // Clippy's recommended refactor:
+        // } else {
+        //     !((self.contains(Joiner::VOWEL) && to.contains(Joiner::ONLY_CONSONANT))
+        //         || (!self.contains(Joiner::VOWEL) && to.contains(Joiner::ONLY_VOWEL)))
+        // }
     }
 
     pub fn value_next(&self) -> String {
