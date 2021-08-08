@@ -53,8 +53,8 @@ fn determine_language(matches: &ArgMatches) -> RNG {
 }
 
 fn get_matches() -> ArgMatches {
-    App::new("RandomNameGenerator")
-        .version("0.1.0")
+    App::new("Random Name Generator")
+        .version("0.1.2")
         .author("Christoph <gaoler@electronicpanopticon.com>")
         .about("Generates random names in various languages")
         .arg("-c, --curse 'Use the Curse language [UNDER CONSTRUCTION]'")
