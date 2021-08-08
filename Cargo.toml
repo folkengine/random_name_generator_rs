@@ -16,7 +16,7 @@ name = "rnglib"
 path = "src/lib.rs"
 
 [[bin]]
-name = "random_name_generator"
+name = "rng"
 path = "src/main.rs"
 
 [dependencies]
