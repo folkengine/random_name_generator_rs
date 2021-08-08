@@ -36,6 +36,8 @@ impl Joiner {
         can_to && can_from
     }
 
+    #[allow(clippy::needless_bool)]
+    #[allow(clippy::if_same_then_else)]
     fn joins_to(&self, to: &Joiner) -> bool {
         if to.is_empty() {
             trace!("to is empty empty");
@@ -50,6 +52,11 @@ impl Joiner {
         } else {
             true
         }
+        // Clippy's recommended refactor:
+        // } else {
+        //     !((self.contains(Joiner::VOWEL) && to.contains(Joiner::ONLY_CONSONANT))
+        //         || (!self.contains(Joiner::VOWEL) && to.contains(Joiner::ONLY_VOWEL)))
+        // }
     }
 
     pub fn value_next(&self) -> String {
