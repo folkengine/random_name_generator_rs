@@ -53,12 +53,19 @@ impl RNG {
         }
     }
 
+    // TODO Add a process version for a filename instead of an embedded Asset.
     fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
+        RNG::classify(
+            std::str::from_utf8(txt.as_ref()).unwrap(),
+            language.to_string(),
+        )
+    }
 
-        let mut rng = RNG::empty(language.to_string());
+    fn classify(lines: &str, name: String) -> RNG {
+        let mut rng = RNG::empty(name);
 
-        for line in std::str::from_utf8(txt.as_ref()).unwrap().lines() {
+        for line in lines.lines() {
             if let Ok(sy) = Syllable::new(line) {
                 match sy.classification {
                     Classification::Prefix => rng.prefixes.add(sy),
