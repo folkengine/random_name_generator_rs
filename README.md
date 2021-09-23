@@ -1,6 +1,8 @@
-# random_name_generator_rs
+# random_name_generator
 
-[![Build Status](https://api.travis-ci.com/folkengine/random_name_generator_rs.svg?branch=main)](https://travis-ci.com/github/folkengine/random_name_generator_rs)
+[![Crates.io](https://img.shields.io/crates/v/random_name_generator?style=flat-square)](https://crates.io/crates/random_name_generator)
+[![Crates.io](https://img.shields.io/crates/d/random_name_generator?style=flat-square)](https://crates.io/crates/random_name_generator)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/folkengine/random_name_generator_rs/Rust)
 
 This is a rust port of the [Ruby port](https://github.com/folkengine/random_name_generator)
 of the [Java Random Name Generator library](https://github.com/folkengine/java-random-name-generator).
