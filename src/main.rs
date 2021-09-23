@@ -1,6 +1,9 @@
 use clap::{App, ArgMatches};
 use rnglib::{Language, RNG};
 
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const PKG_DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
+
 fn main() {
     let matches = get_matches();
 
@@ -53,8 +56,8 @@ fn determine_language(matches: &ArgMatches) -> RNG {
 }
 
 fn get_matches() -> ArgMatches {
-    App::new("Random Name Generator")
-        .version("0.1.2")
+    App::new(PKG_DESCRIPTION)
+        .version(VERSION)
         .author("Christoph <gaoler@electronicpanopticon.com>")
         .about("Generates random names in various languages")
         .arg("-c, --curse 'Use the Curse language [UNDER CONSTRUCTION]'")
