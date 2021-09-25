@@ -56,19 +56,22 @@ impl RNG {
 
     fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
-        RNG::processor(std::str::from_utf8(txt.as_ref()).unwrap(), language.to_string())
+        RNG::processor(
+            std::str::from_utf8(txt.as_ref()).unwrap(),
+            language.to_string(),
+        )
     }
 
     fn process_file(filename: String) -> Result<RNG> {
         let f = std::fs::read_to_string(filename.clone())?;
-        Ok(RNG::processor(std::str::from_utf8(f.as_ref()).unwrap(), filename))
+        Ok(RNG::processor(
+            std::str::from_utf8(f.as_ref()).unwrap(),
+            filename,
+        ))
     }
 
     fn processor(txt: &str, language: String) -> RNG {
-        RNG::classify(
-            txt,
-            language,
-        )
+        RNG::classify(txt, language)
     }
 
     fn classify(lines: &str, name: String) -> RNG {
@@ -233,8 +236,6 @@ mod lib_tests {
         assert_eq!(result.centers.len(), 1);
         assert_eq!(result.suffixes.len(), 1);
     }
-
-    #[test]
 
     #[allow(unused_variables)]
     fn process_file__with_error() {
