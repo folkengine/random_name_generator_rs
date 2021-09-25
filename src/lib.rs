@@ -54,6 +54,10 @@ impl RNG {
         }
     }
 
+    pub fn new_from_file(filename: String) -> Result<RNG> {
+        RNG::process_file(filename)
+    }
+
     fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
         RNG::processor(
@@ -223,6 +227,30 @@ mod lib_tests {
     }
 
     #[test]
+    fn new_from_file() {
+        let filename = "src/languages/Test-micro.txt";
+
+        let rng = RNG::new_from_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 1);
+        assert_eq!(result.centers.len(), 1);
+        assert_eq!(result.suffixes.len(), 1);
+    }
+
+    #[test]
+    fn new_from_file__with_error() {
+        let filename = "src/languages/none.txt";
+
+        let result = RNG::new_from_file(filename.to_string());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
     fn process_file() {
         let filename = "src/languages/Test-micro.txt";
 
@@ -237,7 +265,7 @@ mod lib_tests {
         assert_eq!(result.suffixes.len(), 1);
     }
 
-    #[allow(unused_variables)]
+    #[test]
     fn process_file__with_error() {
         let filename = "src/languages/none.txt";
 

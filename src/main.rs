@@ -1,4 +1,4 @@
-use clap::{crate_authors, crate_license, crate_name, crate_version, App, ArgMatches};
+use clap::{crate_authors, crate_license, crate_name, crate_version, App, Arg, ArgMatches};
 use rnglib::{Language, RNG};
 
 const PKG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
@@ -36,7 +36,9 @@ fn generate_name(rng: rnglib::RNG) {
 }
 
 fn determine_language(matches: &ArgMatches) -> RNG {
-    if matches.is_present("elven") {
+    if matches.is_present("raw") {
+        RNG::new_from_file(matches.value_of("raw").unwrap().to_string()).unwrap()
+    } else if matches.is_present("elven") {
         RNG::new(&Language::Elven).unwrap()
     } else if matches.is_present("fantasy") {
         RNG::new(&Language::Fantasy).unwrap()
@@ -68,5 +70,11 @@ fn get_matches() -> ArgMatches {
         .arg("-r, --roman 'Use the Roman language'")
         .arg("--dump 'Print out the raw lanuage file'")
         .arg("-x, --flipmode 'Use a random language'")
+        .arg(
+            Arg::new("raw")
+                .long("raw")
+                .about("reads in a raw language file")
+                .takes_value(true),
+        )
         .get_matches()
 }
