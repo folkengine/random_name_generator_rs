@@ -1,9 +1,10 @@
 use clap::{App, ArgMatches};
 use rnglib::{Language, RNG};
 
-const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
-const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+const PKG_AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
+const PKG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
+const PKG_LICENSE: &str = env!("CARGO_PKG_LICENSE");
+const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() {
     let matches = get_matches();
@@ -57,9 +58,10 @@ fn determine_language(matches: &ArgMatches) -> RNG {
 }
 
 fn get_matches() -> ArgMatches {
-    App::new(DESCRIPTION)
-        .version(VERSION)
-        .author(AUTHORS)
+    App::new(PKG_DESCRIPTION)
+        .version(PKG_VERSION)
+        .author(PKG_AUTHORS)
+        .license(PKG_LICENSE)
         .about("Generates random names in various languages")
         .arg("-c, --curse 'Use the Curse language [UNDER CONSTRUCTION]'")
         .arg("-d, --demonic 'Use the Demonic language [UNDER CONSTRUCTION]'")
