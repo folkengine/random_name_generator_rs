@@ -6,7 +6,6 @@ authors = ["Christoph Baker <gaoler@electronicpanopticon.com>"]
 repository = "https://github.com/folkengine/random_name_generator_rs.git"
 homepage = "https://github.com/folkengine/random_name_generator_rs"
 edition = "2018"
-rust = "1.54.0"
 license = "BSD-3-Clause"
 readme = "README.md"
 
