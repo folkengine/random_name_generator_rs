@@ -56,8 +56,14 @@ impl RNG {
     // TODO Add a process version for a filename instead of an embedded Asset.
     fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
+        RNG::processor(std::str::from_utf8(txt.as_ref()).unwrap(), &language)
+    }
+
+    // fn process_file(filename: String)
+
+    fn processor(txt: &str, language: &Language) -> RNG {
         RNG::classify(
-            std::str::from_utf8(txt.as_ref()).unwrap(),
+            txt,
             language.to_string(),
         )
     }
