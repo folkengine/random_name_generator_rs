@@ -20,6 +20,7 @@ name = "rng"
 path = "src/main.rs"
 
 [dependencies]
+anyhow = "1.0.44"
 bitflags = "1.2"
 clap = "3.0.0-beta.4"
 lazy_static = "1.4.0"

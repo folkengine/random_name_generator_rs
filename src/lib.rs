@@ -7,6 +7,7 @@ mod rng_weighted_rnd;
 extern crate bitflags;
 extern crate log;
 
+use anyhow::Result;
 use rand::{
     distributions::{Distribution, Standard},
     prelude::*,
@@ -53,18 +54,20 @@ impl RNG {
         }
     }
 
-    // TODO Add a process version for a filename instead of an embedded Asset.
     fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
-        RNG::processor(std::str::from_utf8(txt.as_ref()).unwrap(), &language)
+        RNG::processor(std::str::from_utf8(txt.as_ref()).unwrap(), language.to_string())
     }
 
-    // fn process_file(filename: String)
+    fn process_file(filename: String) -> Result<RNG> {
+        let f = std::fs::read_to_string(filename.clone())?;
+        Ok(RNG::processor(std::str::from_utf8(f.as_ref()).unwrap(), filename))
+    }
 
-    fn processor(txt: &str, language: &Language) -> RNG {
+    fn processor(txt: &str, language: String) -> RNG {
         RNG::classify(
             txt,
-            language.to_string(),
+            language,
         )
     }
 
@@ -216,6 +219,32 @@ mod lib_tests {
         assert!(result.suffixes.len() > 0);
     }
 
+    #[test]
+    fn process_file() {
+        let filename = "src/languages/Test-micro.txt";
+
+        let rng = RNG::process_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 1);
+        assert_eq!(result.centers.len(), 1);
+        assert_eq!(result.suffixes.len(), 1);
+    }
+
+    #[test]
+
+    #[allow(unused_variables)]
+    fn process_file__with_error() {
+        let filename = "src/languages/none.txt";
+
+        let result = RNG::process_file(filename.to_string());
+
+        assert!(result.is_err());
+    }
+
     fn create_min() -> RNG {
         RNG {
             name: "Min".to_string(),
@@ -293,13 +322,7 @@ mod lib_tests {
 
     #[test]
     fn is_valid() {
-        let min = RNG {
-            name: "Min".to_string(),
-            prefixes: Syllables::new_from_array(&["a"]),
-            centers: Syllables::new_from_array(&["b"]),
-            suffixes: Syllables::new_from_array(&["c"]),
-            bad_syllables: vec![],
-        };
+        let min = create_min();
         assert!(min.is_valid())
     }
 
