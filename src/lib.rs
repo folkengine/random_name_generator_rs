@@ -7,6 +7,7 @@ mod rng_weighted_rnd;
 extern crate bitflags;
 extern crate log;
 
+use anyhow::Result;
 use rand::{
     distributions::{Distribution, Standard},
     prelude::*,
@@ -53,12 +54,34 @@ impl RNG {
         }
     }
 
+    pub fn new_from_file(filename: String) -> Result<RNG> {
+        RNG::process_file(filename)
+    }
+
     fn process(language: &Language) -> RNG {
         let txt = Asset::get(language.get_filename().as_str()).unwrap();
+        RNG::processor(
+            std::str::from_utf8(txt.as_ref()).unwrap(),
+            language.to_string(),
+        )
+    }
 
-        let mut rng = RNG::empty(language.to_string());
+    fn process_file(filename: String) -> Result<RNG> {
+        let f = std::fs::read_to_string(filename.clone())?;
+        Ok(RNG::processor(
+            std::str::from_utf8(f.as_ref()).unwrap(),
+            filename,
+        ))
+    }
 
-        for line in std::str::from_utf8(txt.as_ref()).unwrap().lines() {
+    fn processor(txt: &str, language: String) -> RNG {
+        RNG::classify(txt, language)
+    }
+
+    fn classify(lines: &str, name: String) -> RNG {
+        let mut rng = RNG::empty(name);
+
+        for line in lines.lines() {
             if let Ok(sy) = Syllable::new(line) {
                 match sy.classification {
                     Classification::Prefix => rng.prefixes.add(sy),
@@ -203,6 +226,54 @@ mod lib_tests {
         assert!(result.suffixes.len() > 0);
     }
 
+    #[test]
+    fn new_from_file() {
+        let filename = "src/languages/Test-micro.txt";
+
+        let rng = RNG::new_from_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 1);
+        assert_eq!(result.centers.len(), 1);
+        assert_eq!(result.suffixes.len(), 1);
+    }
+
+    #[test]
+    fn new_from_file__with_error() {
+        let filename = "src/languages/none.txt";
+
+        let result = RNG::new_from_file(filename.to_string());
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn process_file() {
+        let filename = "src/languages/Test-micro.txt";
+
+        let rng = RNG::process_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 1);
+        assert_eq!(result.centers.len(), 1);
+        assert_eq!(result.suffixes.len(), 1);
+    }
+
+    #[test]
+    fn process_file__with_error() {
+        let filename = "src/languages/none.txt";
+
+        let result = RNG::process_file(filename.to_string());
+
+        assert!(result.is_err());
+    }
+
     fn create_min() -> RNG {
         RNG {
             name: "Min".to_string(),
@@ -280,13 +351,7 @@ mod lib_tests {
 
     #[test]
     fn is_valid() {
-        let min = RNG {
-            name: "Min".to_string(),
-            prefixes: Syllables::new_from_array(&["a"]),
-            centers: Syllables::new_from_array(&["b"]),
-            suffixes: Syllables::new_from_array(&["c"]),
-            bad_syllables: vec![],
-        };
+        let min = create_min();
         assert!(min.is_valid())
     }
 
