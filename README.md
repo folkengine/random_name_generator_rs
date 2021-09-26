@@ -2,7 +2,8 @@
 
 [![Crates.io](https://img.shields.io/crates/v/random_name_generator?style=flat-square)](https://crates.io/crates/random_name_generator)
 [![Crates.io](https://img.shields.io/crates/d/random_name_generator?style=flat-square)](https://crates.io/crates/random_name_generator)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/folkengine/random_name_generator_rs/Rust)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/folkengine/random_name_generator_rs/Rust)](https://github.com/folkengine/random_name_generator_rs/actions/workflows/rust.yml?query=branch%3Amaster)
 
 This is a rust port of the [Ruby port](https://github.com/folkengine/random_name_generator)
 of the [Java Random Name Generator library](https://github.com/folkengine/java-random-name-generator).
@@ -42,8 +43,20 @@ use rnglib::{RNG, Language};
 
 fn main() {
     let rng = RNG::new(&Language::Fantasy).unwrap();
-    
     let name = rng.generate_name_by_count(3);
+    println!("{}: {}", rng.name, name)
+}
+```
+
+One can also pass in custom language files:
+
+```
+use rnglib::{RNG};
+
+fn main() {
+    let rng = RNG::new_from_file("src/languages/Test-tiny.txt").unwrap();
+    let name = rng.generate_name();
+    println!("{}: {}", rng.name, name)
 }
 ```
 
@@ -55,7 +68,7 @@ Using cargo:
 
 ```
 $> cargo run -- --help
-RandomNameGenerator 0.1.0
+RandomNameGenerator 0.1.2
 Christoph <gaoler@electronicpanopticon.com>
 Generates random names in various languages
 

@@ -1,4 +1,4 @@
-use clap::{crate_authors, crate_license, crate_name, crate_version, App, Arg, ArgMatches};
+use clap::{crate_authors, crate_license, crate_name, crate_version, App, ArgMatches};
 use rnglib::{Language, RNG};
 
 const PKG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
@@ -70,11 +70,6 @@ fn get_matches() -> ArgMatches {
         .arg("-r, --roman 'Use the Roman language'")
         .arg("--dump 'Print out the raw lanuage file'")
         .arg("-x, --flipmode 'Use a random language'")
-        .arg(
-            Arg::new("raw")
-                .long("raw")
-                .about("reads in a raw language file")
-                .takes_value(true),
-        )
+        .arg("--raw=[FILE] 'reads in a raw language file'")
         .get_matches()
 }
