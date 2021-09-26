@@ -113,6 +113,7 @@ Elven: daedar latherdre
 
 ## Dependencies
 
+* [Anyhow](https://github.com/dtolnay/anyhow)
 * [Bitflags](https://github.com/bitflags/bitflags)
 * [Clap](https://github.com/clap-rs/clap)
 * [Clippy](https://rust-lang.github.io/rust-clippy/)
