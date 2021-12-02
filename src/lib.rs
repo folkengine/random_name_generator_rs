@@ -59,9 +59,9 @@ impl RNG {
     }
 
     fn process(language: &Language) -> RNG {
-        let txt = Asset::get(language.get_filename().as_str()).unwrap();
+        let mut txt = Asset::get(language.get_filename().as_str()).unwrap();
         RNG::processor(
-            std::str::from_utf8(txt.as_ref()).unwrap(),
+            std::str::from_utf8(txt.data.to_mut()).unwrap(),
             language.to_string(),
         )
     }
@@ -515,7 +515,7 @@ impl fmt::Display for Language {
 
 impl Distribution<Language> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Language {
-        match rng.gen_range(1, 5) {
+        match rng.gen_range(1..5) {
             // 0 => Dialects::Demonic,
             1 => Language::Elven,
             2 => Language::Fantasy,
