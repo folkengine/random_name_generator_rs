@@ -1,3 +1,2 @@
 [package]
 rust = "1.56.0"
-exclude = [".github/workflows/*", "benches/*", "docs/*", ".gitignore", ".travis.yml"]
