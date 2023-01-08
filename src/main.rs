@@ -1,4 +1,4 @@
-use clap::{crate_authors, crate_license, crate_name, crate_version, App, ArgMatches};
+use clap::{crate_authors, crate_name, crate_version, Command, ArgMatches};
 use rnglib::{Language, RNG};
 
 const PKG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
@@ -57,10 +57,9 @@ fn determine_language(matches: &ArgMatches) -> RNG {
 }
 
 fn get_matches() -> ArgMatches {
-    App::new(crate_name!())
+    Command::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
-        .license(crate_license!())
         .about(PKG_DESCRIPTION)
         .arg("-c, --curse 'Use the Curse language [UNDER CONSTRUCTION]'")
         .arg("-d, --demonic 'Use the Demonic language [UNDER CONSTRUCTION]'")
