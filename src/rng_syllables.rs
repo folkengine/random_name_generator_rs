@@ -221,7 +221,7 @@ mod syllables_tests {
         v.add(b.clone());
         let a = Syllable::new("a").unwrap();
 
-        let actual = v.next_from(a);
+        let actual = v.next_from(&a);
 
         assert_eq!(actual, b);
     }

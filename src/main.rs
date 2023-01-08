@@ -19,7 +19,7 @@ fn main() {
 
 fn dump(rng: rnglib::RNG) {
     for s in rng.syllables().into_iter() {
-        println!("{}", s.to_string())
+        println!("{}", s)
     }
 }
 
