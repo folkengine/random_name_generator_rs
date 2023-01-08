@@ -35,9 +35,9 @@ impl Syllables {
     }
 
     pub fn collapse(&self) -> String {
-        let mut s = "".to_string();
+        let mut s = String::new();
         for i in 0..self.len() {
-            s.push_str(self.get(i).unwrap().value.as_str())
+            s.push_str(self.get(i).unwrap().value.as_str());
         }
         s
     }
@@ -80,7 +80,7 @@ impl Syllables {
         self.0.len()
     }
 
-    pub fn next_from(&self, from_syllable: Syllable) -> Syllable {
+    pub fn next_from(&self, from_syllable: &Syllable) -> Syllable {
         self.filter_from(from_syllable.jnext)
             .get_random()
             .unwrap()
@@ -88,7 +88,7 @@ impl Syllables {
     }
 
     /// Generates a random value from the length of the Syllable Vector - 1.
-    /// https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html#generate-random-numbers-within-a-range
+    /// <https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html#generate-random-numbers-within-a-range/>
     fn rnd(&self) -> usize {
         let mut rng = rand::thread_rng();
         let length = self.len();

@@ -47,12 +47,16 @@ pub struct RNG {
 }
 
 impl RNG {
+    /// # Errors
+    ///
+    /// Errors out if the language file is not able to be processed correctly.
     pub fn new(language: &Language) -> Result<RNG, RNG> {
         let rng = RNG::process(language);
 
-        match rng.is_valid() {
-            true => Ok(rng),
-            false => Err(rng),
+        if rng.is_valid() {
+            Ok(rng)
+        } else {
+            Err(rng)
         }
     }
 

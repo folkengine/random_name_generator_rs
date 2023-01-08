@@ -25,18 +25,18 @@ lazy_static! {
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
 }
 
-/// rng_syllable: Struct for managing properties of individual syllables with in a language file. Each line within a file
+/// `rng_syllable`: Struct for managing properties of individual syllables with in a language file. Each line within a file
 /// translates into a syllable struct. The reason behind it is to take over most of the complexity of parsing each
 /// syllable, greatly simplifying the work done by Random Name Generator. This code is not meant to be called directly as a
 /// part of standard usage.
 ///
 /// Examples
 ///
-/// let syllable = Syllable::new("-foo +c").unwrap();
+/// `let syllable = Syllable::new("-foo +c").unwrap();`
 ///
 /// This creates a foo syllable struct that needs to be the first syllable and followed by a constant.
 ///
-/// For testing purposes, passing in another RNGSyllable object will create a clone:
+/// For testing purposes, passing in another `RNGSyllable` object will create a clone:
 ///
 /// SYLLABLE CLASSIFICATION:
 /// Name is usually composed from 3 different class of syllables, which include prefix, middle part and suffix.
@@ -151,7 +151,7 @@ impl Syllable {
         )
     }
 
-    pub fn connects(&self, syllable: Syllable) -> bool {
+    pub fn connects(&self, syllable: &Syllable) -> bool {
         self.jnext.joins(syllable.jprevious)
     }
 }
@@ -192,7 +192,7 @@ impl Classification {
         match *self {
             Classification::Prefix => "-".to_string(),
             Classification::Suffix => "+".to_string(),
-            _ => "".to_string(),
+            Classification::Center => String::new(),
         }
     }
 }
@@ -226,7 +226,7 @@ mod syllable_tests {
     fn connects_matrix(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
         assert_eq!(from.jnext.bits(), from_i);
         assert_eq!(to.jprevious.bits(), to_i);
-        assert!(from.connects(to));
+        assert!(from.connects(&to));
     }
 
     #[rstest(from, to, from_i, to_i,
@@ -253,7 +253,7 @@ mod syllable_tests {
     fn connects_matrix__neg(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
         assert_eq!(from.jnext.bits(), from_i);
         assert_eq!(to.jprevious.bits(), to_i);
-        assert!(!from.connects(to));
+        assert!(!from.connects(&to));
     }
 
     #[test]
