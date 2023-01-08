@@ -50,7 +50,7 @@ impl Syllables {
         let v = self
             .0
             .iter()
-            .filter(|s| from.joins(&s.jprevious))
+            .filter(|s| from.joins(s.jprevious))
             .cloned()
             .collect();
         Syllables::new_from_vector(v)

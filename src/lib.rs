@@ -1,3 +1,5 @@
+#![warn(clippy::pedantic)]
+
 mod rng_joiner;
 mod rng_syllable;
 mod rng_syllables;

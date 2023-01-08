@@ -151,8 +151,8 @@ impl Syllable {
         )
     }
 
-    pub fn connects(&self, syllable: &Syllable) -> bool {
-        self.jnext.joins(&syllable.jprevious)
+    pub fn connects(&self, syllable: Syllable) -> bool {
+        self.jnext.joins(syllable.jprevious)
     }
 }
 
@@ -226,7 +226,7 @@ mod syllable_tests {
     fn connects_matrix(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
         assert_eq!(from.jnext.bits(), from_i);
         assert_eq!(to.jprevious.bits(), to_i);
-        assert!(from.connects(&to));
+        assert!(from.connects(to));
     }
 
     #[rstest(from, to, from_i, to_i,
@@ -253,7 +253,7 @@ mod syllable_tests {
     fn connects_matrix__neg(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
         assert_eq!(from.jnext.bits(), from_i);
         assert_eq!(to.jprevious.bits(), to_i);
-        assert!(!from.connects(&to));
+        assert!(!from.connects(to));
     }
 
     #[test]
