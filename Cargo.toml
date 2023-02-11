@@ -23,18 +23,18 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1.0.44"
 bitflags = "1.2"
-clap = { version = "4.0.32", features = ["cargo"] }
+clap = { version = "4.1.4", features = ["derive"] }
 lazy_static = "1.4.0"
 log = "0.4.11"
 rand = "0.8.4"
 regex = "1"
 rust-embed = "6.3.0"
-titlecase = "1.1.0"
+titlecase = "2.2.1"
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "0.4.0"
 proptest = "1.0.0"
-rstest = "0.11.0"
+rstest = "0.16.0"
 
 [[bench]]
 name = "my_benchmark"
