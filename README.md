@@ -68,25 +68,20 @@ Using cargo:
 
 ```
 $> cargo run -- --help
-RandomNameGenerator 0.1.2
-Christoph <gaoler@electronicpanopticon.com>
-Generates random names in various languages
+Random Name Generator
 
-USAGE:
-    rng [FLAGS]
+Usage: rng [OPTIONS]
 
-FLAGS:
-    -c, --curse       Use the Curse language [UNDER CONSTRUCTION]
-    -d, --demonic     Use the Demonic language [UNDER CONSTRUCTION]
-        --dump        Print out the raw lanuage file
-    -e, --elven       Use the Elven language
-    -f, --fantasy     Use the Fantasy language
-    -x, --flipmode    Use a random language
-    -g, --goblin      Use the Goblin language
-    -h, --help        Prints help information
-    -r, --roman       Use the Roman language
-    -V, --version     Prints version information
-
+Options:
+  -e, --elven
+  -f, --fantasy
+  -g, --goblin
+  -r, --roman
+  -c, --curse       [UNDER CONSTRUCTION]
+  -x, --flipmode    Flipmode is the greatest! (Random language)
+      --raw <FILE>  Reads in a raw language file
+  -h, --help        Print help
+  -V, --version     Print version
 ```
 
 or from the binary:
@@ -130,7 +125,6 @@ Elven: daedar latherdre
 
 * Add in Russian support available in the Ruby version.
 * Finish Demonic
-* Use [clap types](https://github.com/clap-rs/clap/blob/master/examples/12_typed_values.rs) for number of generated words and syllables.
 
 ## Further Interest
 
