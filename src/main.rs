@@ -67,22 +67,22 @@ fn cmd() -> clap::Command {
 
 fn generate(matches: &ArgMatches) -> String {
     if matches.get_flag("elven") {
-        generate_name(RNG::new(&Language::Elven).unwrap())
+        generate_name(&RNG::new(&Language::Elven).unwrap())
     } else if matches.get_flag("fantasy") {
-        generate_name(RNG::new(&Language::Fantasy).unwrap())
+        generate_name(&RNG::new(&Language::Fantasy).unwrap())
     } else if matches.get_flag("goblin") {
-        generate_name(RNG::new(&Language::Goblin).unwrap())
+        generate_name(&RNG::new(&Language::Goblin).unwrap())
     } else if matches.get_flag("roman") {
-        generate_name(RNG::new(&Language::Roman).unwrap())
+        generate_name(&RNG::new(&Language::Roman).unwrap())
     } else if matches.get_flag("curse") {
         RNG::new(&Language::Curse).unwrap().generate_short()
     } else {
         let my_dialect_type: Language = rand::random();
-        generate_name(RNG::new(&my_dialect_type).unwrap())
+        generate_name(&RNG::new(&my_dialect_type).unwrap())
     }
 }
 
-fn generate_name(rng: rnglib::RNG) -> String {
+fn generate_name(rng: &rnglib::RNG) -> String {
     let first_name = rng.generate_name();
     let last_name = rng.generate_name();
 
