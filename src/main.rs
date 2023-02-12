@@ -85,7 +85,7 @@ fn generate(matches: &ArgMatches) -> String {
 
         match result {
             Ok(rng) => generate_name(&rng),
-            Err(_) => "INVALID FILE".to_string()
+            Err(_) => "INVALID FILE".to_string(),
         }
     }
 }
