@@ -9,6 +9,13 @@ mod rng_weighted_rnd;
 extern crate bitflags;
 extern crate log;
 
+#[derive(Debug, Eq, PartialEq)]
+pub enum RNGError {
+    GenerationError,
+    InvalidLanguageFile,
+    ReadError,
+}
+
 use anyhow::Result;
 use rand::{
     distributions::{Distribution, Standard},
@@ -29,7 +36,7 @@ use crate::rng_weighted_rnd::{NORMAL_WEIGHT, SHORT_WEIGHT};
 /// ```
 /// use rnglib::{RNG, Language};
 ///
-/// let rng = RNG::new(&Language::Elven).unwrap();
+/// let rng = RNG::try_from(&Language::Elven).unwrap();
 ///
 /// let first_name = rng.generate_name();
 /// let last_name = rng.generate_name();
@@ -50,6 +57,7 @@ impl RNG {
     /// # Errors
     ///
     /// Errors out if the language file is not able to be processed correctly.
+    #[deprecated(since = "0.2.0", note = "Use try_from instead")]
     pub fn new(language: &Language) -> Result<RNG, RNG> {
         let rng = RNG::process(language);
 
@@ -133,14 +141,6 @@ impl RNG {
             && self.bad_syllables.is_empty()
     }
 
-    /// # Panics
-    ///
-    /// Errors out if the language file is not able to be processed correctly.
-    #[must_use]
-    pub fn generate(language: &Language) -> RNG {
-        RNG::new(language).unwrap()
-    }
-
     #[must_use]
     pub fn generate_name(&self) -> String {
         self.generate_name_by_count(NORMAL_WEIGHT.gen())
@@ -197,6 +197,20 @@ impl RNG {
     }
 }
 
+impl TryFrom<&Language> for RNG {
+    type Error = RNGError;
+
+    fn try_from(language: &Language) -> std::result::Result<Self, Self::Error> {
+        let rng = RNG::process(language);
+
+        if rng.is_valid() {
+            Ok(rng)
+        } else {
+            Err(RNGError::InvalidLanguageFile)
+        }
+    }
+}
+
 #[derive(RustEmbed)]
 #[folder = "src/languages/"]
 struct Asset;
@@ -208,8 +222,15 @@ mod lib_tests {
     use proptest::prelude::*;
 
     #[test]
+    fn try_from() {
+        let rng = RNG::try_from(&Language::Fantasy);
+
+        assert!(rng.is_ok());
+    }
+
+    #[test]
     fn new() {
-        let result = RNG::new(&Language::Fantasy).unwrap();
+        let result = RNG::try_from(&Language::Fantasy).unwrap();
 
         assert_eq!(result.name, Language::Fantasy.to_string());
         assert!(result.bad_syllables.len() < 1);
@@ -220,18 +241,15 @@ mod lib_tests {
 
     #[test]
     fn new__demonic() {
-        let result = RNG::new(&Language::Demonic).unwrap_err();
+        let result = RNG::try_from(&Language::Demonic);
 
-        assert_eq!(result.name, Language::Demonic.to_string());
-        assert!(result.bad_syllables.len() > 0);
-        assert!(result.prefixes.len() > 0);
-        assert!(result.centers.len() > 0);
-        assert!(result.suffixes.len() > 0);
+        assert!(result.is_err());
+        assert_eq!(RNGError::InvalidLanguageFile, result.unwrap_err());
     }
 
     #[test]
     fn new__goblin() {
-        let result = RNG::new(&Language::Goblin).unwrap();
+        let result = RNG::try_from(&Language::Goblin).unwrap();
 
         assert_eq!(result.name, Language::Goblin.to_string());
         assert!(result.bad_syllables.len() < 1);
@@ -242,7 +260,7 @@ mod lib_tests {
 
     #[test]
     fn new__roman() {
-        let result = RNG::new(&Language::Roman).unwrap();
+        let result = RNG::try_from(&Language::Roman).unwrap();
 
         assert_eq!(result.name, Language::Roman.to_string());
         assert!(result.bad_syllables.len() < 1);
@@ -355,7 +373,7 @@ mod lib_tests {
 
     #[test]
     fn generate_syllables() {
-        let rng = RNG::new(&Language::Elven).unwrap();
+        let rng = RNG::try_from(&Language::Elven).unwrap();
         let non: Vec<u8> = vec![0, 1, 6, 7, 8];
 
         let chain: Vec<Syllables> = (1..10).map(|_| rng.generate_syllables()).collect();
@@ -390,13 +408,6 @@ mod lib_tests {
             bad_syllables: vec!["#$@!".to_string()],
         };
         assert!(!bad.is_valid())
-    }
-
-    #[test]
-    fn generate() {
-        let rng = RNG::generate(&Language::Elven);
-
-        assert_eq!(rng.name, "Elven");
     }
 
     #[test]
@@ -482,7 +493,7 @@ mod lib_tests {
     // region assert functions
     fn general_generate_dialects_asserts(language: Language, count: usize) {
         for _ in 0..9 {
-            let rng = RNG::new(&language).unwrap();
+            let rng = RNG::try_from(&language).unwrap();
 
             let name = rng.generate_syllables_by_count(count as u8);
 
