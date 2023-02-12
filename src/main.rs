@@ -1,75 +1,103 @@
-use clap::{crate_authors, crate_license, crate_name, crate_version, App, ArgMatches};
+use clap::{command, Arg, ArgAction, ArgMatches};
 use rnglib::{Language, RNG};
 
-const PKG_DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
-
 fn main() {
-    let matches = get_matches();
+    let matches = cmd().get_matches();
 
-    let rng = determine_language(&matches);
+    let name = generate(&matches);
 
-    if matches.is_present("dump") {
-        dump(rng)
-    } else if matches.is_present("curse") {
-        curse(rng)
+    println!("{name}");
+}
+
+fn cmd() -> clap::Command {
+    command!()
+        .arg(
+            Arg::new("elven")
+                .short('e')
+                .long("elven")
+                .required(false)
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("fantasy")
+                .short('f')
+                .long("fantasy")
+                .required(false)
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("goblin")
+                .short('g')
+                .long("goblin")
+                .required(false)
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("roman")
+                .short('r')
+                .long("roman")
+                .required(false)
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("curse")
+                .short('c')
+                .long("curse")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("[UNDER CONSTRUCTION]"),
+        )
+        .arg(
+            Arg::new("flipmode")
+                .short('x')
+                .long("flipmode")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("Flipmode is the greatest! (Random language)"),
+        )
+        .arg(
+            Arg::new("raw")
+                .long("raw")
+                .required(false)
+                .value_name("FILE")
+                .help("Reads in a raw language file"),
+        )
+        .arg_required_else_help(true)
+}
+
+fn generate(matches: &ArgMatches) -> String {
+    if matches.get_flag("elven") {
+        generate_name(&RNG::new(&Language::Elven).unwrap())
+    } else if matches.get_flag("fantasy") {
+        generate_name(&RNG::new(&Language::Fantasy).unwrap())
+    } else if matches.get_flag("goblin") {
+        generate_name(&RNG::new(&Language::Goblin).unwrap())
+    } else if matches.get_flag("roman") {
+        generate_name(&RNG::new(&Language::Roman).unwrap())
+    } else if matches.get_flag("curse") {
+        RNG::new(&Language::Curse).unwrap().generate_short()
+    } else if matches.get_flag("flipmode") {
+        let my_dialect_type: Language = rand::random();
+        generate_name(&RNG::new(&my_dialect_type).unwrap())
     } else {
-        generate_name(rng)
+        let raw = matches.get_one::<String>("raw").unwrap();
+        let result = RNG::new_from_file(raw.clone());
+
+        match result {
+            Ok(rng) => generate_name(&rng),
+            Err(_) => "INVALID FILE".to_string(),
+        }
     }
 }
 
-fn dump(rng: rnglib::RNG) {
-    for s in rng.syllables().into_iter() {
-        println!("{}", s.to_string())
-    }
-}
-
-fn curse(rng: rnglib::RNG) {
-    let word = rng.generate_short();
-    println!("{}", word)
-}
-
-fn generate_name(rng: rnglib::RNG) {
+fn generate_name(rng: &rnglib::RNG) -> String {
     let first_name = rng.generate_name();
     let last_name = rng.generate_name();
 
-    println!("{}: {} {}", rng.name, first_name, last_name)
+    format!("{}: {} {}", rng.name, first_name, last_name)
 }
 
-fn determine_language(matches: &ArgMatches) -> RNG {
-    if matches.is_present("raw") {
-        RNG::new_from_file(matches.value_of("raw").unwrap().to_string()).unwrap()
-    } else if matches.is_present("elven") {
-        RNG::new(&Language::Elven).unwrap()
-    } else if matches.is_present("fantasy") {
-        RNG::new(&Language::Fantasy).unwrap()
-    } else if matches.is_present("goblin") {
-        RNG::new(&Language::Goblin).unwrap()
-    } else if matches.is_present("roman") {
-        RNG::new(&Language::Roman).unwrap()
-    } else if matches.is_present("demonic") {
-        RNG::new(&Language::Demonic).unwrap_err()
-    } else if matches.is_present("curse") {
-        RNG::new(&Language::Curse).unwrap()
-    } else {
-        let my_dialect_type: Language = rand::random();
-        RNG::new(&my_dialect_type).unwrap()
-    }
-}
-
-fn get_matches() -> ArgMatches {
-    App::new(crate_name!())
-        .version(crate_version!())
-        .author(crate_authors!())
-        .license(crate_license!())
-        .about(PKG_DESCRIPTION)
-        .arg("-c, --curse 'Use the Curse language [UNDER CONSTRUCTION]'")
-        .arg("-d, --demonic 'Use the Demonic language [UNDER CONSTRUCTION]'")
-        .arg("-e, --elven 'Use the Elven language'")
-        .arg("-f, --fantasy 'Use the Fantasy language'")
-        .arg("-g, --goblin 'Use the Goblin language'")
-        .arg("-r, --roman 'Use the Roman language'")
-        .arg("--dump 'Print out the raw lanuage file'")
-        .arg("-x, --flipmode 'Use a random language'")
-        .arg("--raw=[FILE] 'reads in a raw language file'")
-        .get_matches()
+#[test]
+fn verify_cmd() {
+    cmd().debug_assert();
 }

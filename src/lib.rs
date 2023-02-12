@@ -1,3 +1,5 @@
+#![warn(clippy::pedantic)]
+
 mod rng_joiner;
 mod rng_syllable;
 mod rng_syllables;
@@ -45,15 +47,22 @@ pub struct RNG {
 }
 
 impl RNG {
+    /// # Errors
+    ///
+    /// Errors out if the language file is not able to be processed correctly.
     pub fn new(language: &Language) -> Result<RNG, RNG> {
         let rng = RNG::process(language);
 
-        match rng.is_valid() {
-            true => Ok(rng),
-            false => Err(rng),
+        if rng.is_valid() {
+            Ok(rng)
+        } else {
+            Err(rng)
         }
     }
 
+    /// # Errors
+    ///
+    /// Errors out if the language file is not able to be processed correctly.
     pub fn new_from_file(filename: String) -> Result<RNG> {
         RNG::process_file(filename)
     }
@@ -95,6 +104,7 @@ impl RNG {
         rng
     }
 
+    #[must_use]
     pub fn empty(name: String) -> RNG {
         RNG {
             name,
@@ -105,6 +115,7 @@ impl RNG {
         }
     }
 
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.name.is_empty()
             && self.prefixes.is_empty()
@@ -113,6 +124,7 @@ impl RNG {
             && self.bad_syllables.is_empty()
     }
 
+    #[must_use]
     pub fn is_valid(&self) -> bool {
         !self.name.is_empty()
             && !self.prefixes.is_empty()
@@ -121,27 +133,39 @@ impl RNG {
             && self.bad_syllables.is_empty()
     }
 
+    /// # Panics
+    ///
+    /// Errors out if the language file is not able to be processed correctly.
+    #[must_use]
     pub fn generate(language: &Language) -> RNG {
         RNG::new(language).unwrap()
     }
 
+    #[must_use]
     pub fn generate_name(&self) -> String {
         self.generate_name_by_count(NORMAL_WEIGHT.gen())
     }
 
+    #[must_use]
     pub fn generate_short(&self) -> String {
         self.generate_name_by_count(SHORT_WEIGHT.gen())
     }
 
+    #[must_use]
     pub fn generate_name_by_count(&self, count: u8) -> String {
         let name = self.generate_syllables_by_count(count).collapse();
         titlecase(name.as_str())
     }
 
+    #[must_use]
     pub fn generate_syllables(&self) -> Syllables {
         self.generate_syllables_by_count(NORMAL_WEIGHT.gen())
     }
 
+    /// # Panics
+    ///
+    /// Errors out if the language file is not able to be processed correctly.
+    #[must_use]
     pub fn generate_syllables_by_count(&self, mut syllable_count: u8) -> Syllables {
         let mut syllables = Syllables::new();
         let mut last = self.prefixes.get_random().unwrap().clone();
@@ -161,6 +185,7 @@ impl RNG {
         syllables
     }
 
+    #[must_use]
     pub fn syllables(&self) -> Syllables {
         let v = [
             self.prefixes.all().clone(),
@@ -509,7 +534,7 @@ pub enum Language {
 
 impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
@@ -526,10 +551,12 @@ impl Distribution<Language> for Standard {
 }
 
 impl Language {
+    #[must_use]
     pub fn get_filename(&self) -> String {
-        format!("{}.txt", self.to_string())
+        format!("{self}.txt")
     }
 
+    #[must_use]
     pub fn get_path(&self) -> String {
         format!("./src/languages/{}", self.get_filename())
     }

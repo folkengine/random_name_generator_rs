@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/random_name_generator?style=flat-square)](https://crates.io/crates/random_name_generator)
 [![Crates.io](https://img.shields.io/crates/d/random_name_generator?style=flat-square)](https://crates.io/crates/random_name_generator)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/folkengine/random_name_generator_rs/Rust)](https://github.com/folkengine/random_name_generator_rs/actions/workflows/rust.yml?query=branch%3Amaster)
+[![Build and Test](https://github.com/folkengine/random_name_generator_rs/actions/workflows/CI.yaml/badge.svg)](https://github.com/folkengine/random_name_generator_rs/actions/workflows/CI.yaml)
 
 This is a rust port of the [Ruby port](https://github.com/folkengine/random_name_generator)
 of the [Java Random Name Generator library](https://github.com/folkengine/java-random-name-generator).

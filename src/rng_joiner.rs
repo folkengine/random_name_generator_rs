@@ -3,11 +3,11 @@ use std::fmt;
 
 bitflags! {
     pub struct Joiner: u8 {
-        const NONE           = 0b00000000;
-        const SOME           = 0b00000001;
-        const VOWEL          = 0b00000010;
-        const ONLY_VOWEL     = 0b00000100;
-        const ONLY_CONSONANT = 0b00001000;
+        const NONE           = 0b0000_0000;
+        const SOME           = 0b0000_0001;
+        const VOWEL          = 0b0000_0010;
+        const ONLY_VOWEL     = 0b0000_0100;
+        const ONLY_CONSONANT = 0b0000_1000;
     }
 }
 
@@ -26,7 +26,7 @@ bitflags! {
 ///
 impl Joiner {
     #[allow(dead_code)]
-    pub fn joins(&self, to: &Joiner) -> bool {
+    pub fn joins(self, to: Joiner) -> bool {
         debug!("{}.joins({})", self, to);
 
         let can_to = self.joins_to(to);
@@ -38,7 +38,7 @@ impl Joiner {
 
     #[allow(clippy::needless_bool)]
     #[allow(clippy::if_same_then_else)]
-    fn joins_to(&self, to: &Joiner) -> bool {
+    fn joins_to(self, to: Joiner) -> bool {
         if to.is_empty() {
             trace!("to is empty empty");
             false
@@ -59,25 +59,25 @@ impl Joiner {
         // }
     }
 
-    pub fn value_next(&self) -> String {
+    pub fn value_next(self) -> String {
         debug!("value_next {:b})", self);
         if self.contains(Joiner::ONLY_CONSONANT) {
             " +c".to_string()
         } else if self.contains(Joiner::ONLY_VOWEL) {
             " +v".to_string()
         } else {
-            "".to_string()
+            String::new()
         }
     }
 
-    pub fn value_previous(&self) -> String {
+    pub fn value_previous(self) -> String {
         debug!("value_previous {:b}", self);
         if self.contains(Joiner::ONLY_CONSONANT) {
             " -c".to_string()
         } else if self.contains(Joiner::ONLY_VOWEL) {
             " -v".to_string()
         } else {
-            "".to_string()
+            String::new()
         }
     }
 }
@@ -151,7 +151,7 @@ mod joiner_tests {
         let j = Joiner::SOME;
         let t = Joiner::SOME | Joiner::ONLY_VOWEL;
 
-        assert!(!j.joins(&t));
+        assert!(!j.joins(t));
     }
 
     #[rstest(j, input,
@@ -173,7 +173,7 @@ mod joiner_tests {
         case(Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT, Joiner::SOME | Joiner::ONLY_VOWEL),                 // 11 to 5
     )]
     fn joins_matrix(j: Joiner, input: Joiner) {
-        assert!(j.joins(&input));
+        assert!(j.joins(input));
     }
 
     #[rstest(j, input,
@@ -198,14 +198,14 @@ mod joiner_tests {
         case(Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT, Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT), // 11 to 11
     )]
     fn joins_matrix_neg(j: Joiner, input: Joiner) {
-        assert!(!j.joins(&input));
+        assert!(!j.joins(input));
     }
 
     #[rstest(input, case(Joiner::NONE), case(Joiner::SOME))]
     fn joins__only_vowel_ne(input: Joiner) {
         let j = Joiner::SOME | Joiner::ONLY_VOWEL;
 
-        assert!(!j.joins(&input));
+        assert!(!j.joins(input));
     }
 
     #[rstest(input,
@@ -215,7 +215,7 @@ mod joiner_tests {
     fn joins__only_consonant(input: Joiner) {
         let j = Joiner::SOME | Joiner::ONLY_CONSONANT;
 
-        assert!(j.joins(&input));
+        assert!(j.joins(input));
     }
 
     #[rstest(input,
@@ -225,7 +225,7 @@ mod joiner_tests {
     fn joins__only_consonant_ne(input: Joiner) {
         let j = Joiner::SOME | Joiner::ONLY_CONSONANT;
 
-        assert!(!j.joins(&input));
+        assert!(!j.joins(input));
     }
 
     #[test]
@@ -233,7 +233,7 @@ mod joiner_tests {
         let j = Joiner::SOME | Joiner::ONLY_VOWEL;
         let input = Joiner::SOME | Joiner::VOWEL;
 
-        assert!(j.joins(&input));
+        assert!(j.joins(input));
     }
 
     #[test]
@@ -241,7 +241,7 @@ mod joiner_tests {
         let j = Joiner::SOME | Joiner::VOWEL;
         let input = Joiner::SOME | Joiner::ONLY_VOWEL;
 
-        assert!(j.joins_to(&input));
+        assert!(j.joins_to(input));
     }
 
     #[rstest(input,
@@ -251,7 +251,7 @@ mod joiner_tests {
     fn joins__some_ne(input: Joiner) {
         let j = Joiner::SOME;
 
-        assert!(!j.joins(&input));
+        assert!(!j.joins(input));
     }
 
     #[rstest(input,
@@ -267,7 +267,7 @@ mod joiner_tests {
     fn joins__none_ne(input: Joiner) {
         let j = Joiner::NONE;
 
-        assert!(!j.joins(&input));
+        assert!(!j.joins(input));
     }
 
     #[test]
@@ -291,7 +291,7 @@ mod joiner_tests {
         let j = Joiner::VOWEL;
         let input = Joiner::SOME | Joiner::VOWEL;
 
-        assert!(!j.joins(&input));
+        assert!(!j.joins(input));
     }
 
     /// delete me when all are covered
@@ -300,13 +300,13 @@ mod joiner_tests {
         let j = Joiner::SOME;
         let input = Joiner::VOWEL;
 
-        assert!(!j.joins(&input));
+        assert!(!j.joins(input));
     }
 
     #[test]
     fn joint__none() {
         let j = Joiner::NONE;
 
-        assert!(!j.joins(&Joiner::SOME));
+        assert!(!j.joins(Joiner::SOME));
     }
 }
