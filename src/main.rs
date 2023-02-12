@@ -76,9 +76,17 @@ fn generate(matches: &ArgMatches) -> String {
         generate_name(&RNG::new(&Language::Roman).unwrap())
     } else if matches.get_flag("curse") {
         RNG::new(&Language::Curse).unwrap().generate_short()
-    } else {
+    } else if matches.get_flag("flipmode") {
         let my_dialect_type: Language = rand::random();
         generate_name(&RNG::new(&my_dialect_type).unwrap())
+    } else {
+        let raw = matches.get_one::<String>("raw").unwrap();
+        let result = RNG::new_from_file(raw.clone());
+
+        match result {
+            Ok(rng) => generate_name(&rng),
+            Err(_) => "INVALID FILE".to_string()
+        }
     }
 }
 
