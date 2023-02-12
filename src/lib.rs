@@ -223,24 +223,17 @@ mod lib_tests {
 
     #[test]
     fn try_from() {
-        let rng = RNG::try_from(&Language::Fantasy);
+        let rng = RNG::try_from(&Language::Fantasy).unwrap();
 
-        assert!(rng.is_ok());
+        assert_eq!(rng.name, Language::Fantasy.to_string());
+        assert!(rng.bad_syllables.len() < 1);
+        assert!(rng.prefixes.len() > 0);
+        assert!(rng.centers.len() > 0);
+        assert!(rng.suffixes.len() > 0);
     }
 
     #[test]
-    fn new() {
-        let result = RNG::try_from(&Language::Fantasy).unwrap();
-
-        assert_eq!(result.name, Language::Fantasy.to_string());
-        assert!(result.bad_syllables.len() < 1);
-        assert!(result.prefixes.len() > 0);
-        assert!(result.centers.len() > 0);
-        assert!(result.suffixes.len() > 0);
-    }
-
-    #[test]
-    fn new__demonic() {
+    fn try_from__demonic() {
         let result = RNG::try_from(&Language::Demonic);
 
         assert!(result.is_err());
@@ -248,7 +241,7 @@ mod lib_tests {
     }
 
     #[test]
-    fn new__goblin() {
+    fn try_from__goblin() {
         let result = RNG::try_from(&Language::Goblin).unwrap();
 
         assert_eq!(result.name, Language::Goblin.to_string());
@@ -259,7 +252,7 @@ mod lib_tests {
     }
 
     #[test]
-    fn new__roman() {
+    fn try_from__roman() {
         let result = RNG::try_from(&Language::Roman).unwrap();
 
         assert_eq!(result.name, Language::Roman.to_string());
