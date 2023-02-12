@@ -99,6 +99,7 @@ impl RNG {
         let mut rng = RNG::empty(name);
 
         for line in lines.lines() {
+            println!("{line}");
             if let Ok(sy) = Syllable::new(line) {
                 match sy.classification {
                     Classification::Prefix => rng.prefixes.add(sy),
@@ -263,6 +264,17 @@ mod lib_tests {
     }
 
     #[test]
+    fn try_from__fantasy_russian() {
+        let result = RNG::try_from(&Language::FantasyRU).unwrap();
+
+        assert_eq!(result.name, Language::Roman.to_string());
+        assert!(result.bad_syllables.len() < 1);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
+    }
+
+    #[test]
     fn new_from_file() {
         let filename = "src/languages/Test-micro.txt";
 
@@ -279,7 +291,7 @@ mod lib_tests {
 
     #[test]
     fn new_from_file__russian_goblin() {
-        let filename = "src/languages/Goblin-ru.txt";
+        let filename = "src/languages/GoblinRU.txt";
 
         let rng = RNG::new_from_file(filename.to_string());
         let result = rng.as_ref().unwrap();
@@ -317,8 +329,23 @@ mod lib_tests {
     }
 
     #[test]
+    fn process_file__russian_fantasy() {
+        let filename = "src/languages/FantasyRU.txt";
+
+        let rng = RNG::process_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 19);
+        assert_eq!(result.centers.len(), 13);
+        assert_eq!(result.suffixes.len(), 16);
+    }
+
+    #[test]
     fn process_file__russian_goblin() {
-        let filename = "src/languages/Goblin-ru.txt";
+        let filename = "src/languages/GoblinRU.txt";
 
         let rng = RNG::process_file(filename.to_string());
         let result = rng.as_ref().unwrap();
@@ -343,7 +370,7 @@ mod lib_tests {
     #[test]
     fn classify() {
         let raw = "-ваа +c\n-боо +c\n-гар\n-бар\n-дар\n-жар\n-вар\n-кра\n-гра\n-дра\n-зра\n-гоб\n-доб\n-роб\n-фоб\n-зоб\n-раг\n-наг\n-даг\nбра\nга\nда\nдо\nго\nзе\nша\nназ\nзуб\nзу\nна\nгор\nбу +c\n+быр\n+гыр\n+д";
-        let filename = "src/languages/goblin-ru.txt".to_string();
+        let filename = "src/languages/goblinRU.txt".to_string();
 
         let classified = RNG::classify(raw, filename.clone());
 
@@ -352,6 +379,21 @@ mod lib_tests {
         assert_eq!(classified.prefixes.len(), 19);
         assert_eq!(classified.centers.len(), 13);
         assert_eq!(classified.suffixes.len(), 3);
+    }
+
+    #[test]
+    #[ignore]
+    fn classify__fantasy_russian() {
+        let raw = "-а +c\n-аб\n-ак\n-ац\n-ад\n-аф\n-ам\n-ан\n-ап\n-ар\n-ас\n-ат\n-ав\n-аз\n-аэль\n-аэл\n-ао\n-аэр\n-аш\n-арш +v";
+        let filename = "src/languages/goblinRU.txt".to_string();
+
+        let classified = RNG::classify(raw, filename.clone());
+
+        assert_eq!(classified.name, filename);
+        assert_eq!(classified.bad_syllables.len(), 0);
+        // assert_eq!(classified.prefixes.len(), 19);
+        // assert_eq!(classified.centers.len(), 13);
+        // assert_eq!(classified.suffixes.len(), 3);
     }
 
     fn create_min() -> RNG {
@@ -575,9 +617,13 @@ pub enum Language {
     Curse,
     Demonic,
     Elven,
+    ElvenRU,
     Fantasy,
+    FantasyRU,
     Goblin,
+    GoblinRU,
     Roman,
+    RomanRU,
 }
 
 impl fmt::Display for Language {

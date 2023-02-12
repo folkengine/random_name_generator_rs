@@ -60,6 +60,13 @@ fn cmd() -> clap::Command {
                 .help("Flipmode is the greatest! (Random language)"),
         )
         .arg(
+            Arg::new("russian")
+                .long("russian")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("Use Russian language file, if available"),
+        )
+        .arg(
             Arg::new("raw")
                 .long("raw")
                 .required(false)
@@ -71,13 +78,29 @@ fn cmd() -> clap::Command {
 
 fn generate(matches: &ArgMatches) -> Result<String, RNGError> {
     if matches.get_flag("elven") {
-        Ok(generate_name(&RNG::try_from(&Language::Elven)?))
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::ElvenRU)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Elven)?))
+        }
     } else if matches.get_flag("fantasy") {
-        Ok(generate_name(&RNG::try_from(&Language::Fantasy)?))
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::FantasyRU)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Fantasy)?))
+        }
     } else if matches.get_flag("goblin") {
-        Ok(generate_name(&RNG::try_from(&Language::Goblin)?))
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::GoblinRU)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Goblin)?))
+        }
     } else if matches.get_flag("roman") {
-        Ok(generate_name(&RNG::try_from(&Language::Roman)?))
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::RomanRU)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Roman)?))
+        }
     } else if matches.get_flag("curse") {
         Ok(RNG::try_from(&Language::Curse)?.generate_short())
     } else if matches.get_flag("flipmode") {
