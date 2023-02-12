@@ -278,6 +278,21 @@ mod lib_tests {
     }
 
     #[test]
+    fn new_from_file__russian_goblin() {
+        let filename = "src/languages/Goblin-ru.txt";
+
+        let rng = RNG::new_from_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 19);
+        assert_eq!(result.centers.len(), 13);
+        assert_eq!(result.suffixes.len(), 16);
+    }
+
+    #[test]
     fn new_from_file__with_error() {
         let filename = "src/languages/none.txt";
 
@@ -302,12 +317,41 @@ mod lib_tests {
     }
 
     #[test]
+    fn process_file__russian_goblin() {
+        let filename = "src/languages/Goblin-ru.txt";
+
+        let rng = RNG::process_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 19);
+        assert_eq!(result.centers.len(), 13);
+        assert_eq!(result.suffixes.len(), 16);
+    }
+
+    #[test]
     fn process_file__with_error() {
         let filename = "src/languages/none.txt";
 
         let result = RNG::process_file(filename.to_string());
 
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn classify() {
+        let raw = "-ваа +c\n-боо +c\n-гар\n-бар\n-дар\n-жар\n-вар\n-кра\n-гра\n-дра\n-зра\n-гоб\n-доб\n-роб\n-фоб\n-зоб\n-раг\n-наг\n-даг\nбра\nга\nда\nдо\nго\nзе\nша\nназ\nзуб\nзу\nна\nгор\nбу +c\n+быр\n+гыр\n+д";
+        let filename = "src/languages/goblin-ru.txt".to_string();
+
+        let classified = RNG::classify(raw, filename.clone());
+
+        assert_eq!(classified.name, filename);
+        assert_eq!(classified.bad_syllables.len(), 0);
+        assert_eq!(classified.prefixes.len(), 19);
+        assert_eq!(classified.centers.len(), 13);
+        assert_eq!(classified.suffixes.len(), 3);
     }
 
     fn create_min() -> RNG {
