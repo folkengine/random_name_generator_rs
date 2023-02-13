@@ -9,12 +9,15 @@ This is a rust port of the [Ruby port](https://github.com/folkengine/random_name
 of the [Java Random Name Generator library](https://github.com/folkengine/java-random-name-generator).
 
 It generates it's results based upon which [language file](src/languages) is specified.
-Currently, the following are supported:
+Currently, the following are supported in both English and Russian:
 
 * Elven
 * Fantasy
 * Goblin
 * Roman
+
+_Thanks to [Zhumatiy Sergey](https://github.com/zhum), for his contribution of the Russian versions of the language
+files, originally contributed to the [Ruby version](https://github.com/folkengine/random_name_generator) of this library!_
 
 The following are in progress:
 
@@ -99,6 +102,22 @@ $> cargo run -- -g
 Goblin: zradogul bargodul
 ```
 
+It also now supports Russian language files:
+
+```
+❯ cargo run -- --roman --russian
+Римский: Дафрибуцио Дубенус
+
+❯ cargo run -- --goblin --russian
+Гоблин: Краог Зрашагул
+
+❯ cargo run -- --fantasy --russian
+Фантазия: Валорнен Гарлакот
+
+❯ cargo run -- --elven --russian
+Эльфийский: Латэнаэлмасан Шелиан
+```
+
 From the binary:
 
 ```
@@ -123,7 +142,6 @@ Elven: daedar latherdre
 
 ## TODO
 
-* Add in Russian support available in the Ruby version.
 * Finish Demonic
 
 ## Further Interest
