@@ -1,12 +1,16 @@
 use clap::{command, Arg, ArgAction, ArgMatches};
-use rnglib::{Language, RNG};
+use rnglib::{Language, RNGError, RNG};
 
 fn main() {
     let matches = cmd().get_matches();
 
     let name = generate(&matches);
 
-    println!("{name}");
+    if name.is_ok() {
+        println!("{}", name.unwrap());
+    } else {
+        println!("{:?}", name.unwrap_err());
+    }
 }
 
 fn cmd() -> clap::Command {
@@ -56,6 +60,13 @@ fn cmd() -> clap::Command {
                 .help("Flipmode is the greatest! (Random language)"),
         )
         .arg(
+            Arg::new("russian")
+                .long("russian")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("Use Russian language file, if available"),
+        )
+        .arg(
             Arg::new("raw")
                 .long("raw")
                 .required(false)
@@ -65,27 +76,43 @@ fn cmd() -> clap::Command {
         .arg_required_else_help(true)
 }
 
-fn generate(matches: &ArgMatches) -> String {
+fn generate(matches: &ArgMatches) -> Result<String, RNGError> {
     if matches.get_flag("elven") {
-        generate_name(&RNG::new(&Language::Elven).unwrap())
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::Эльфийский)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Elven)?))
+        }
     } else if matches.get_flag("fantasy") {
-        generate_name(&RNG::new(&Language::Fantasy).unwrap())
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::Фантазия)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Fantasy)?))
+        }
     } else if matches.get_flag("goblin") {
-        generate_name(&RNG::new(&Language::Goblin).unwrap())
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::Гоблин)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Goblin)?))
+        }
     } else if matches.get_flag("roman") {
-        generate_name(&RNG::new(&Language::Roman).unwrap())
+        if matches.get_flag("russian") {
+            Ok(generate_name(&RNG::try_from(&Language::Римский)?))
+        } else {
+            Ok(generate_name(&RNG::try_from(&Language::Roman)?))
+        }
     } else if matches.get_flag("curse") {
-        RNG::new(&Language::Curse).unwrap().generate_short()
+        Ok(RNG::try_from(&Language::Curse)?.generate_short())
     } else if matches.get_flag("flipmode") {
         let my_dialect_type: Language = rand::random();
-        generate_name(&RNG::new(&my_dialect_type).unwrap())
+        Ok(generate_name(&RNG::try_from(&my_dialect_type)?))
     } else {
         let raw = matches.get_one::<String>("raw").unwrap();
         let result = RNG::new_from_file(raw.clone());
 
         match result {
-            Ok(rng) => generate_name(&rng),
-            Err(_) => "INVALID FILE".to_string(),
+            Ok(rng) => Ok(generate_name(&rng)),
+            Err(_) => Err(RNGError::InvalidLanguageFile),
         }
     }
 }

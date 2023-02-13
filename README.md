@@ -9,12 +9,15 @@ This is a rust port of the [Ruby port](https://github.com/folkengine/random_name
 of the [Java Random Name Generator library](https://github.com/folkengine/java-random-name-generator).
 
 It generates it's results based upon which [language file](src/languages) is specified.
-Currently, the following are supported:
+Currently, the following are supported in both English and Russian:
 
 * Elven
 * Fantasy
 * Goblin
 * Roman
+
+_Thanks to [Zhumatiy Sergey](https://github.com/zhum), for his contribution of the Russian versions of the language
+files, originally in the [Ruby version](https://github.com/folkengine/random_name_generator) of this library!_
 
 The following are in progress:
 
@@ -27,7 +30,7 @@ The following are in progress:
 use rnglib::{RNG, Language};
 
 fn main() {
-    let rng = RNG::new(&Language::Elven).unwrap();
+    let rng = RNG::try_from(&Language::Elven).unwrap();
     
     let first_name = rng.generate_name();
     let last_name = rng.generate_name();
@@ -42,7 +45,7 @@ It is possible to control the number of syllables for a generated name:
 use rnglib::{RNG, Language};
 
 fn main() {
-    let rng = RNG::new(&Language::Fantasy).unwrap();
+    let rng = RNG::try_from(&Language::Fantasy).unwrap();
     let name = rng.generate_name_by_count(3);
     println!("{}: {}", rng.name, name)
 }
@@ -73,15 +76,17 @@ Random Name Generator
 Usage: rng [OPTIONS]
 
 Options:
-  -e, --elven
-  -f, --fantasy
-  -g, --goblin
-  -r, --roman
+  -e, --elven       
+  -f, --fantasy     
+  -g, --goblin      
+  -r, --roman       
   -c, --curse       [UNDER CONSTRUCTION]
   -x, --flipmode    Flipmode is the greatest! (Random language)
+      --russian     Use Russian language file, if available
       --raw <FILE>  Reads in a raw language file
   -h, --help        Print help
   -V, --version     Print version
+
 ```
 
 or from the binary:
@@ -97,6 +102,22 @@ From cargo:
 ```
 $> cargo run -- -g
 Goblin: zradogul bargodul
+```
+
+It also now supports Russian language files:
+
+```
+❯ cargo run -- --roman --russian
+Римский: Дафрибуцио Дубенус
+
+❯ cargo run -- --goblin --russian
+Гоблин: Краог Зрашагул
+
+❯ cargo run -- --fantasy --russian
+Фантазия: Валорнен Гарлакот
+
+❯ cargo run -- --elven --russian
+Эльфийский: Латэнаэлмасан Шелиан
 ```
 
 From the binary:
@@ -123,7 +144,6 @@ Elven: daedar latherdre
 
 ## TODO
 
-* Add in Russian support available in the Ruby version.
 * Finish Demonic
 
 ## Further Interest

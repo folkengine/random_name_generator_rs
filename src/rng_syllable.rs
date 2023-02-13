@@ -19,7 +19,7 @@ static VOWELS: [char; 54] = [
 lazy_static! {
     // https://regex101.com/r/UZ4REr/1
     static ref FULL_RE: Regex =
-        Regex::new(r"^([-+]{0,1})([A-Za-z]+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
+        Regex::new(r"^([-+]{0,1})([\p{Cyrillic}\p{Greek}\p{Arabic}\p{Hiragana}A-Za-z]+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
             .unwrap();
     static ref PREFIX_RE: Regex = Regex::new(r"(.+)(\-[vcVC]).*").unwrap();
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
@@ -204,6 +204,13 @@ impl Classification {
 mod syllable_tests {
     use super::*;
     use rstest::rstest;
+
+    #[test]
+    fn new() {
+        let syllable = Syllable::new("-ваа +c");
+
+        assert!(syllable.is_ok());
+    }
 
     #[rstest(from, to, from_i, to_i,
         case(Syllable::new("ch").unwrap(), Syllable::new("ch").unwrap(), 1, 1),

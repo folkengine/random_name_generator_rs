@@ -9,6 +9,13 @@ mod rng_weighted_rnd;
 extern crate bitflags;
 extern crate log;
 
+#[derive(Debug, Eq, PartialEq)]
+pub enum RNGError {
+    GenerationError,
+    InvalidLanguageFile,
+    ReadError,
+}
+
 use anyhow::Result;
 use rand::{
     distributions::{Distribution, Standard},
@@ -29,7 +36,7 @@ use crate::rng_weighted_rnd::{NORMAL_WEIGHT, SHORT_WEIGHT};
 /// ```
 /// use rnglib::{RNG, Language};
 ///
-/// let rng = RNG::new(&Language::Elven).unwrap();
+/// let rng = RNG::try_from(&Language::Elven).unwrap();
 ///
 /// let first_name = rng.generate_name();
 /// let last_name = rng.generate_name();
@@ -50,6 +57,7 @@ impl RNG {
     /// # Errors
     ///
     /// Errors out if the language file is not able to be processed correctly.
+    #[deprecated(since = "0.2.0", note = "Use try_from instead")]
     pub fn new(language: &Language) -> Result<RNG, RNG> {
         let rng = RNG::process(language);
 
@@ -133,14 +141,6 @@ impl RNG {
             && self.bad_syllables.is_empty()
     }
 
-    /// # Panics
-    ///
-    /// Errors out if the language file is not able to be processed correctly.
-    #[must_use]
-    pub fn generate(language: &Language) -> RNG {
-        RNG::new(language).unwrap()
-    }
-
     #[must_use]
     pub fn generate_name(&self) -> String {
         self.generate_name_by_count(NORMAL_WEIGHT.gen())
@@ -197,6 +197,20 @@ impl RNG {
     }
 }
 
+impl TryFrom<&Language> for RNG {
+    type Error = RNGError;
+
+    fn try_from(language: &Language) -> std::result::Result<Self, Self::Error> {
+        let rng = RNG::process(language);
+
+        if rng.is_valid() {
+            Ok(rng)
+        } else {
+            Err(RNGError::InvalidLanguageFile)
+        }
+    }
+}
+
 #[derive(RustEmbed)]
 #[folder = "src/languages/"]
 struct Asset;
@@ -208,30 +222,27 @@ mod lib_tests {
     use proptest::prelude::*;
 
     #[test]
-    fn new() {
-        let result = RNG::new(&Language::Fantasy).unwrap();
+    fn try_from() {
+        let rng = RNG::try_from(&Language::Fantasy).unwrap();
 
-        assert_eq!(result.name, Language::Fantasy.to_string());
-        assert!(result.bad_syllables.len() < 1);
-        assert!(result.prefixes.len() > 0);
-        assert!(result.centers.len() > 0);
-        assert!(result.suffixes.len() > 0);
+        assert_eq!(rng.name, Language::Fantasy.to_string());
+        assert!(rng.bad_syllables.len() < 1);
+        assert!(rng.prefixes.len() > 0);
+        assert!(rng.centers.len() > 0);
+        assert!(rng.suffixes.len() > 0);
     }
 
     #[test]
-    fn new__demonic() {
-        let result = RNG::new(&Language::Demonic).unwrap_err();
+    fn try_from__demonic() {
+        let result = RNG::try_from(&Language::Demonic);
 
-        assert_eq!(result.name, Language::Demonic.to_string());
-        assert!(result.bad_syllables.len() > 0);
-        assert!(result.prefixes.len() > 0);
-        assert!(result.centers.len() > 0);
-        assert!(result.suffixes.len() > 0);
+        assert!(result.is_err());
+        assert_eq!(RNGError::InvalidLanguageFile, result.unwrap_err());
     }
 
     #[test]
-    fn new__goblin() {
-        let result = RNG::new(&Language::Goblin).unwrap();
+    fn try_from__goblin() {
+        let result = RNG::try_from(&Language::Goblin).unwrap();
 
         assert_eq!(result.name, Language::Goblin.to_string());
         assert!(result.bad_syllables.len() < 1);
@@ -241,10 +252,21 @@ mod lib_tests {
     }
 
     #[test]
-    fn new__roman() {
-        let result = RNG::new(&Language::Roman).unwrap();
+    fn try_from__roman() {
+        let result = RNG::try_from(&Language::Roman).unwrap();
 
         assert_eq!(result.name, Language::Roman.to_string());
+        assert!(result.bad_syllables.len() < 1);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
+    }
+
+    #[test]
+    fn try_from__fantasy_russian() {
+        let result = RNG::try_from(&Language::Фантазия).unwrap();
+
+        assert_eq!(result.name, Language::Фантазия.to_string());
         assert!(result.bad_syllables.len() < 1);
         assert!(result.prefixes.len() > 0);
         assert!(result.centers.len() > 0);
@@ -264,6 +286,21 @@ mod lib_tests {
         assert_eq!(result.prefixes.len(), 1);
         assert_eq!(result.centers.len(), 1);
         assert_eq!(result.suffixes.len(), 1);
+    }
+
+    #[test]
+    fn new_from_file__russian_goblin() {
+        let filename = "src/languages/Гоблин.txt";
+
+        let rng = RNG::new_from_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 19);
+        assert_eq!(result.centers.len(), 13);
+        assert_eq!(result.suffixes.len(), 16);
     }
 
     #[test]
@@ -291,12 +328,70 @@ mod lib_tests {
     }
 
     #[test]
+    fn process_file__russian_fantasy() {
+        let filename = "src/languages/Фантазия.txt";
+
+        let rng = RNG::process_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 180);
+        assert_eq!(result.centers.len(), 157);
+        assert_eq!(result.suffixes.len(), 19);
+    }
+
+    #[test]
+    fn process_file__russian_goblin() {
+        let filename = "src/languages/Гоблин.txt";
+
+        let rng = RNG::process_file(filename.to_string());
+        let result = rng.as_ref().unwrap();
+
+        assert!(!rng.is_err());
+        assert_eq!(result.name, filename.to_string());
+        assert_eq!(result.bad_syllables.len(), 0);
+        assert_eq!(result.prefixes.len(), 19);
+        assert_eq!(result.centers.len(), 13);
+        assert_eq!(result.suffixes.len(), 16);
+    }
+
+    #[test]
     fn process_file__with_error() {
         let filename = "src/languages/none.txt";
 
         let result = RNG::process_file(filename.to_string());
 
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn classify() {
+        let raw = "-ваа +c\n-боо +c\n-гар\n-бар\n-дар\n-жар\n-вар\n-кра\n-гра\n-дра\n-зра\n-гоб\n-доб\n-роб\n-фоб\n-зоб\n-раг\n-наг\n-даг\nбра\nга\nда\nдо\nго\nзе\nша\nназ\nзуб\nзу\nна\nгор\nбу +c\n+быр\n+гыр\n+д";
+        let filename = "src/languages/goblinRU.txt".to_string();
+
+        let classified = RNG::classify(raw, filename.clone());
+
+        assert_eq!(classified.name, filename);
+        assert_eq!(classified.bad_syllables.len(), 0);
+        assert_eq!(classified.prefixes.len(), 19);
+        assert_eq!(classified.centers.len(), 13);
+        assert_eq!(classified.suffixes.len(), 3);
+    }
+
+    #[test]
+    fn classify__fantasy_russian() {
+        let raw = "-а +c\n-аб\n-ак\n-ац\n-ад\n-аф\n-ам\n-ан\n-ап\n-ар\n-ас\n-ат\n-ав\n-аз\n-аэль\n-аэл\n-ао\n-аэр\n-аш\n-арш +v";
+        let filename = "src/languages/goblinRU.txt".to_string();
+
+        let classified = RNG::classify(raw, filename.clone());
+
+        assert_eq!(classified.name, filename);
+        assert_eq!(classified.bad_syllables.len(), 0);
+        // assert_eq!(classified.prefixes.len(), 19);
+        // assert_eq!(classified.centers.len(), 13);
+        // assert_eq!(classified.suffixes.len(), 3);
     }
 
     fn create_min() -> RNG {
@@ -355,7 +450,7 @@ mod lib_tests {
 
     #[test]
     fn generate_syllables() {
-        let rng = RNG::new(&Language::Elven).unwrap();
+        let rng = RNG::try_from(&Language::Elven).unwrap();
         let non: Vec<u8> = vec![0, 1, 6, 7, 8];
 
         let chain: Vec<Syllables> = (1..10).map(|_| rng.generate_syllables()).collect();
@@ -390,13 +485,6 @@ mod lib_tests {
             bad_syllables: vec!["#$@!".to_string()],
         };
         assert!(!bad.is_valid())
-    }
-
-    #[test]
-    fn generate() {
-        let rng = RNG::generate(&Language::Elven);
-
-        assert_eq!(rng.name, "Elven");
     }
 
     #[test]
@@ -482,7 +570,7 @@ mod lib_tests {
     // region assert functions
     fn general_generate_dialects_asserts(language: Language, count: usize) {
         for _ in 0..9 {
-            let rng = RNG::new(&language).unwrap();
+            let rng = RNG::try_from(&language).unwrap();
 
             let name = rng.generate_syllables_by_count(count as u8);
 
@@ -527,9 +615,13 @@ pub enum Language {
     Curse,
     Demonic,
     Elven,
+    Эльфийский,
     Fantasy,
+    Фантазия,
     Goblin,
+    Гоблин,
     Roman,
+    Римский,
 }
 
 impl fmt::Display for Language {
