@@ -79,25 +79,25 @@ fn cmd() -> clap::Command {
 fn generate(matches: &ArgMatches) -> Result<String, RNGError> {
     if matches.get_flag("elven") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::ElvenRU)?))
+            Ok(generate_name(&RNG::try_from(&Language::Эльфийский)?))
         } else {
             Ok(generate_name(&RNG::try_from(&Language::Elven)?))
         }
     } else if matches.get_flag("fantasy") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::FantasyRU)?))
+            Ok(generate_name(&RNG::try_from(&Language::Фантазия)?))
         } else {
             Ok(generate_name(&RNG::try_from(&Language::Fantasy)?))
         }
     } else if matches.get_flag("goblin") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::GoblinRU)?))
+            Ok(generate_name(&RNG::try_from(&Language::Гоблин)?))
         } else {
             Ok(generate_name(&RNG::try_from(&Language::Goblin)?))
         }
     } else if matches.get_flag("roman") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::RomanRU)?))
+            Ok(generate_name(&RNG::try_from(&Language::Римский)?))
         } else {
             Ok(generate_name(&RNG::try_from(&Language::Roman)?))
         }

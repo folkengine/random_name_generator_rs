@@ -99,7 +99,6 @@ impl RNG {
         let mut rng = RNG::empty(name);
 
         for line in lines.lines() {
-            println!("{line}");
             if let Ok(sy) = Syllable::new(line) {
                 match sy.classification {
                     Classification::Prefix => rng.prefixes.add(sy),
@@ -265,9 +264,9 @@ mod lib_tests {
 
     #[test]
     fn try_from__fantasy_russian() {
-        let result = RNG::try_from(&Language::FantasyRU).unwrap();
+        let result = RNG::try_from(&Language::Фантазия).unwrap();
 
-        assert_eq!(result.name, Language::Roman.to_string());
+        assert_eq!(result.name, Language::Фантазия.to_string());
         assert!(result.bad_syllables.len() < 1);
         assert!(result.prefixes.len() > 0);
         assert!(result.centers.len() > 0);
@@ -291,7 +290,7 @@ mod lib_tests {
 
     #[test]
     fn new_from_file__russian_goblin() {
-        let filename = "src/languages/GoblinRU.txt";
+        let filename = "src/languages/Гоблин.txt";
 
         let rng = RNG::new_from_file(filename.to_string());
         let result = rng.as_ref().unwrap();
@@ -330,7 +329,7 @@ mod lib_tests {
 
     #[test]
     fn process_file__russian_fantasy() {
-        let filename = "src/languages/FantasyRU.txt";
+        let filename = "src/languages/Фантазия.txt";
 
         let rng = RNG::process_file(filename.to_string());
         let result = rng.as_ref().unwrap();
@@ -338,14 +337,14 @@ mod lib_tests {
         assert!(!rng.is_err());
         assert_eq!(result.name, filename.to_string());
         assert_eq!(result.bad_syllables.len(), 0);
-        assert_eq!(result.prefixes.len(), 19);
-        assert_eq!(result.centers.len(), 13);
-        assert_eq!(result.suffixes.len(), 16);
+        assert_eq!(result.prefixes.len(), 180);
+        assert_eq!(result.centers.len(), 157);
+        assert_eq!(result.suffixes.len(), 19);
     }
 
     #[test]
     fn process_file__russian_goblin() {
-        let filename = "src/languages/GoblinRU.txt";
+        let filename = "src/languages/Гоблин.txt";
 
         let rng = RNG::process_file(filename.to_string());
         let result = rng.as_ref().unwrap();
@@ -617,13 +616,13 @@ pub enum Language {
     Curse,
     Demonic,
     Elven,
-    ElvenRU,
+    Эльфийский,
     Fantasy,
-    FantasyRU,
+    Фантазия,
     Goblin,
-    GoblinRU,
+    Гоблин,
     Roman,
-    RomanRU,
+    Римский,
 }
 
 impl fmt::Display for Language {
