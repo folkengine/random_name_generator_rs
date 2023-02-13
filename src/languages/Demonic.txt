@@ -24,34 +24,48 @@
 -ap
 -ar
 -as
+-az
 -azi
--mai +c
+-ba
+-baal
+-be
+-beel
+-che +c
+-ci +c
 -da +c
 -dai +c
+-de +c
 -hab
--mai
+-mai +c
 -mal
 
 add -c +v
 al -c
 am -c
 ama -c +c
-ay -c
 ast -c
+ay -c
+az -v +v
 bat
+ber +c
 dra +c
 dus
 ez -c +v
+gor
 ha -c +c
+he +c
 i -c +c
 ia -c +c
 it -c
 loc +v
 ma +c
+me +c
 mo -c +c
+mod +c
 oc
-olly -c +v
+olly -c
 or
+pho +c
 ra +c
 ri
 rat
@@ -64,6 +78,7 @@ su
 thi +c
 una -c +c
 za -v
+ze +c
 
 +al
 +akku -c
@@ -71,32 +86,42 @@ za -v
 +aroth
 +b'el -c
 +bou -v
++bub -v
 +chon
 +christ -v
 +dai
 +deus
 +er -c
 +es -c
++eus -c
++gon
 +gra
 +hak -v
--haka -v
++haka -v
 +ias -c
 +iel
++ith -c
 +ka
++laam
 +lat
 +lech
 +lius
 +ma
 +man
++met
 +mon
++mosh
++moth -c
 +nah
 +nyu
-+on -c
++on
 +puch
 +phus -c
 +ra -v
 +rept -v
 +res
++ries
++rit
 +ros
 +roth
 +s -v
@@ -115,19 +140,6 @@ za -v
 
 # https://en.wikipedia.org/wiki/The_infernal_names
 
-Apollyon - Greek synonym for Abaddon.
-Asmodeus - Hebrew devil of sensuality and luxury, originally "creature of judgment"
-Azazel - Taught man to make weapons of war (Hebrew)
-Baalberith - Canaanite Lord of the covenant who was later made a devil
-Balaam - Hebrew devil of avarice and greed
-Baphomet - symbolic of Satan
-Beelzebub - Lord of the Flies, taken from the symbolism of the scarab (Hebrew)
-Behemoth - Hebrew personification of Lucifer in the form of an elephant or hippopotamus
-Beherit - Syriac name for Satan
-Chemosh - National god of Moabites, later a devil
-Cimeries - Rides a black horse and rules Africa
-Dagon - Philistine avenging devil of the sea
-Demogorgon - a name so terrible as to not be known to mortals
 Diabolous - "Flowing downwards" (Greek)
 Dracula - Romanian name for son of the devil or dragon, which would also denote a "devilish" name—Romanian isn't too clear on which meaning, if not both, is correct.
 Euronymous - Greek Prince of Death (a misspelling, correct spelling Eurynomos)
