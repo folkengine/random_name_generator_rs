@@ -381,7 +381,6 @@ mod lib_tests {
     }
 
     #[test]
-    #[ignore]
     fn classify__fantasy_russian() {
         let raw = "-а +c\n-аб\n-ак\n-ац\n-ад\n-аф\n-ам\n-ан\n-ап\n-ар\n-ас\n-ат\n-ав\n-аз\n-аэль\n-аэл\n-ао\n-аэр\n-аш\n-арш +v";
         let filename = "src/languages/goblinRU.txt".to_string();
