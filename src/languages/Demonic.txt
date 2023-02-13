@@ -6,6 +6,7 @@
 -ad
 -ae +c
 -ag
+-ah
 -ahr +v
 -ai +c
 -ak +v
@@ -23,6 +24,10 @@
 -ap
 -ar
 -as
+-azi
+-mai +c
+-da +c
+-dai +c
 -hab
 -mai
 -mal
@@ -48,6 +53,7 @@ oc
 olly -c +v
 or
 ra +c
+ri
 rat
 rax +v
 real
@@ -71,6 +77,9 @@ za -v
 +deus
 +er -c
 +es -c
++gra
++hak -v
+-haka -v
 +ias -c
 +iel
 +ka
@@ -83,6 +92,7 @@ za -v
 +nah
 +nyu
 +on -c
++puch
 +phus -c
 +ra -v
 +rept -v
@@ -97,6 +107,7 @@ za -v
 +xas -v
 +y -c
 +ym
++yu
 +xu
 +z'el -v
 +zel -v
@@ -104,11 +115,6 @@ za -v
 
 # https://en.wikipedia.org/wiki/The_infernal_names
 
-Azi Dahaka/Dahak (Zoroastrianism)
-
-Ahpuch - Mayan devil
-Ahriman - Mazdean devil
-Angra Mainyu - Zoroasterism synonym for devil
 Apollyon - Greek synonym for Abaddon.
 Asmodeus - Hebrew devil of sensuality and luxury, originally "creature of judgment"
 Azazel - Taught man to make weapons of war (Hebrew)
