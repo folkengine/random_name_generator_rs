@@ -22,7 +22,9 @@ files, originally in the [Ruby version](https://github.com/folkengine/random_nam
 The following are in progress:
 
 * Curse
-* Demonic
+  * [profane-words](https://github.com/zacanger/profane-words) looks like a good resource
+* Demonic - Syllables based on [the infernal names](https://en.wikipedia.org/wiki/The_infernal_names) and [theological demons](https://en.wikipedia.org/wiki/List_of_theological_demons)
+
 
 ## Using the library
 

@@ -24,262 +24,452 @@
 -ap
 -ar
 -as
+-ay
 -az
 -azi
 -ba
 -baal
+-bal
+-ban
+-bar
 -be
+-bel
 -beel
+-bhū +c
+-bi
+-bo
+-bu
+-ca
+-caa +c
+-cha
 -che +c
+-cho
+-cla
+-cor
 -ci +c
+-cro
+-cul
 -da +c
+-dae +c
 -dai +c
+-daj
+-dan
 -de +c
+-demi +c
+-demo +c
+-di
+-dia +c
+-div +v
+-dra
+-dre
+-dzo
+-e +c
+-eb
+-ei
+-el
+-en
+-et
+-eu +c
+-fa
+-fla
+-fo
+-for
+-fur
+-eur
+-ga
+-gho
+-gla
+-go
+-gor
+-gre
+-gri
+-gu
+-gua
+-gus
+-ha
 -hab
+-hal
+-han
+-hav
+-he
+-i
+-ib
+-if
+-inc
+-ip
+-j -v
+-ji
+-ka
+-ki
+-kil
+-ko
+-kr +v
+-kum
+-la
+-le
+-leg +v
+-lem
+-lev +v
+-li
+-lo
+-lu
+-ma
 -mai +c
 -mal
+-mam
+-mar
+-mas
+-me
+-mel
+-meph +v
+-mi
+-mil
+-mo +v
+-moa +c
+-mol
+-mor
+-na
+-naa +v
+-ne
+-nge +c
+-ni
+-o
+-ph +v
+-pho
+-pro
+-pw +c
+-pwcc +v
+-ra
+-ro
+-sa
+-sai +c
+-sam
+-se
+-sha
+-shai +c
+-t
+-t'
+-ta
+-tc
+-tch +v
+-the
+-ty
+-ya
+-ye
+-yen
+-zo
 
+a
+abo +c
 add -c +v
-al -c
+al
 am -c
 ama -c +c
-ast -c
+an
+ass
+ast
+au +c
+av +v
 ay -c
 az -v +v
+ba
+ban
 bat
 ber +c
+bha
+bite
+bo +c
+bor
+ca
+ci
+cri
+cu +c
+der
 dra +c
 dus
+e
+eni
+er
 ez -c +v
+fo -v
+fro -v +c
+go
 gor
-ha -c +c
+ha
+han
 he +c
+ho +c
 i -c +c
 ia -c +c
 it -c
+ka
+kar
+ki
+la
+le
+les
+li
+lo
 loc +v
-ma +c
-me +c
-mo -c +c
-mod +c
+ma
+me
+mei +c
+mi
+mo
+mod
+mosh
+naan -v +v
+ni
+nin
+no
+o
 oc
+och +v
 olly -c
+ony -c +c
 or
+pa
+phas
+phe
+pho
 pho +c
-ra +c
+pu
+ra
 ri
 rat
 rax +v
 real
+ro
 roma -c +c
+ron
+ru
+rus
+sa
 sh
+shy
+si
 sta
+sto
 su
+t
+ta
+tal +v
+te
 thi +c
+u
+ur
 una -c +c
+va
+ya +c
+yo +c
 za -v
 ze +c
+zi
 
-+al
++a
++ac
++ag
++ah
 +akku -c
++al
++an
++ang
++ap
 +as
++aus -c
 +aroth
 +b'el -c
++ba
++bas
++bi
++bia
++biel -v
 +bou -v
 +bub -v
++bus
++can
++cas
++cell
++che
++chies
 +chon
 +christ -v
++chu
++cian
++com
++da
 +dai
++dha
++di
++dit
 +deus
-+er -c
-+es -c
++duk
++dya
++el
++enti
++er
++es
++eth
 +eus -c
++fer -v
++fron -v
++frons -v
++fuge -v
++fur
++ge
++gin
++go
 +gon
++gor
++gos
 +gra
++ha
 +hak -v
 +haka -v
++ia -c
++ian -c
 +ias -c
++id
++ie
 +iel
-+ith -c
++in
++ion
++ite
++ith
++its
++j -v
++jal
++je
++jes -v
++k
++ki
 +ka
++ke
++kee
++la
 +laam
++laas
++lam
++lar
++las
 +lat
 +lech
++leth
++lek
++li
++lial
++lim
++lin
++lion
++lis
++lith
 +lius
++loch
++lor
++lous
 +ma
 +man
 +met
++mo
 +mon
 +mosh
 +moth -c
++mous -v
++na
 +nah
++ne
++neus
++ni
++nio
++nn -v
++nu
 +nyu
++och
++oul
 +on
-+puch
++oni
++ong
++ort
++ory
++os -c
++oyn
++pes
++pet
++phon -v
 +phus -c
++pid
++po
++pos
++puch
++pus
 +ra -v
++ras
 +rept -v
 +res
++ri
++rian
 +ries
++ris
 +rit
++rith
++rong
 +ros
 +roth
++rt -v
++run
++ry
 +s -v
++sa
 +sag
 +sakku -v
++shee
++sheth
++sia
++sion
++son
++st -v
++sta
++su
 +sura
++sya
++ta
++tan
++te
++tos
++than -v
++thim -v
++thin -v
++thus
++thym -v
++tis
++tu
++ul
++urge
++va
++vac
 +van
++vil
++vits
++wang
 +xas -v
 +y -c
++ya
++yak
++yama -v
 +ym
 +yu
 +xu
 +z'el -v
 +zel -v
++zhi -v
++zon
 +zou
 
-# https://en.wikipedia.org/wiki/The_infernal_names
 
-Diabolous - "Flowing downwards" (Greek)
-Dracula - Romanian name for son of the devil or dragon, which would also denote a "devilish" name—Romanian isn't too clear on which meaning, if not both, is correct.
-Euronymous - Greek Prince of Death (a misspelling, correct spelling Eurynomos)
-Gorgo - dim. of Demogorgon, see above
-Guayota - guanche devil
-Haborym - Hebrew synonym for Satan
-Iblis - Synonym for Shaitan
-Leviathan - Hebrew personification of Lucifer in the form of a great sea reptile (usually it represents the Antichrist; the beast of the sea)
-Lilith - Hebrew female devil, Adam's first wife who taught him lust
-Loki - Teutonic devil
-Mammon - Aramaic god of wealth and profit
-Marduk - god of the city of Babylon
-Mastema - Hebrew synonym for Satan
-Melek Taus - Yezidi devil
-Mephistopheles - he who shuns the light, q.v. Faust (Greek)
-Milcom - Ammonite devil
-Moloch - Phoenician and Canaanite devil
-Mormo - King of the Ghouls, consort of Hecate (Greek)
-Naamah - Hebrew female devil of seduction
-Nihasa - American Indian devil
-O-Yama - Japanese name for lord of death
-Pwcca - one of the myriad of fairy (faerie) folk
-Saitan - Enochian equivalent of Satan
-Samael - "Venom of God" (Hebrew)
-Samnu - Central Asian devil
-Sedit - American Nepali devil
-Shaitan - Arabic name for Satan
-T'an-mo - Chinese counterpart to the devil, covetousness, desire
-Tchort - Russian name for Satan, "black god"
-Typhon - Greek personification of devil
-Yama - The lord of death in Hinduism
-Yen-lo-Wang - Chinese ruler of Hell
+https://en.wikipedia.org/wiki/List_of_theological_demons
 
-# https://en.wikipedia.org/wiki/List_of_theological_demons
-
-Baal/Bael (Christian demonology)
-Babi ngepet (Indonesian mythology)
-Bakasura (Hindu mythology)
-Balam (Christian demonology)
-Balberith (Jewish demonology)
-Bali Raj (Hindu mythology)
-Banshee (Irish mythology)
-Baphomet (Christian folklore)
-Barbas (Christian demonology)
-Barbatos (Christian demonology)
-Barong (Indonesian mythology)
-Bathin/Mathim/Bathym/Marthim (Christian demonology)
-Beelzebub (Jewish demonology, Christian demonology)
-Behemoth (Jewish demonology)
-Belial (Jewish demonology, Christian demonology)
-Beleth (Christian demonology)
-Belphegor (Christian demonology)
-Berith/Beherit (Phoenician mythology, Christian demonology)
-Bhūta (Sanskrit)
-Bifrons (Christian demonology)
-Boruta (Slavic mythology)
-Botis (Christian demonology)
-Buer (Christian demonology)
-Bukavac (Slavic mythology)
-Bune (Christian demonology)
-Bushyasta (Zoroastrianism)
-
-Cain/Canio (Christian demonology)
-Charun (Etruscan mythology)
-Chemosh (Moabite)
-Choronzon (Thelema)
-Cimejes/Kimaris/Cimeies (Christian demonology)
-Corson (Christian demonology)
-Crocell/Procell (Christian demonology)
-Culsu (Etruscan mythology)
-
-Daeva (Zoroastrianism demonology)
-Dagon (Semitic mythology)
-Dajjal (Islamic demonology)
-Dantalion (Christian demonology)
-Danjal (Jewish mythology)
-Davy Jones (nautical folklore)
-Decarabia (Christian demonology)
-Demiurge (Gnosticism)
-Demogorgon (Christian demonology)
-Devil (Christian demonology)
-Div-e Sepid (Persian mythology)
-Drekavac (Slavic mythology)
-Dzoavits (Native American mythology)
-
-Eblis (or Iblis) (Islamic demonology)
-Eligos (Christian demonology)
-Eisheth (Jewish demonology)
-
-Focalor (Christian demonology)
-Foras/Forcas/Forras/ (Christian demonology)
-Forneus (Christian demonology)
-Furcas/Forcas (Christian demonology)
-Furfur (Christian demonology)
-
-Gaap (Christian demonology)
-Gader'el (Jewish demonology)
-Gaki (Japanese mythology)
-Gamigin (Christian demonology)
-Ghoul (Arabian and several other mythologies)
-Glasya-Labolas/Caacrinolaas/Caassimolar/Classyalabolas/Glassia-labolis (Christian demonology)
-Gorgon (Greek mythology)
-Gremory/Gomory (Christian demonology)
-Grigori (Jewish demonology)
-Gualichu (Mapuche mythology)
-Guayota (Guanche)
-Gusion/Gusoin/Gusoyn
-
-Haagenti (Christian demonology)
-Halphas/Malthus (Christian demonology)
-Hantu Raya (Indonesian and Malaysian mythology)
-Haures/Flauros/Flavros/Hauras/Havres (Christian demonology)
-
-Ifrit (Islamic mythology)
-Incubus (Christian demonology, Chaldean mythology, Jewish folklore)
-Ipos/Ipes (Christian demonology)
-
-Jinn (Islamic demonology)
-Jikininki (Japanese mythology)
-
-Kabandha/Kabhanda (Hinduism)
-Kali (Hinduism)
-Kasadya (Jewish demonology)
-Kokabiel (Jewish demonology)
-Kroni (Ayyavazhi demonology)
-Krampus (Germanic-Christian Demonology)
-Killakee Cat (Hell Fire Club/Satanism)
-Kumbhakarna (Hinduism)
-L[edit]
-Legion (Christian demonology)
-Lechies (Slavic mythology)
-Leyak (Indonesian mythology)
-Lempo (Finnish mythology)
-Leraje/Leraie (Christian demonology)
-Leviathan (Jewish demonology, Christian demonology)
-Lili/Lilin/Lilim (Jewish demonology)
-Lilith (Sumerian mythology, Akkadian mythology, Jewish folklore)
-Lucifer (Christian demonology)
 Lucifuge Rofocale (Christian demonology)
-M[edit]
+
 Malphas (Christian demonology)
 Mammon (Christian demonology)
 Mara (Buddhist mythology)
@@ -293,12 +483,12 @@ Merihem (Christian demonology)
 Moloch (Christian demonology)
 Murmur (Christian demonology)
 Morpheus (Greek mythology)
-N[edit]
+
 Naamah (Jewish demonology)
 Naberius/Cerbere/Naberus (Christian demonology)
 Ninurta (Sumerian mythology, Akkadian mythology)
 Namtar (Sumerian mythology)
-O[edit]
+
 Onoskelis (Testament of Solomon)
 Orcus (Roman mythology, later Christian demonology)
 Orias/Oriax (Christian demonology)
@@ -306,7 +496,7 @@ Orobas (Christian demonology)
 Ose (Christian demonology)
 Ördög (Hungarian mythology)
 O Tokata (Indonesian mythology)
-P[edit]
+
 Paimon (Christian demonology)
 Pazuzu (Babylonian demonology)
 Pelesit (Indonesian and Malaysian mythology)
@@ -317,7 +507,7 @@ Pocong (Indonesian mythology)
 Pontianak (Indonesian and Malaysian mythology)
 Pruflas (Christian demonology)
 Puloman (Hindu demonology)
-R[edit]
+
 Rahab (Jewish folklore)
 Raum (Christian demonology)
 Ronove (Christian demonology)
