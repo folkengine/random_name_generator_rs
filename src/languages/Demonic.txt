@@ -124,7 +124,7 @@
 -meph +v
 -mi
 -mil
--mo +v
+-mo
 -moa +c
 -mol
 -mor
@@ -181,9 +181,12 @@ bite
 bo +c
 bor
 ca
+cho
 ci
 cri
 cu +c
+da
+daj
 der
 dra +c
 dus
@@ -231,6 +234,7 @@ or
 pa
 phas
 phe
+phi
 pho
 pho +c
 pu
@@ -249,7 +253,8 @@ sh
 shy
 si
 sta
-sto
+ste
+sto +c
 su
 t
 ta
@@ -270,6 +275,8 @@ zi
 +ac
 +ag
 +ah
++ai -c
++aii -c
 +akku -c
 +al
 +an
@@ -287,9 +294,11 @@ zi
 +bou -v
 +bub -v
 +bus
++cale
 +can
 +cas
 +cell
++cha
 +che
 +chies
 +chon
@@ -353,9 +362,11 @@ zi
 +lar
 +las
 +lat
++le
 +lech
 +leth
 +lek
++les
 +li
 +lial
 +lim
@@ -395,15 +406,17 @@ zi
 +oyn
 +pes
 +pet
-+phon -v
-+phus -c
++phas
++phon
++phus
 +pid
 +po
 +pos
 +puch
 +pus
-+ra -v
++ra
 +ras
++rax
 +rept -v
 +res
 +ri
@@ -425,7 +438,9 @@ zi
 +shee
 +sheth
 +sia
++sias
 +sion
++sih
 +son
 +st -v
 +sta
@@ -443,6 +458,7 @@ zi
 +thym -v
 +tis
 +tu
++uge -c
 +ul
 +urge
 +va
@@ -468,16 +484,6 @@ zi
 
 https://en.wikipedia.org/wiki/List_of_theological_demons
 
-Lucifuge Rofocale (Christian demonology)
-
-Malphas (Christian demonology)
-Mammon (Christian demonology)
-Mara (Buddhist mythology)
-Maricha (Hindu mythology)
-Marax/Morax/Foraii (Christian demonology)
-Marchosias (Christian demonology)
-Masih ad-Dajjal/Ad-Dajjal/Dajjal (Islamic eschatology)
-Mastema (Jewish demonology)
 Mephistopheles (Christian folklore, German folklore)
 Merihem (Christian demonology)
 Moloch (Christian demonology)
