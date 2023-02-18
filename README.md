@@ -11,7 +11,7 @@ of the [Java Random Name Generator library](https://github.com/folkengine/java-r
 It generates it's results based upon which [language file](src/languages) is specified.
 Currently, the following are supported in both English and Russian:
 
-* Demonic
+* Demonic - New! Syllables based on [the infernal names](https://en.wikipedia.org/wiki/The_infernal_names) and [theological demons](https://en.wikipedia.org/wiki/List_of_theological_demons)
 * Elven
 * Fantasy
 * Goblin
@@ -24,8 +24,6 @@ The following are in progress:
 
 * Curse
   * [profane-words](https://github.com/zacanger/profane-words) looks like a good resource
-* Demonic - Syllables based on [the infernal names](https://en.wikipedia.org/wiki/The_infernal_names) and [theological demons](https://en.wikipedia.org/wiki/List_of_theological_demons)
-
 
 ## Using the library
 
