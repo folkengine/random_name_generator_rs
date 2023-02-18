@@ -1,7 +1,7 @@
 [package]
 name = "random_name_generator"
 description = "Random Name Generator"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Christoph Baker <gaoler@electronicpanopticon.com>"]
 repository = "https://github.com/folkengine/random_name_generator_rs.git"
 homepage = "https://github.com/folkengine/random_name_generator_rs"
