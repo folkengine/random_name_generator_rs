@@ -4,8 +4,8 @@ use rnglib::{Language, RNGError, RNG};
 fn main() -> Result<(), RNGError> {
     let matches = cmd().get_matches();
 
-    let _count: usize = *get_number(&matches).unwrap();
-    let _rng = get_rng(&matches).unwrap();
+    let _count: usize = *get_number(&matches).ok_or(RNGError::ParsingError)?;
+    let _rng = get_rng(&matches)?;
 
     // if matches.get_flag("raw") {
     //     let raw = matches.get_one::<String>("raw").unwrap();

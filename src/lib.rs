@@ -13,6 +13,7 @@ extern crate log;
 pub enum RNGError {
     GenerationError,
     InvalidLanguageFile,
+    ParsingError,
     ReadError,
 }
 
