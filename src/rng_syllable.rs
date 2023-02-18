@@ -10,16 +10,17 @@ static _CONSONANTS: [char; 57] = [
     'м', 'н', 'п', 'р', 'с', 'т', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'ѕ', 'ѳ', 'ѯ',
     'ѱ', // Russian https://en.wikipedia.org/wiki/Russian_alphabet
 ];
-static VOWELS: [char; 54] = [
-    'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ɪ', 'ʏ', 'ʊ', 'ɯ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ø', 'ə',
-    'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ', 'е', 'ё',
-    'э', 'и', 'й', 'ю', 'ѭ', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', 'ѩ', 'і', 'ѣ', 'ѵ', 'ѡ', // Russian
+static VOWELS: [char; 56] = [
+    'i', 'y', 'ɨ', 'ʉ', 'ɯ', 'u', 'ū', 'ɪ', 'ʏ', 'ʊ', 'ɯ', 'ʊ', 'e', 'ø', 'ɘ', 'ɵ', 'ɤ', 'o', 'ö',
+    'ø', 'ə', 'ɵ', 'ɤ', 'o', 'ɛ', 'œ', 'ɜ', 'ɞ', 'ʌ', 'ɔ', 'æ', 'ɐ', 'ɞ', 'a', 'ɶ', 'ä', 'ɒ', 'ɑ',
+    'е', 'ё', 'э', 'и', 'й', 'ю', 'ѭ', 'я', 'ѧ', 'ѫ', 'ꙛ', 'ꙙ', 'ꙝ', 'ѩ', 'і', 'ѣ', 'ѵ',
+    'ѡ', // Russian
 ];
 
 lazy_static! {
     // https://regex101.com/r/UZ4REr/1
     static ref FULL_RE: Regex =
-        Regex::new(r"^([-+]{0,1})([\p{Cyrillic}\p{Greek}\p{Arabic}\p{Hiragana}A-Za-z']+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
+        Regex::new(r"^([-+]{0,1})([\p{Cyrillic}\p{Greek}\p{Arabic}\p{Hiragana}A-Za-zūæö']+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
             .unwrap();
     static ref PREFIX_RE: Regex = Regex::new(r"(.+)(\-[vcVC]).*").unwrap();
     static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();

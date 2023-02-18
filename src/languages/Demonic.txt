@@ -41,6 +41,7 @@
 -bu
 -ca
 -caa +c
+-cer
 -cha
 -che +c
 -cho
@@ -128,37 +129,91 @@
 -moa +c
 -mol
 -mor
+-mur
 -na
 -naa +v
+-nam
 -ne
 -nge +c
 -ni
+-nin
 -o
+-on
+-ono +c
+-or
+-ör
+-ori
+-oro
+-pa
+-pai
+-pe
 -ph +v
+-phe
 -pho
+-pi
+-pith
+-po
+-pon
 -pro
+-pru
+-pu
 -pw +c
 -pwcc +v
 -ra
+-ran
+-rang
+-rak
 -ro
+-ru
 -sa
+-sab
 -sai +c
 -sam
 -se
+-sem
 -sha
 -shai +c
+-shay
+-she
+-si
+-so
+-st +v
+-sto
+-sth +v
+-su
+-suc
+-sur
 -t
--t'
 -ta
+-tan
 -tc
 -tch +v
+-th +v
 -the
+-to
+-tu
 -ty
+-u +c
+-v +c
+-va
+-vas
+-ve
+-we
+-wen
 -ya
 -ye
 -yen
+-x +c
+-xa
+-xe
+-xez
+-xi
+-y +v
+-ye
+-za
+-ze
+-zi
 -zo
-
 a
 abo +c
 add -c +v
@@ -166,6 +221,7 @@ al
 am -c
 ama -c +c
 an
+ang
 ass
 ast
 au +c
@@ -175,7 +231,8 @@ az -v +v
 ba
 ban
 bat
-ber +c
+be
+ber
 bha
 bite
 bo +c
@@ -183,14 +240,18 @@ bor
 ca
 cho
 ci
+chu
+chul
 cri
 cu +c
 da
 daj
 der
+di
 dra +c
 dus
 e
+en
 eni
 er
 ez -c +v
@@ -208,6 +269,7 @@ it -c
 ka
 kar
 ki
+ko
 la
 le
 les
@@ -218,10 +280,12 @@ ma
 me
 mei +c
 mi
+min
 mo
 mod
 mosh
 naan -v +v
+ne
 ni
 nin
 no
@@ -239,6 +303,8 @@ pho
 pho +c
 pu
 ra
+ran
+rang
 ri
 rat
 rax +v
@@ -249,9 +315,12 @@ ron
 ru
 rus
 sa
+sal
 sh
+sha
 shy
 si
+ske
 sta
 ste
 sto +c
@@ -260,7 +329,9 @@ t
 ta
 tal +v
 te
+ter
 thi +c
+tia +c
 u
 ur
 una -c +c
@@ -268,26 +339,32 @@ va
 ya +c
 yo +c
 za -v
+zb -v +v
 ze +c
 zi
-
+zu
 +a
++ab
 +ac
++ach
 +ag
 +ah
 +ai -c
 +aii -c
 +akku -c
 +al
++ael
 +an
 +ang
 +ap
 +as
 +aus -c
 +aroth
-+b'el -c
++ax
++bel -c
 +ba
 +bas
++beth
 +bi
 +bia
 +biel -v
@@ -298,6 +375,7 @@ zi
 +can
 +cas
 +cell
++ch
 +cha
 +che
 +chies
@@ -306,26 +384,38 @@ zi
 +chu
 +cian
 +com
++cong
++cus
 +da
 +dai
++deus
 +dha
 +di
++dim
 +dit
-+deus
++dög
 +duk
 +dya
 +el
 +enti
++eos
 +er
 +es
 +eth
 +eus -c
++ex
++far -v
 +fer -v
++flas -v
 +fron -v
 +frons -v
 +fuge -v
 +fur
++ga
++gan
++gat
 +ge
++gi
 +gin
 +go
 +gon
@@ -333,29 +423,38 @@ zi
 +gos
 +gra
 +ha
++hab
 +hak -v
 +haka -v
++hem
 +ia -c
 +ian -c
++iar -c
 +ias -c
++iax -c
 +id
 +ie
 +iel
 +in
++ine -c
 +ion
++ir
 +ite
 +ith
 +its
++ius -c
 +j -v
 +jal
 +je
 +jes -v
 +k
++ka
 +ki
 +ka
 +ke
 +kee
 +la
++lac
 +laam
 +laas
 +lam
@@ -379,6 +478,7 @@ zi
 +lor
 +lous
 +ma
++mah
 +man
 +met
 +mo
@@ -386,27 +486,39 @@ zi
 +mosh
 +moth -c
 +mous -v
++mue
++mur
 +na
 +nah
++nak
 +ne
 +neus
 +ni
++nin
 +nio
++no
++nock
 +nn -v
++nth -v
 +nu
 +nyu
 +och
++ock
 +oul
 +on
 +oni
 +ong
 +ort
 +ory
-+os -c
++os
 +oyn
++par
 +pes
 +pet
++phan -v
++phar
 +phas
++pheus
 +phon
 +phus
 +pid
@@ -417,6 +529,7 @@ zi
 +ra
 +ras
 +rax
++re
 +rept -v
 +res
 +ri
@@ -435,12 +548,14 @@ zi
 +sa
 +sag
 +sakku -v
++se
 +shee
 +sheth
 +sia
 +sias
 +sion
 +sih
++sit
 +son
 +st -v
 +sta
@@ -449,21 +564,27 @@ zi
 +sya
 +ta
 +tan
++tar
 +te
++ti
 +tos
 +than -v
 +thim -v
 +thin -v
++thius -v
 +thus
 +thym -v
 +tis
 +tu
 +uge -c
 +ul
++um
 +urge
++us
 +va
 +vac
 +van
++ve
 +vil
 +vits
 +wang
@@ -472,93 +593,14 @@ zi
 +ya
 +yak
 +yama -v
++yaz
 +ym
++yol
 +yu
++x -v
 +xu
-+z'el -v
 +zel -v
 +zhi -v
 +zon
 +zou
-
-
-https://en.wikipedia.org/wiki/List_of_theological_demons
-
-Mephistopheles (Christian folklore, German folklore)
-Merihem (Christian demonology)
-Moloch (Christian demonology)
-Murmur (Christian demonology)
-Morpheus (Greek mythology)
-
-Naamah (Jewish demonology)
-Naberius/Cerbere/Naberus (Christian demonology)
-Ninurta (Sumerian mythology, Akkadian mythology)
-Namtar (Sumerian mythology)
-
-Onoskelis (Testament of Solomon)
-Orcus (Roman mythology, later Christian demonology)
-Orias/Oriax (Christian demonology)
-Orobas (Christian demonology)
-Ose (Christian demonology)
-Ördög (Hungarian mythology)
-O Tokata (Indonesian mythology)
-
-Paimon (Christian demonology)
-Pazuzu (Babylonian demonology)
-Pelesit (Indonesian and Malaysian mythology)
-Phenex (Christian demonology)
-Penemue (Jewish and Christian demonology)
-Pithius (Christian demonology)
-Pocong (Indonesian mythology)
-Pontianak (Indonesian and Malaysian mythology)
-Pruflas (Christian demonology)
-Puloman (Hindu demonology)
-
-Rahab (Jewish folklore)
-Raum (Christian demonology)
-Ronove (Christian demonology)
-Rusalka (Slavic mythology)
-Rakshasa (Hinduism)
-Rangda (Hinduism in Indonesia)
-Ravan (Hinduism)
-S[edit]
-Sabnock (Christian demonology)
-Saleos (Christian demonology)
-Samael (Jewish demonology)
-Satan (or Shaytan) (Jewish demonology, Christian demonology, Islamic demonology)
-Seir (Christian demonology)
-Semyaz (Jewish demonology)
-Shax/Chax (Christian demonology)
-Shedim (Jewish folklore)
-Sitri (Christian demonology)
-Sthenno (Greek mythology)
-Stolas/Solas (Christian demonology)
-Suanggi (Indonesian mythology)
-Succubus (Sumerian mythology, Akkadian mythology, Jewish folklore, Christian demonology)
-Surgat (Christian demonology)
-
-Tannin (Jewish demonology)
-Toyol (Indonesian and Malaysian)
-Tuchulcha (Etruscan mythology)
-
-Ukobach (Christian demonology)
-
-Valac (Christian demonology)
-Valefar/Malaphar/Malephar (Christian demonology)
-Vanth (Etruscan mythology)
-Vapula (Christian demonology)
-Vassago (Christian demonology)
-Vepar (Christian demonology)
-Vine (Christian demonology)
-
-Wendigo (Algonquin)
-
-Xaphan (Christian demonology)
-Xezbeth (demonology)[clarification needed]
-
-Yeqon
-Yeter'el
-
-Zagan (Christian demonology)
-Zepar (Christian demonology)
-Ziminiar (Christian demonology)
++zu

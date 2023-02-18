@@ -16,6 +16,13 @@ fn main() {
 fn cmd() -> clap::Command {
     command!()
         .arg(
+            Arg::new("demonic")
+                .short('d')
+                .long("demonic")
+                .required(false)
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
             Arg::new("elven")
                 .short('e')
                 .long("elven")
@@ -77,7 +84,10 @@ fn cmd() -> clap::Command {
 }
 
 fn generate(matches: &ArgMatches) -> Result<String, RNGError> {
-    if matches.get_flag("elven") {
+    if matches.get_flag("demonic") {
+        let rng = &RNG::try_from(&Language::Demonic)?;
+        Ok(format!("{}: {}", rng.name, rng.generate_name()))
+    } else if matches.get_flag("elven") {
         if matches.get_flag("russian") {
             Ok(generate_name(&RNG::try_from(&Language::Эльфийский)?))
         } else {
