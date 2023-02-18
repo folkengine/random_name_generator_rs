@@ -1,16 +1,31 @@
 use clap::{command, Arg, ArgAction, ArgMatches};
 use rnglib::{Language, RNGError, RNG};
 
-fn main() {
+fn main() -> Result<(), RNGError> {
     let matches = cmd().get_matches();
 
-    let name = generate(&matches);
+    let _count: usize = *get_number(&matches).unwrap();
+    let _rng = get_rng(&matches).unwrap();
 
-    if name.is_ok() {
-        println!("{}", name.unwrap());
-    } else {
-        println!("{:?}", name.unwrap_err());
-    }
+    // if matches.get_flag("raw") {
+    //     let raw = matches.get_one::<String>("raw").unwrap();
+    //     let result = RNG::new_from_file(raw.clone());
+    //
+    //     match result {
+    //         Ok(rng) => Ok(generate_name(&rng)),
+    //         Err(_) => Err(RNGError::InvalidLanguageFile),
+    //     }
+    // } else {
+    //     let name = generate(&matches);
+    //
+    //     if name.is_ok() {
+    //         println!("{}", name.unwrap());
+    //     } else {
+    //         println!("{:?}", name.unwrap_err());
+    //     }
+    // }
+
+    Ok(())
 }
 
 fn cmd() -> clap::Command {
@@ -80,54 +95,112 @@ fn cmd() -> clap::Command {
                 .value_name("FILE")
                 .help("Reads in a raw language file"),
         )
+        .arg(
+            Arg::new("number")
+                .short('n')
+                .long("number")
+                .required(false)
+                .default_value("2")
+                .value_parser(clap::value_parser!(usize))
+                .help("Number of names created."),
+        )
         .arg_required_else_help(true)
 }
 
-fn generate(matches: &ArgMatches) -> Result<String, RNGError> {
+fn get_number(matches: &ArgMatches) -> Option<&usize> {
+    matches
+        .try_get_one::<usize>("number")
+        .expect("Could not read a threshold value")
+}
+
+fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
     if matches.get_flag("demonic") {
-        let rng = &RNG::try_from(&Language::Demonic)?;
-        Ok(format!("{}: {}", rng.name, rng.generate_name()))
+        Ok(RNG::try_from(&Language::Demonic)?)
     } else if matches.get_flag("elven") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Эльфийский)?))
+            Ok(RNG::try_from(&Language::Эльфийский)?)
         } else {
-            Ok(generate_name(&RNG::try_from(&Language::Elven)?))
+            Ok(RNG::try_from(&Language::Elven)?)
         }
     } else if matches.get_flag("fantasy") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Фантазия)?))
+            Ok(RNG::try_from(&Language::Фантазия)?)
         } else {
-            Ok(generate_name(&RNG::try_from(&Language::Fantasy)?))
+            Ok(RNG::try_from(&Language::Fantasy)?)
         }
     } else if matches.get_flag("goblin") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Гоблин)?))
+            Ok(RNG::try_from(&Language::Гоблин)?)
         } else {
-            Ok(generate_name(&RNG::try_from(&Language::Goblin)?))
+            Ok(RNG::try_from(&Language::Goblin)?)
         }
     } else if matches.get_flag("roman") {
         if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Римский)?))
+            Ok(RNG::try_from(&Language::Римский)?)
         } else {
-            Ok(generate_name(&RNG::try_from(&Language::Roman)?))
+            Ok(RNG::try_from(&Language::Roman)?)
         }
     } else if matches.get_flag("curse") {
-        Ok(RNG::try_from(&Language::Curse)?.generate_short())
+        Ok(RNG::try_from(&Language::Curse)?)
     } else if matches.get_flag("flipmode") {
         let my_dialect_type: Language = rand::random();
-        Ok(generate_name(&RNG::try_from(&my_dialect_type)?))
+        Ok(RNG::try_from(&my_dialect_type)?)
     } else {
         let raw = matches.get_one::<String>("raw").unwrap();
         let result = RNG::new_from_file(raw.clone());
 
         match result {
-            Ok(rng) => Ok(generate_name(&rng)),
+            Ok(rng) => Ok(rng),
             Err(_) => Err(RNGError::InvalidLanguageFile),
         }
     }
 }
 
-fn generate_name(rng: &rnglib::RNG) -> String {
+fn _generate(matches: &ArgMatches) -> Result<String, RNGError> {
+    if matches.get_flag("demonic") {
+        let rng = &RNG::try_from(&Language::Demonic)?;
+        Ok(format!("{}: {}", rng.name, rng.generate_name()))
+    } else if matches.get_flag("elven") {
+        if matches.get_flag("russian") {
+            Ok(_generate_name(&RNG::try_from(&Language::Эльфийский)?))
+        } else {
+            Ok(_generate_name(&RNG::try_from(&Language::Elven)?))
+        }
+    } else if matches.get_flag("fantasy") {
+        if matches.get_flag("russian") {
+            Ok(_generate_name(&RNG::try_from(&Language::Фантазия)?))
+        } else {
+            Ok(_generate_name(&RNG::try_from(&Language::Fantasy)?))
+        }
+    } else if matches.get_flag("goblin") {
+        if matches.get_flag("russian") {
+            Ok(_generate_name(&RNG::try_from(&Language::Гоблин)?))
+        } else {
+            Ok(_generate_name(&RNG::try_from(&Language::Goblin)?))
+        }
+    } else if matches.get_flag("roman") {
+        if matches.get_flag("russian") {
+            Ok(_generate_name(&RNG::try_from(&Language::Римский)?))
+        } else {
+            Ok(_generate_name(&RNG::try_from(&Language::Roman)?))
+        }
+    } else if matches.get_flag("curse") {
+        Ok(RNG::try_from(&Language::Curse)?.generate_short())
+    } else if matches.get_flag("flipmode") {
+        let my_dialect_type: Language = rand::random();
+        Ok(_generate_name(&RNG::try_from(&my_dialect_type)?))
+    } else {
+        let raw = matches.get_one::<String>("raw").unwrap();
+        let result = RNG::new_from_file(raw.clone());
+
+        match result {
+            Ok(rng) => Ok(_generate_name(&rng)),
+            Err(_) => Err(RNGError::InvalidLanguageFile),
+        }
+    }
+}
+
+fn _generate_name(rng: &rnglib::RNG) -> String {
     let first_name = rng.generate_name();
     let last_name = rng.generate_name();
 
