@@ -54,10 +54,12 @@ pub struct RNG {
 }
 
 impl RNG {
+    /// Use if you want to return the RNG entity, even if there are issues with some
+    /// of the syllables. Otherwise, use `RNG::try_from`.
+    ///
     /// # Errors
     ///
     /// Errors out if the language file is not able to be processed correctly.
-    #[deprecated(since = "0.2.0", note = "Use try_from instead")]
     pub fn new(language: &Language) -> Result<RNG, RNG> {
         let rng = RNG::process(language);
 
@@ -234,10 +236,12 @@ mod lib_tests {
 
     #[test]
     fn try_from__demonic() {
-        let result = RNG::try_from(&Language::Demonic);
+        let rng = RNG::new(&Language::Demonic).unwrap();
 
-        assert!(result.is_err());
-        assert_eq!(RNGError::InvalidLanguageFile, result.unwrap_err());
+        assert!(rng.bad_syllables.len() < 1);
+        assert!(rng.prefixes.len() > 0);
+        assert!(rng.centers.len() > 0);
+        assert!(rng.suffixes.len() > 0);
     }
 
     #[test]

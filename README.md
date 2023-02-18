@@ -11,18 +11,19 @@ of the [Java Random Name Generator library](https://github.com/folkengine/java-r
 It generates it's results based upon which [language file](src/languages) is specified.
 Currently, the following are supported in both English and Russian:
 
+* Demonic - New! Syllables based on [the infernal names](https://en.wikipedia.org/wiki/The_infernal_names) and [theological demons](https://en.wikipedia.org/wiki/List_of_theological_demons)
 * Elven
 * Fantasy
 * Goblin
 * Roman
 
-_Thanks to [Zhumatiy Sergey](https://github.com/zhum), for his contribution of the Russian versions of the language
+_Thanks to [Zhumatiy Sergey](https://github.com/zhum), for his contribution of the Russian language
 files, originally in the [Ruby version](https://github.com/folkengine/random_name_generator) of this library!_
 
 The following are in progress:
 
 * Curse
-* Demonic
+  * [profane-words](https://github.com/zacanger/profane-words) looks like a good resource
 
 ## Using the library
 
@@ -76,6 +77,7 @@ Random Name Generator
 Usage: rng [OPTIONS]
 
 Options:
+  -d, --demonic     
   -e, --elven       
   -f, --fantasy     
   -g, --goblin      
@@ -86,7 +88,6 @@ Options:
       --raw <FILE>  Reads in a raw language file
   -h, --help        Print help
   -V, --version     Print version
-
 ```
 
 or from the binary:
@@ -144,7 +145,9 @@ Elven: daedar latherdre
 
 ## TODO
 
-* Finish Demonic
+* Finish curse words
+* Add syllable weight flag
+* Add number of names flag
 
 ## Further Interest
 
