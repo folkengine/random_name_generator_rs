@@ -22,9 +22,9 @@ name = "rng"
 path = "src/main.rs"
 
 [dependencies]
-anyhow = "1.0.44"
+anyhow = "1.0.69"
 bitflags = "1.2"
-clap = { version = "4.1.4", features = ["cargo", "derive"] }
+clap = { version = "4.1.6", features = ["cargo", "derive"] }
 lazy_static = "1.4.0"
 log = "0.4.11"
 rand = "0.8.4"
