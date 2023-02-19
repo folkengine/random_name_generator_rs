@@ -4,26 +4,16 @@ use rnglib::{Language, RNGError, RNG};
 fn main() -> Result<(), RNGError> {
     let matches = cmd().get_matches();
 
-    let _count: usize = *get_number(&matches).ok_or(RNGError::ParsingError)?;
-    let _rng = get_rng(&matches)?;
+    let count: usize = *get_number(&matches).ok_or(RNGError::ParsingError)?;
+    let rng = get_rng(&matches)?;
 
-    // if matches.get_flag("raw") {
-    //     let raw = matches.get_one::<String>("raw").unwrap();
-    //     let result = RNG::new_from_file(raw.clone());
-    //
-    //     match result {
-    //         Ok(rng) => Ok(generate_name(&rng)),
-    //         Err(_) => Err(RNGError::InvalidLanguageFile),
-    //     }
-    // } else {
-    //     let name = generate(&matches);
-    //
-    //     if name.is_ok() {
-    //         println!("{}", name.unwrap());
-    //     } else {
-    //         println!("{:?}", name.unwrap_err());
-    //     }
-    // }
+    let mut v: Vec<String> = Vec::new();
+
+    for _ in 0..count {
+        v.push(rng.generate_name());
+    }
+
+    println!("{}: {}", rng.name, v.join(" "));
 
     Ok(())
 }
@@ -154,57 +144,6 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
             Err(_) => Err(RNGError::InvalidLanguageFile),
         }
     }
-}
-
-fn _generate(matches: &ArgMatches) -> Result<String, RNGError> {
-    if matches.get_flag("demonic") {
-        let rng = &RNG::try_from(&Language::Demonic)?;
-        Ok(format!("{}: {}", rng.name, rng.generate_name()))
-    } else if matches.get_flag("elven") {
-        if matches.get_flag("russian") {
-            Ok(_generate_name(&RNG::try_from(&Language::Эльфийский)?))
-        } else {
-            Ok(_generate_name(&RNG::try_from(&Language::Elven)?))
-        }
-    } else if matches.get_flag("fantasy") {
-        if matches.get_flag("russian") {
-            Ok(_generate_name(&RNG::try_from(&Language::Фантазия)?))
-        } else {
-            Ok(_generate_name(&RNG::try_from(&Language::Fantasy)?))
-        }
-    } else if matches.get_flag("goblin") {
-        if matches.get_flag("russian") {
-            Ok(_generate_name(&RNG::try_from(&Language::Гоблин)?))
-        } else {
-            Ok(_generate_name(&RNG::try_from(&Language::Goblin)?))
-        }
-    } else if matches.get_flag("roman") {
-        if matches.get_flag("russian") {
-            Ok(_generate_name(&RNG::try_from(&Language::Римский)?))
-        } else {
-            Ok(_generate_name(&RNG::try_from(&Language::Roman)?))
-        }
-    } else if matches.get_flag("curse") {
-        Ok(RNG::try_from(&Language::Curse)?.generate_short())
-    } else if matches.get_flag("flipmode") {
-        let my_dialect_type: Language = rand::random();
-        Ok(_generate_name(&RNG::try_from(&my_dialect_type)?))
-    } else {
-        let raw = matches.get_one::<String>("raw").unwrap();
-        let result = RNG::new_from_file(raw.clone());
-
-        match result {
-            Ok(rng) => Ok(_generate_name(&rng)),
-            Err(_) => Err(RNGError::InvalidLanguageFile),
-        }
-    }
-}
-
-fn _generate_name(rng: &rnglib::RNG) -> String {
-    let first_name = rng.generate_name();
-    let last_name = rng.generate_name();
-
-    format!("{}: {} {}", rng.name, first_name, last_name)
 }
 
 #[test]
