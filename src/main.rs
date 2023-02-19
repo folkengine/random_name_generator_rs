@@ -1,16 +1,25 @@
 use clap::{command, Arg, ArgAction, ArgMatches};
 use rnglib::{Language, RNGError, RNG};
 
-fn main() {
+fn main() -> Result<(), RNGError> {
     let matches = cmd().get_matches();
 
-    let name = generate(&matches);
+    let count: usize = *get_number(&matches).ok_or(RNGError::ParsingError)?;
+    let rng = get_rng(&matches)?;
 
-    if name.is_ok() {
-        println!("{}", name.unwrap());
-    } else {
-        println!("{:?}", name.unwrap_err());
+    let mut v: Vec<String> = Vec::new();
+
+    for _ in 0..count {
+        if matches.get_flag("short") {
+            v.push(rng.generate_short());
+        } else {
+            v.push(rng.generate_name());
+        }
     }
+
+    println!("{}: {}", rng.name, v.join(" "));
+
+    Ok(())
 }
 
 fn cmd() -> clap::Command {
@@ -74,64 +83,76 @@ fn cmd() -> clap::Command {
                 .help("Use Russian language file, if available"),
         )
         .arg(
+            Arg::new("short")
+                .long("short")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("Creates shorter names"),
+        )
+        .arg(
             Arg::new("raw")
                 .long("raw")
                 .required(false)
                 .value_name("FILE")
                 .help("Reads in a raw language file"),
         )
+        .arg(
+            Arg::new("number")
+                .short('n')
+                .long("number")
+                .required(false)
+                .default_value("2")
+                .value_parser(clap::value_parser!(usize))
+                .help("Number of names created."),
+        )
         .arg_required_else_help(true)
 }
 
-fn generate(matches: &ArgMatches) -> Result<String, RNGError> {
+fn get_number(matches: &ArgMatches) -> Option<&usize> {
+    matches
+        .try_get_one::<usize>("number")
+        .expect("Could not read a threshold value")
+}
+
+fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
+    let is_russian = matches.get_flag("russian");
+
     if matches.get_flag("demonic") {
-        let rng = &RNG::try_from(&Language::Demonic)?;
-        Ok(format!("{}: {}", rng.name, rng.generate_name()))
+        Ok(RNG::try_from(&Language::Demonic)?)
     } else if matches.get_flag("elven") {
-        if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Эльфийский)?))
-        } else {
-            Ok(generate_name(&RNG::try_from(&Language::Elven)?))
-        }
+        filter_russian(is_russian, &Language::Elven, &Language::Эльфийский)
     } else if matches.get_flag("fantasy") {
-        if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Фантазия)?))
-        } else {
-            Ok(generate_name(&RNG::try_from(&Language::Fantasy)?))
-        }
+        filter_russian(is_russian, &Language::Fantasy, &Language::Фантазия)
     } else if matches.get_flag("goblin") {
-        if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Гоблин)?))
-        } else {
-            Ok(generate_name(&RNG::try_from(&Language::Goblin)?))
-        }
+        filter_russian(is_russian, &Language::Goblin, &Language::Гоблин)
     } else if matches.get_flag("roman") {
-        if matches.get_flag("russian") {
-            Ok(generate_name(&RNG::try_from(&Language::Римский)?))
-        } else {
-            Ok(generate_name(&RNG::try_from(&Language::Roman)?))
-        }
+        filter_russian(is_russian, &Language::Roman, &Language::Римский)
     } else if matches.get_flag("curse") {
-        Ok(RNG::try_from(&Language::Curse)?.generate_short())
+        Ok(RNG::try_from(&Language::Curse)?)
     } else if matches.get_flag("flipmode") {
         let my_dialect_type: Language = rand::random();
-        Ok(generate_name(&RNG::try_from(&my_dialect_type)?))
+        Ok(RNG::try_from(&my_dialect_type)?)
     } else {
         let raw = matches.get_one::<String>("raw").unwrap();
         let result = RNG::new_from_file(raw.clone());
 
         match result {
-            Ok(rng) => Ok(generate_name(&rng)),
+            Ok(rng) => Ok(rng),
             Err(_) => Err(RNGError::InvalidLanguageFile),
         }
     }
 }
 
-fn generate_name(rng: &rnglib::RNG) -> String {
-    let first_name = rng.generate_name();
-    let last_name = rng.generate_name();
-
-    format!("{}: {} {}", rng.name, first_name, last_name)
+fn filter_russian(
+    is_russian: bool,
+    english: &Language,
+    russian: &Language,
+) -> Result<RNG, RNGError> {
+    if is_russian {
+        Ok(RNG::try_from(russian)?)
+    } else {
+        Ok(RNG::try_from(english)?)
+    }
 }
 
 #[test]
