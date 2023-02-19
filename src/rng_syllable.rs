@@ -1,8 +1,10 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::fmt;
+use std::str::FromStr;
 
 use crate::rng_joiner::Joiner;
+use crate::RNGError;
 
 static _CONSONANTS: [char; 57] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l', 'ł', 'm', 'ɱ', 'n',
@@ -33,7 +35,7 @@ lazy_static! {
 ///
 /// Examples
 ///
-/// `let syllable = Syllable::new("-foo +c").unwrap();`
+/// `let syllable = Syllable::from_str("-foo +c").unwrap();`
 ///
 /// This creates a foo syllable struct that needs to be the first syllable and followed by a constant.
 ///
@@ -69,21 +71,6 @@ pub struct Syllable {
 }
 
 impl Syllable {
-    pub fn new(raw: &str) -> Result<Syllable, BadSyllable> {
-        if FULL_RE.is_match(raw) {
-            let (classification, value) = Syllable::classify(raw);
-            let syllable = Syllable {
-                value,
-                classification,
-                jnext: Syllable::determine_next_joiner(raw),
-                jprevious: Syllable::determine_previous_joiner(raw),
-            };
-            Ok(syllable)
-        } else {
-            Err(BadSyllable)
-        }
-    }
-
     pub fn ends_with_vowel(&self) -> bool {
         VOWELS.contains(&self.value.chars().last().unwrap())
     }
@@ -170,6 +157,25 @@ impl fmt::Display for Syllable {
     }
 }
 
+impl FromStr for Syllable {
+    type Err = RNGError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if FULL_RE.is_match(s) {
+            let (classification, value) = Syllable::classify(s);
+            let syllable = Syllable {
+                value,
+                classification,
+                jnext: Syllable::determine_next_joiner(s),
+                jprevious: Syllable::determine_previous_joiner(s),
+            };
+            Ok(syllable)
+        } else {
+            Err(RNGError::ParsingError)
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct BadSyllable;
 
@@ -208,28 +214,28 @@ mod syllable_tests {
 
     #[test]
     fn new() {
-        let syllable = Syllable::new("-ваа +c");
+        let syllable = Syllable::from_str("-ваа +c");
 
         assert!(syllable.is_ok());
     }
 
     #[rstest(from, to, from_i, to_i,
-        case(Syllable::new("ch").unwrap(), Syllable::new("ch").unwrap(), 1, 1),
-        case(Syllable::new("ch").unwrap(), Syllable::new("abc").unwrap(), 1, 3),
-        case(Syllable::new("ch").unwrap(), Syllable::new("ch -c").unwrap(), 1, 9),
-        case(Syllable::new("ch").unwrap(), Syllable::new("ach -c").unwrap(), 1, 11),
-        case(Syllable::new("cha").unwrap(), Syllable::new("ch").unwrap(), 3, 1),
-        case(Syllable::new("cha").unwrap(), Syllable::new("ach").unwrap(), 3, 3),
-        case(Syllable::new("cha").unwrap(), Syllable::new("ch -v").unwrap(), 3, 5),
-        case(Syllable::new("cha").unwrap(), Syllable::new("ich -v").unwrap(), 3, 7),
-        case(Syllable::new("ch +v").unwrap(), Syllable::new("ich").unwrap(), 5, 3),
-        case(Syllable::new("ch +v").unwrap(), Syllable::new("ich -c").unwrap(), 5, 11),
-        case(Syllable::new("chi +v").unwrap(), Syllable::new("abc").unwrap(), 7, 3),
-        case(Syllable::new("chi +v").unwrap(), Syllable::new("abc -v").unwrap(), 7, 7),
-        case(Syllable::new("ch +c").unwrap(), Syllable::new("ch").unwrap(), 9, 1),
-        case(Syllable::new("ch +c").unwrap(), Syllable::new("ch -c").unwrap(), 9, 9),
-        case(Syllable::new("chi +c").unwrap(), Syllable::new("ch").unwrap(), 11, 1),
-        case(Syllable::new("chi +c").unwrap(), Syllable::new("ch -v").unwrap(), 11, 5),
+        case(Syllable::from_str("ch").unwrap(), Syllable::from_str("ch").unwrap(), 1, 1),
+        case(Syllable::from_str("ch").unwrap(), Syllable::from_str("abc").unwrap(), 1, 3),
+        case(Syllable::from_str("ch").unwrap(), Syllable::from_str("ch -c").unwrap(), 1, 9),
+        case(Syllable::from_str("ch").unwrap(), Syllable::from_str("ach -c").unwrap(), 1, 11),
+        case(Syllable::from_str("cha").unwrap(), Syllable::from_str("ch").unwrap(), 3, 1),
+        case(Syllable::from_str("cha").unwrap(), Syllable::from_str("ach").unwrap(), 3, 3),
+        case(Syllable::from_str("cha").unwrap(), Syllable::from_str("ch -v").unwrap(), 3, 5),
+        case(Syllable::from_str("cha").unwrap(), Syllable::from_str("ich -v").unwrap(), 3, 7),
+        case(Syllable::from_str("ch +v").unwrap(), Syllable::from_str("ich").unwrap(), 5, 3),
+        case(Syllable::from_str("ch +v").unwrap(), Syllable::from_str("ich -c").unwrap(), 5, 11),
+        case(Syllable::from_str("chi +v").unwrap(), Syllable::from_str("abc").unwrap(), 7, 3),
+        case(Syllable::from_str("chi +v").unwrap(), Syllable::from_str("abc -v").unwrap(), 7, 7),
+        case(Syllable::from_str("ch +c").unwrap(), Syllable::from_str("ch").unwrap(), 9, 1),
+        case(Syllable::from_str("ch +c").unwrap(), Syllable::from_str("ch -c").unwrap(), 9, 9),
+        case(Syllable::from_str("chi +c").unwrap(), Syllable::from_str("ch").unwrap(), 11, 1),
+        case(Syllable::from_str("chi +c").unwrap(), Syllable::from_str("ch -v").unwrap(), 11, 5),
     )]
     fn connects_matrix(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
         assert_eq!(from.jnext.bits(), from_i);
@@ -238,25 +244,25 @@ mod syllable_tests {
     }
 
     #[rstest(from, to, from_i, to_i,
-        case(Syllable::new("ass").unwrap(), Syllable::new("hole -v").unwrap(), 1, 5),
-        case(Syllable::new("fu").unwrap(), Syllable::new("ck -c").unwrap(), 3, 9),
-        case(Syllable::new("bi").unwrap(), Syllable::new("atch -c").unwrap(), 3, 11),
-        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch").unwrap(), 5, 1),
-        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch -v").unwrap(), 5, 5),
-        case(Syllable::new("sh +v").unwrap(), Syllable::new("ach -v").unwrap(), 5, 7),
-        case(Syllable::new("sh +v").unwrap(), Syllable::new("ch -c").unwrap(), 5, 9),
-        case(Syllable::new("shi +v").unwrap(), Syllable::new("ch").unwrap(), 7, 1),
-        case(Syllable::new("shi +v").unwrap(), Syllable::new("ts -v").unwrap(), 7, 5),
-        case(Syllable::new("shi +v").unwrap(), Syllable::new("tty -c").unwrap(), 7, 9),
-        case(Syllable::new("shi +v").unwrap(), Syllable::new("ach -c").unwrap(), 7, 11),
-        case(Syllable::new("sh +c").unwrap(), Syllable::new("ach").unwrap(), 9, 3),
-        case(Syllable::new("sh +c").unwrap(), Syllable::new("ch -v").unwrap(), 9, 5),
-        case(Syllable::new("sh +c").unwrap(), Syllable::new("it -v").unwrap(), 9, 7),
-        case(Syllable::new("sh +c").unwrap(), Syllable::new("it -c").unwrap(), 9, 11),
-        case(Syllable::new("bo +c").unwrap(), Syllable::new("oty").unwrap(), 11, 3),
-        case(Syllable::new("bo +c").unwrap(), Syllable::new("oty -v").unwrap(), 11, 7),
-        case(Syllable::new("boo +c").unwrap(), Syllable::new("ty -c").unwrap(), 11, 9),
-        case(Syllable::new("bo +c").unwrap(), Syllable::new("oger -c").unwrap(), 11, 11),
+        case(Syllable::from_str("ass").unwrap(), Syllable::from_str("hole -v").unwrap(), 1, 5),
+        case(Syllable::from_str("fu").unwrap(), Syllable::from_str("ck -c").unwrap(), 3, 9),
+        case(Syllable::from_str("bi").unwrap(), Syllable::from_str("atch -c").unwrap(), 3, 11),
+        case(Syllable::from_str("sh +v").unwrap(), Syllable::from_str("ch").unwrap(), 5, 1),
+        case(Syllable::from_str("sh +v").unwrap(), Syllable::from_str("ch -v").unwrap(), 5, 5),
+        case(Syllable::from_str("sh +v").unwrap(), Syllable::from_str("ach -v").unwrap(), 5, 7),
+        case(Syllable::from_str("sh +v").unwrap(), Syllable::from_str("ch -c").unwrap(), 5, 9),
+        case(Syllable::from_str("shi +v").unwrap(), Syllable::from_str("ch").unwrap(), 7, 1),
+        case(Syllable::from_str("shi +v").unwrap(), Syllable::from_str("ts -v").unwrap(), 7, 5),
+        case(Syllable::from_str("shi +v").unwrap(), Syllable::from_str("tty -c").unwrap(), 7, 9),
+        case(Syllable::from_str("shi +v").unwrap(), Syllable::from_str("ach -c").unwrap(), 7, 11),
+        case(Syllable::from_str("sh +c").unwrap(), Syllable::from_str("ach").unwrap(), 9, 3),
+        case(Syllable::from_str("sh +c").unwrap(), Syllable::from_str("ch -v").unwrap(), 9, 5),
+        case(Syllable::from_str("sh +c").unwrap(), Syllable::from_str("it -v").unwrap(), 9, 7),
+        case(Syllable::from_str("sh +c").unwrap(), Syllable::from_str("it -c").unwrap(), 9, 11),
+        case(Syllable::from_str("bo +c").unwrap(), Syllable::from_str("oty").unwrap(), 11, 3),
+        case(Syllable::from_str("bo +c").unwrap(), Syllable::from_str("oty -v").unwrap(), 11, 7),
+        case(Syllable::from_str("boo +c").unwrap(), Syllable::from_str("ty -c").unwrap(), 11, 9),
+        case(Syllable::from_str("bo +c").unwrap(), Syllable::from_str("oger -c").unwrap(), 11, 11),
     )]
     fn connects_matrix__neg(from: Syllable, to: Syllable, from_i: u8, to_i: u8) {
         assert_eq!(from.jnext.bits(), from_i);
@@ -273,7 +279,7 @@ mod syllable_tests {
             jprevious: Joiner::SOME | Joiner::VOWEL | Joiner::ONLY_CONSONANT,
         };
 
-        let actual = Syllable::new("idr -c +v");
+        let actual = Syllable::from_str("idr -c +v");
 
         assert_eq!(expected, actual.unwrap());
     }
@@ -287,7 +293,7 @@ mod syllable_tests {
             jprevious: Joiner::SOME | Joiner::VOWEL,
         };
 
-        let actual = Syllable::new("-asd");
+        let actual = Syllable::from_str("-asd");
 
         assert_eq!(expected, actual.unwrap());
     }
@@ -301,35 +307,35 @@ mod syllable_tests {
             jnext: Joiner::SOME | Joiner::VOWEL,
         };
 
-        let actual = Syllable::new("+adly -v");
+        let actual = Syllable::from_str("+adly -v");
 
         assert_eq!(expected, actual.unwrap());
     }
 
     #[test]
     fn starts_with_vowel() {
-        let actual = Syllable::new("+sadly -v");
+        let actual = Syllable::from_str("+sadly -v");
 
         assert_eq!(false, actual.unwrap().starts_with_vowel());
     }
 
     #[test]
     fn starts_with_vowel_not() {
-        let actual = Syllable::new("+adly -v");
+        let actual = Syllable::from_str("+adly -v");
 
         assert_eq!(true, actual.unwrap().starts_with_vowel());
     }
 
     #[test]
     fn ends_with_vowel() {
-        let actual = Syllable::new("+sadly -v");
+        let actual = Syllable::from_str("+sadly -v");
 
         assert_eq!(true, actual.unwrap().ends_with_vowel());
     }
 
     #[test]
     fn ends_with_vowel_not() {
-        let actual = Syllable::new("-asdf -v");
+        let actual = Syllable::from_str("-asdf -v");
 
         assert_eq!(false, actual.unwrap().ends_with_vowel());
     }
@@ -378,9 +384,9 @@ mod syllable_tests {
 
     fn _micro() -> Vec<Syllable> {
         vec![
-            Syllable::new("-a").unwrap(),
-            Syllable::new("b").unwrap(),
-            Syllable::new("+c").unwrap(),
+            Syllable::from_str("-a").unwrap(),
+            Syllable::from_str("b").unwrap(),
+            Syllable::from_str("+c").unwrap(),
         ]
     }
 
@@ -393,7 +399,10 @@ mod syllable_tests {
         case("+123asfd3ew")
     )]
     fn new__invalid__error(input: &str) {
-        assert_eq!(Syllable::new(input).unwrap_err(), BadSyllable);
+        assert_eq!(
+            Syllable::from_str(input).unwrap_err(),
+            RNGError::ParsingError
+        );
     }
 
     #[rstest(input, case("!"), case("+-"), case("+123asfd3ew"))]
@@ -410,19 +419,19 @@ mod syllable_tests {
         case("ladd  -v +v", "ladd -v +v".to_string()),
     )]
     fn to_string(input: &str, expected: String) {
-        assert_eq!(Syllable::new(input).unwrap().to_string(), expected);
+        assert_eq!(Syllable::from_str(input).unwrap().to_string(), expected);
     }
 
     #[test]
     fn to_string_tmp() {
-        let s = Syllable::new("-ang +v").unwrap();
+        let s = Syllable::from_str("-ang +v").unwrap();
 
         assert_eq!(s.to_string(), "-ang +v".to_string());
     }
 
     #[test]
     fn value_next() {
-        let syl = Syllable::new("-ang +v").unwrap();
+        let syl = Syllable::from_str("-ang +v").unwrap();
         // assert_eq!(syl.jnext.value_next(), " +v".to_string());
         assert_eq!(syl.jprevious.value_previous(), "".to_string());
     }

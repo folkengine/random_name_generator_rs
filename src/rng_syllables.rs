@@ -1,11 +1,12 @@
 use rand::distributions::{Distribution, Uniform};
+use std::str::FromStr;
 
 use crate::rng_joiner::Joiner;
 use crate::rng_syllable::Syllable;
 
-/// Syllables is a single field struct containing a Vector of Syllable structs. Syllables facilites
-/// filtering on Syllable Joiners allowing for dialects to easily determine the next syllable for
-/// a generated name.
+/// Syllables is a single field struct containing a Vector of Syllable structs. Syllables
+/// facilitates filtering on Syllable Joiners allowing for dialects to easily determine the next
+/// syllable for a generated name.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Syllables(Vec<Syllable>);
 
@@ -18,12 +19,10 @@ impl Syllables {
         Syllables(v)
     }
 
-    pub fn new_from_array(syl_strs: &[&str]) -> Syllables {
-        let mut syllables: Vec<Syllable> = Vec::new();
-        for s in syl_strs.iter() {
-            syllables.push(Syllable::new(s).unwrap());
-        }
-        Syllables::new_from_vector(syllables)
+    pub fn new_from_array(strs: &[&str]) -> Syllables {
+        strs.iter()
+            .map(|s| Syllable::from_str(s).unwrap())
+            .collect()
     }
 
     pub fn add(&mut self, elem: Syllable) {
@@ -107,6 +106,18 @@ impl Default for Syllables {
     }
 }
 
+impl FromIterator<Syllable> for Syllables {
+    fn from_iter<I: IntoIterator<Item = Syllable>>(iter: I) -> Self {
+        let mut c = Syllables::new();
+
+        for i in iter {
+            c.add(i);
+        }
+
+        c
+    }
+}
+
 impl IntoIterator for Syllables {
     type Item = Syllable;
     type IntoIter = std::vec::IntoIter<Self::Item>;
@@ -125,8 +136,8 @@ mod syllables_tests {
     #[test]
     fn add() {
         let mut syllables = Syllables::new_from_array(&["ch", "abc"]);
-        syllables.add(Syllable::new("efg").unwrap());
-        syllables.add(Syllable::new("hij").unwrap());
+        syllables.add(Syllable::from_str("efg").unwrap());
+        syllables.add(Syllable::from_str("hij").unwrap());
 
         assert_eq!(syllables.len(), 4);
     }
@@ -137,11 +148,11 @@ mod syllables_tests {
         let all: &Vec<Syllable> = c.all();
 
         assert_eq!(c.len(), 2);
-        assert_eq!(c.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(c.get(1).unwrap(), &Syllable::new("abc").unwrap());
+        assert_eq!(c.get(0).unwrap(), &Syllable::from_str("ch").unwrap());
+        assert_eq!(c.get(1).unwrap(), &Syllable::from_str("abc").unwrap());
         assert_eq!(all.len(), 2);
-        assert_eq!(all.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(all.get(1).unwrap(), &Syllable::new("abc").unwrap());
+        assert_eq!(all.get(0).unwrap(), &Syllable::from_str("ch").unwrap());
+        assert_eq!(all.get(1).unwrap(), &Syllable::from_str("abc").unwrap());
     }
 
     #[test]
@@ -156,7 +167,7 @@ mod syllables_tests {
     #[test]
     fn contains() {
         let mut syllables = Syllables::new_from_array(&["ch", "abc"]);
-        let efg = Syllable::new("efg").unwrap();
+        let efg = Syllable::from_str("efg").unwrap();
         assert!(!syllables.contains(&efg));
 
         syllables.add(efg.clone());
@@ -170,8 +181,8 @@ mod syllables_tests {
 
         let filtered = syllables.filter_from(joiner);
 
-        assert!(!filtered.contains(&Syllable::new("ch").unwrap()));
-        assert!(filtered.contains(&Syllable::new("abc").unwrap()));
+        assert!(!filtered.contains(&Syllable::from_str("ch").unwrap()));
+        assert!(filtered.contains(&Syllable::from_str("abc").unwrap()));
     }
 
     #[test]
@@ -180,7 +191,7 @@ mod syllables_tests {
         let three = Syllables::new_from_array(&["ch", "abc", "efg"]);
 
         assert!(zero.first().is_none());
-        assert_eq!(three.first().unwrap(), &Syllable::new("ch").unwrap());
+        assert_eq!(three.first().unwrap(), &Syllable::from_str("ch").unwrap());
     }
 
     #[test]
@@ -189,7 +200,7 @@ mod syllables_tests {
         let three = Syllables::new_from_array(&["ch", "abc", "efg"]);
 
         assert!(zero.last().is_none());
-        assert_eq!(three.last().unwrap(), &Syllable::new("efg").unwrap());
+        assert_eq!(three.last().unwrap(), &Syllable::from_str("efg").unwrap());
     }
 
     #[test]
@@ -206,20 +217,35 @@ mod syllables_tests {
         let syllables = Syllables::new_from_array(&["ch", "abc", "er", "go", "to"]);
 
         assert_eq!(syllables.len(), 5);
-        assert_eq!(syllables.get(0).unwrap(), &Syllable::new("ch").unwrap());
-        assert_eq!(syllables.get(1).unwrap(), &Syllable::new("abc").unwrap());
-        assert_eq!(syllables.get(2).unwrap(), &Syllable::new("er").unwrap());
-        assert_eq!(syllables.get(3).unwrap(), &Syllable::new("go").unwrap());
-        assert_eq!(syllables.get(4).unwrap(), &Syllable::new("to").unwrap());
+        assert_eq!(
+            syllables.get(0).unwrap(),
+            &Syllable::from_str("ch").unwrap()
+        );
+        assert_eq!(
+            syllables.get(1).unwrap(),
+            &Syllable::from_str("abc").unwrap()
+        );
+        assert_eq!(
+            syllables.get(2).unwrap(),
+            &Syllable::from_str("er").unwrap()
+        );
+        assert_eq!(
+            syllables.get(3).unwrap(),
+            &Syllable::from_str("go").unwrap()
+        );
+        assert_eq!(
+            syllables.get(4).unwrap(),
+            &Syllable::from_str("to").unwrap()
+        );
         assert!(syllables.get(5).is_none());
     }
 
     #[test]
     fn next_from() {
-        let b = Syllable::new("b").unwrap();
+        let b = Syllable::from_str("b").unwrap();
         let mut v = Syllables::new();
         v.add(b.clone());
-        let a = Syllable::new("a").unwrap();
+        let a = Syllable::from_str("a").unwrap();
 
         let actual = v.next_from(&a);
 
@@ -239,7 +265,7 @@ mod syllables_tests {
             let syllables = Syllables::new_from_array(&["ch", "abc", "er", "go", "to"]);
 
             let rnd = syllables.get_random().unwrap();
-            let non = Syllable::new("efg").unwrap();
+            let non = Syllable::from_str("efg").unwrap();
 
             assert!(syllables.contains(rnd));
             assert!(!syllables.contains(&non));

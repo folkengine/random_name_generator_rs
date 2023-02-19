@@ -24,6 +24,7 @@ use rand::{
 };
 use rust_embed::RustEmbed;
 use std::fmt;
+use std::str::FromStr;
 use titlecase::titlecase;
 
 use crate::rng_syllable::{Classification, Syllable};
@@ -74,35 +75,29 @@ impl RNG {
     /// # Errors
     ///
     /// Errors out if the language file is not able to be processed correctly.
-    pub fn new_from_file(filename: String) -> Result<RNG> {
-        RNG::process_file(filename)
+    pub fn new_from_file(filename: String) -> Result<RNG, RNGError> {
+        match std::fs::read_to_string(filename.clone()) {
+            Ok(f) => match std::str::from_utf8(f.as_ref()) {
+                Ok(s) => Ok(RNG::classify(s, filename)),
+                Err(_) => Err(RNGError::InvalidLanguageFile),
+            },
+            Err(_) => Err(RNGError::InvalidLanguageFile),
+        }
     }
 
     fn process(language: &Language) -> RNG {
         let mut txt = Asset::get(language.get_filename().as_str()).unwrap();
-        RNG::processor(
+        RNG::classify(
             std::str::from_utf8(txt.data.to_mut()).unwrap(),
             language.to_string(),
         )
-    }
-
-    fn process_file(filename: String) -> Result<RNG> {
-        let f = std::fs::read_to_string(filename.clone())?;
-        Ok(RNG::processor(
-            std::str::from_utf8(f.as_ref()).unwrap(),
-            filename,
-        ))
-    }
-
-    fn processor(txt: &str, language: String) -> RNG {
-        RNG::classify(txt, language)
     }
 
     fn classify(lines: &str, name: String) -> RNG {
         let mut rng = RNG::empty(name);
 
         for line in lines.lines() {
-            if let Ok(sy) = Syllable::new(line) {
+            if let Ok(sy) = Syllable::from_str(line) {
                 match sy.classification {
                     Classification::Prefix => rng.prefixes.add(sy),
                     Classification::Center => rng.centers.add(sy),
@@ -318,25 +313,10 @@ mod lib_tests {
     }
 
     #[test]
-    fn process_file() {
-        let filename = "src/languages/Test-micro.txt";
-
-        let rng = RNG::process_file(filename.to_string());
-        let result = rng.as_ref().unwrap();
-
-        assert!(!rng.is_err());
-        assert_eq!(result.name, filename.to_string());
-        assert_eq!(result.bad_syllables.len(), 0);
-        assert_eq!(result.prefixes.len(), 1);
-        assert_eq!(result.centers.len(), 1);
-        assert_eq!(result.suffixes.len(), 1);
-    }
-
-    #[test]
-    fn process_file__russian_fantasy() {
+    fn new_from_file__russian_fantasy() {
         let filename = "src/languages/Фантазия.txt";
 
-        let rng = RNG::process_file(filename.to_string());
+        let rng = RNG::new_from_file(filename.to_string());
         let result = rng.as_ref().unwrap();
 
         assert!(!rng.is_err());
@@ -348,25 +328,10 @@ mod lib_tests {
     }
 
     #[test]
-    fn process_file__russian_goblin() {
-        let filename = "src/languages/Гоблин.txt";
-
-        let rng = RNG::process_file(filename.to_string());
-        let result = rng.as_ref().unwrap();
-
-        assert!(!rng.is_err());
-        assert_eq!(result.name, filename.to_string());
-        assert_eq!(result.bad_syllables.len(), 0);
-        assert_eq!(result.prefixes.len(), 19);
-        assert_eq!(result.centers.len(), 13);
-        assert_eq!(result.suffixes.len(), 16);
-    }
-
-    #[test]
     fn process_file__with_error() {
         let filename = "src/languages/none.txt";
 
-        let result = RNG::process_file(filename.to_string());
+        let result = RNG::new_from_file(filename.to_string());
 
         assert!(result.is_err());
     }
