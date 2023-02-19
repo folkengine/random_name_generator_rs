@@ -10,7 +10,11 @@ fn main() -> Result<(), RNGError> {
     let mut v: Vec<String> = Vec::new();
 
     for _ in 0..count {
-        v.push(rng.generate_name());
+        if matches.get_flag("short") {
+            v.push(rng.generate_short());
+        } else {
+            v.push(rng.generate_name());
+        }
     }
 
     println!("{}: {}", rng.name, v.join(" "));
@@ -77,6 +81,13 @@ fn cmd() -> clap::Command {
                 .required(false)
                 .action(ArgAction::SetTrue)
                 .help("Use Russian language file, if available"),
+        )
+        .arg(
+            Arg::new("short")
+                .long("short")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("Creates shorter names"),
         )
         .arg(
             Arg::new("raw")
