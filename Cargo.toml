@@ -9,7 +9,7 @@ edition = "2021"
 rust-version = "1.64.0"  # MSRV
 license = "BSD-3-Clause"
 readme = "README.md"
-exclude = [".github/workflows/*", "docs/*", ".gitignore", ".travis.yml"]
+exclude = [".devcontainer/*", ".github/*", "docs/*", ".gitignore", ".travis.yml"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
