@@ -77,17 +77,19 @@ Random Name Generator
 Usage: rng [OPTIONS]
 
 Options:
-  -d, --demonic     
-  -e, --elven       
-  -f, --fantasy     
-  -g, --goblin      
-  -r, --roman       
-  -c, --curse       [UNDER CONSTRUCTION]
-  -x, --flipmode    Flipmode is the greatest! (Random language)
-      --russian     Use Russian language file, if available
-      --raw <FILE>  Reads in a raw language file
-  -h, --help        Print help
-  -V, --version     Print version
+  -d, --demonic
+  -e, --elven
+  -f, --fantasy
+  -g, --goblin
+  -r, --roman
+  -c, --curse            [UNDER CONSTRUCTION]
+  -x, --flipmode         Flipmode is the greatest! (Random language)
+      --russian          Use Russian language file, if available
+      --short            Creates shorter names
+      --raw <FILE>       Reads in a raw language file
+  -n, --number <number>  Number of names created. [default: 2]
+  -h, --help             Print help
+  -V, --version          Print version
 ```
 
 or from the binary:
