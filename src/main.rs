@@ -7,17 +7,11 @@ fn main() -> Result<(), RNGError> {
     let count: usize = *get_number(&matches).ok_or(RNGError::ParsingError)?;
     let rng = get_rng(&matches)?;
 
-    let mut v: Vec<String> = Vec::new();
-
-    for _ in 0..count {
-        if matches.get_flag("short") {
-            v.push(rng.generate_short());
-        } else {
-            v.push(rng.generate_name());
-        }
-    }
-
-    println!("{}: {}", rng.name, v.join(" "));
+    println!(
+        "{}: {}",
+        rng.name,
+        rng.generate_names_string(count, matches.get_flag("short"))
+    );
 
     Ok(())
 }

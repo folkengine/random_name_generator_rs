@@ -144,6 +144,28 @@ impl RNG {
         self.generate_name_by_count(NORMAL_WEIGHT.gen())
     }
 
+    /// Returns a vector of names based on the number passed in. Returns
+    /// short weighted names if `is_short` is set to true.
+    #[must_use]
+    pub fn generate_names(&self, number: usize, is_short: bool) -> Vec<String> {
+        let mut v: Vec<String> = Vec::new();
+
+        for _ in 0..number {
+            if is_short {
+                v.push(self.generate_short());
+            } else {
+                v.push(self.generate_name());
+            }
+        }
+
+        v
+    }
+
+    #[must_use]
+    pub fn generate_names_string(&self, n: usize, is_short: bool) -> String {
+        self.generate_names(n, is_short).join(" ")
+    }
+
     #[must_use]
     pub fn generate_short(&self) -> String {
         self.generate_name_by_count(SHORT_WEIGHT.gen())
@@ -386,6 +408,24 @@ mod lib_tests {
         chain
             .iter()
             .for_each(|name| assert!(name.as_str().ends_with("c")));
+    }
+
+    #[test]
+    fn generate_names() {
+        let rng = RNG::try_from(&Language::Roman).unwrap();
+
+        let names = rng.generate_names(5, true);
+
+        assert_eq!(names.len(), 5);
+    }
+
+    #[test]
+    fn generate_names_string() {
+        let rng = RNG::try_from(&Language::Demonic).unwrap();
+
+        let names = rng.generate_names_string(12, true);
+
+        assert_eq!(names.split_whitespace().count(), 12);
     }
 
     #[test]
