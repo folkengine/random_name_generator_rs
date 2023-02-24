@@ -112,20 +112,35 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
     let is_russian = matches.get_flag("russian");
 
     if matches.get_flag("demonic") {
-        Ok(RNG::try_from(&Language::Demonic)?)
+        Ok(RNG::from(&Language::Demonic))
     } else if matches.get_flag("elven") {
-        filter_russian(is_russian, &Language::Elven, &Language::Эльфийский)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Elven,
+            &Language::Эльфийский,
+        ))
     } else if matches.get_flag("fantasy") {
-        filter_russian(is_russian, &Language::Fantasy, &Language::Фантазия)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Fantasy,
+            &Language::Фантазия,
+        ))
     } else if matches.get_flag("goblin") {
-        filter_russian(is_russian, &Language::Goblin, &Language::Гоблин)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Goblin,
+            &Language::Гоблин,
+        ))
     } else if matches.get_flag("roman") {
-        filter_russian(is_russian, &Language::Roman, &Language::Римский)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Roman,
+            &Language::Римский,
+        ))
     } else if matches.get_flag("curse") {
-        Ok(RNG::try_from(&Language::Curse)?)
+        Ok(RNG::from(&Language::Curse))
     } else if matches.get_flag("flipmode") {
-        let my_dialect_type: Language = rand::random();
-        Ok(RNG::try_from(&my_dialect_type)?)
+        Ok(RNG::random())
     } else {
         let raw = matches.get_one::<String>("raw").unwrap();
         let result = RNG::new_from_file(raw.clone());
@@ -137,15 +152,11 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
     }
 }
 
-fn filter_russian(
-    is_russian: bool,
-    english: &Language,
-    russian: &Language,
-) -> Result<RNG, RNGError> {
+fn filter_russian(is_russian: bool, english: &Language, russian: &Language) -> RNG {
     if is_russian {
-        Ok(RNG::try_from(russian)?)
+        RNG::from(russian)
     } else {
-        Ok(RNG::try_from(english)?)
+        RNG::from(english)
     }
 }
 

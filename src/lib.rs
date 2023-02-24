@@ -57,7 +57,7 @@ pub struct RNG {
 
 impl RNG {
     /// Use if you want to return the RNG entity, even if there are issues with some
-    /// of the syllables. Otherwise, use `RNG::try_from`.
+    /// of the syllables. Otherwise, use `RNG::from`.
     ///
     /// # Errors
     ///
@@ -83,6 +83,12 @@ impl RNG {
             },
             Err(_) => Err(RNGError::InvalidLanguageFile),
         }
+    }
+
+    #[must_use]
+    pub fn random() -> RNG {
+        let my_dialect_type: Language = rand::random();
+        RNG::process(&my_dialect_type)
     }
 
     fn process(language: &Language) -> RNG {
@@ -217,17 +223,9 @@ impl RNG {
     }
 }
 
-impl TryFrom<&Language> for RNG {
-    type Error = RNGError;
-
-    fn try_from(language: &Language) -> std::result::Result<Self, Self::Error> {
-        let rng = RNG::process(language);
-
-        if rng.is_valid() {
-            Ok(rng)
-        } else {
-            Err(RNGError::InvalidLanguageFile)
-        }
+impl From<&Language> for RNG {
+    fn from(language: &Language) -> Self {
+        RNG::process(language)
     }
 }
 
@@ -642,8 +640,8 @@ impl fmt::Display for Language {
 
 impl Distribution<Language> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Language {
-        match rng.gen_range(1..5) {
-            // 0 => Dialects::Demonic,
+        match rng.gen_range(0..5) {
+            0 => Language::Demonic,
             1 => Language::Elven,
             2 => Language::Fantasy,
             3 => Language::Goblin,
