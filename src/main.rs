@@ -114,13 +114,29 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
     if matches.get_flag("demonic") {
         Ok(RNG::from(&Language::Demonic))
     } else if matches.get_flag("elven") {
-        filter_russian(is_russian, &Language::Elven, &Language::Эльфийский)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Elven,
+            &Language::Эльфийский,
+        ))
     } else if matches.get_flag("fantasy") {
-        filter_russian(is_russian, &Language::Fantasy, &Language::Фантазия)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Fantasy,
+            &Language::Фантазия,
+        ))
     } else if matches.get_flag("goblin") {
-        filter_russian(is_russian, &Language::Goblin, &Language::Гоблин)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Goblin,
+            &Language::Гоблин,
+        ))
     } else if matches.get_flag("roman") {
-        filter_russian(is_russian, &Language::Roman, &Language::Римский)
+        Ok(filter_russian(
+            is_russian,
+            &Language::Roman,
+            &Language::Римский,
+        ))
     } else if matches.get_flag("curse") {
         Ok(RNG::from(&Language::Curse))
     } else if matches.get_flag("flipmode") {
@@ -136,15 +152,11 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
     }
 }
 
-fn filter_russian(
-    is_russian: bool,
-    english: &Language,
-    russian: &Language,
-) -> Result<RNG, RNGError> {
+fn filter_russian(is_russian: bool, english: &Language, russian: &Language) -> RNG {
     if is_russian {
-        Ok(RNG::from(russian))
+        RNG::from(russian)
     } else {
-        Ok(RNG::from(english))
+        RNG::from(english)
     }
 }
 
