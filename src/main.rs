@@ -136,7 +136,11 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
     }
 }
 
-fn filter_russian(is_russian: bool, english: &Language, russian: &Language) -> Result<RNG, RNGError> {
+fn filter_russian(
+    is_russian: bool,
+    english: &Language,
+    russian: &Language,
+) -> Result<RNG, RNGError> {
     if is_russian {
         Ok(RNG::from(russian))
     } else {
