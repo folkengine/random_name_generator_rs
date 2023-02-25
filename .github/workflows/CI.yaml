@@ -40,7 +40,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: dtolnay/rust-toolchain@master
         with:
           components: clippy, rust-src
       - run: cargo clippy -- -Dclippy::all -Dclippy::pedantic
@@ -52,7 +52,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: dtolnay/rust-toolchain@master
         with:
           components: rustfmt, rust-src
       - run: cargo fmt --all -- --check
