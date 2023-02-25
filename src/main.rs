@@ -1,6 +1,14 @@
 use clap::{command, Arg, ArgAction, ArgMatches};
 use rnglib::{Language, RNGError, RNG};
 
+static HELP_TEMPLATE: &str = "{about} {version}
+
+Usage: rng
+
+Options:
+{options}
+";
+
 fn main() -> Result<(), RNGError> {
     let matches = cmd().get_matches();
 
@@ -18,6 +26,7 @@ fn main() -> Result<(), RNGError> {
 
 fn cmd() -> clap::Command {
     command!()
+        .help_template(HELP_TEMPLATE)
         .arg(
             Arg::new("demonic")
                 .short('d')
