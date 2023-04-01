@@ -2,6 +2,7 @@ use log::{debug, trace};
 use std::fmt;
 
 bitflags! {
+    #[derive(Clone, Copy, Debug, PartialEq)]
     pub struct Joiner: u8 {
         const NONE           = 0b0000_0000;
         const SOME           = 0b0000_0001;
@@ -80,7 +81,7 @@ impl Joiner {
 
 impl fmt::Display for Joiner {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:b}", self.bits,)
+        write!(f, "{:b}", self.bits())
     }
 }
 
