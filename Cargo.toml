@@ -22,19 +22,19 @@ name = "rng"
 path = "src/main.rs"
 
 [dependencies]
-anyhow = "1.0.69"
+anyhow = "1.0.71"
 bitflags = "2.0.2"
 clap = { version = "4.3.0", features = ["cargo", "derive"] }
 lazy_static = "1.4.0"
-log = "0.4.11"
-rand = "0.8.4"
+log = "0.4.19"
+rand = "0.8.5"
 regex = "1"
-rust-embed = "6.3.0"
+rust-embed = "6.7.0"
 titlecase = "2.2.1"
 
 [dev-dependencies]
 criterion = "0.5.1"
-proptest = "1.0.0"
+proptest = "1.2.0"
 rstest = "0.17.0"
 
 [[bench]]
