@@ -1,7 +1,7 @@
 [package]
 name = "random_name_generator"
 description = "Random Name Generator"
-version = "0.3.4"
+version = "0.3.5"
 authors = ["Christoph Baker <gaoler@electronicpanopticon.com>"]
 repository = "https://github.com/folkengine/random_name_generator_rs.git"
 homepage = "https://github.com/folkengine/random_name_generator_rs"
@@ -24,7 +24,7 @@ path = "src/main.rs"
 [dependencies]
 anyhow = "1.0.69"
 bitflags = "2.0.2"
-clap = { version = "4.2.1", features = ["cargo", "derive"] }
+clap = { version = "4.3.0", features = ["cargo", "derive"] }
 lazy_static = "1.4.0"
 log = "0.4.11"
 rand = "0.8.4"
@@ -33,7 +33,7 @@ rust-embed = "6.3.0"
 titlecase = "2.2.1"
 
 [dev-dependencies]
-criterion = "0.4.0"
+criterion = "0.5.1"
 proptest = "1.0.0"
 rstest = "0.17.0"
 
