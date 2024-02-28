@@ -28,12 +28,8 @@ bitflags! {
 impl Joiner {
     #[allow(dead_code)]
     pub fn joins(self, to: Joiner) -> bool {
-        debug!("{}.joins({})", self, to);
-
         let can_to = self.joins_to(to);
-        debug!("can to: {}", can_to);
         let can_from = to.joins_to(self);
-        debug!("can from: {}", can_from);
         can_to && can_from
     }
 
@@ -57,7 +53,6 @@ impl Joiner {
     }
 
     pub fn value_next(self) -> String {
-        debug!("value_next {:b})", self);
         if self.contains(Joiner::ONLY_CONSONANT) {
             " +c".to_string()
         } else if self.contains(Joiner::ONLY_VOWEL) {
@@ -68,7 +63,6 @@ impl Joiner {
     }
 
     pub fn value_previous(self) -> String {
-        debug!("value_previous {:b}", self);
         if self.contains(Joiner::ONLY_CONSONANT) {
             " -c".to_string()
         } else if self.contains(Joiner::ONLY_VOWEL) {
