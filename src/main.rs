@@ -106,7 +106,7 @@ fn cmd() -> clap::Command {
                 .value_name("FILE")
                 .help("Reads in a raw language file"),
         )
-         .arg(
+        .arg(
             Arg::new("no-prefix")
                 .short('p')
                 .long("no-prefix")
@@ -114,7 +114,7 @@ fn cmd() -> clap::Command {
                 .action(ArgAction::SetTrue)
                 .help("Don't print language chosen (for use with -x)"),
         )
-         .arg(
+        .arg(
             Arg::new("number")
                 .short('n')
                 .long("number")

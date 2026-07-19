@@ -176,15 +176,6 @@ impl FromStr for Syllable {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct BadSyllable;
-
-impl fmt::Display for BadSyllable {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Invalid Syllable")
-    }
-}
-
 // region Classification
 
 #[derive(Clone, Debug, PartialEq)]
