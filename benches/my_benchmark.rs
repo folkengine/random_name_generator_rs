@@ -3,7 +3,11 @@ use rnglib::{Language, RNG};
 
 fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("RNG Fantasy", |b| {
-        b.iter(|| RNG::new(&Language::Fantasy).unwrap().generate_name())
+        b.iter(|| {
+            RNG::new(&Language::Fantasy)
+                .expect("Fantasy language file is valid")
+                .generate_name()
+        });
     });
 }
 

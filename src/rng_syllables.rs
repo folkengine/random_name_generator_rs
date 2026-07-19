@@ -1,4 +1,4 @@
-use rand::distributions::{Distribution, Uniform};
+use rand::distr::{Distribution, Uniform};
 use std::str::FromStr;
 
 use crate::rng_joiner::Joiner;
@@ -21,7 +21,7 @@ impl Syllables {
 
     pub fn new_from_array(strs: &[&str]) -> Syllables {
         strs.iter()
-            .map(|s| Syllable::from_str(s).unwrap())
+            .map(|s| Syllable::from_str(s).expect("array contains valid syllable strings"))
             .collect()
     }
 
@@ -35,8 +35,8 @@ impl Syllables {
 
     pub fn collapse(&self) -> String {
         let mut s = String::new();
-        for i in 0..self.len() {
-            s.push_str(self.get(i).unwrap().value.as_str());
+        for syllable in &self.0 {
+            s.push_str(syllable.value.as_str());
         }
         s
     }
@@ -82,19 +82,19 @@ impl Syllables {
     pub fn next_from(&self, from_syllable: &Syllable) -> Syllable {
         self.filter_from(from_syllable.jnext)
             .get_random()
-            .unwrap()
+            .expect("a compatible syllable follows")
             .clone()
     }
 
     /// Generates a random value from the length of the Syllable Vector - 1.
     /// <https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html#generate-random-numbers-within-a-range/>
     fn rnd(&self) -> usize {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let length = self.len();
         if length < 2 {
             0
         } else {
-            let die = Uniform::from(0..self.len() - 1);
+            let die = Uniform::new(0, self.len() - 1).expect("range is non-empty");
             die.sample(&mut rng)
         }
     }

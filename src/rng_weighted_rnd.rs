@@ -1,7 +1,4 @@
-use rand::{
-    distributions::{Distribution, WeightedIndex},
-    prelude::*,
-};
+use rand::distr::{Distribution, weighted::WeightedIndex};
 use std::sync::LazyLock;
 
 pub static NORMAL_WEIGHT: LazyLock<WeightedRnd> = LazyLock::new(|| WeightedRnd {
@@ -20,8 +17,9 @@ pub struct WeightedRnd {
 
 impl WeightedRnd {
     pub fn random(&self) -> u8 {
-        let dist = WeightedIndex::new(self.weights.as_slice()).unwrap();
-        let mut rng = thread_rng();
+        let dist = WeightedIndex::new(self.weights.as_slice())
+            .expect("weights are non-empty and positive");
+        let mut rng = rand::rng();
         self.counts.as_slice()[dist.sample(&mut rng)]
     }
 }

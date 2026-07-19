@@ -22,20 +22,24 @@ name = "rng"
 path = "src/main.rs"
 
 [dependencies]
-anyhow = "1.0.75"
-bitflags = "2.4.0"
-clap = { version = "4.4.3", features = ["cargo", "derive"] }
-log = "0.4.20"
-rand = "0.8.5"
-regex = "1.9.5"
-rust-embed = "8.0.0"
-titlecase = "2.2.1"
+anyhow = "1.0.104"
+bitflags = "2.13.1"
+clap = { version = "4.6.2", features = ["cargo", "derive"] }
+log = "0.4.33"
+rand = "0.10.2"
+regex = "1.13.1"
+# debug-embed: embed language files even in debug builds; avoids crashes on devices like Android
+rust-embed = { version = "8.12.0", features = ["debug-embed"] }
+titlecase = "3.6.0"
 
 [dev-dependencies]
-criterion = "0.5.1"
-proptest = "1.2.0"
-rstest = "0.18.2"
+criterion = "0.8.2"
+proptest = "1.11.0"
+rstest = "0.26.1"
 
 [[bench]]
 name = "my_benchmark"
 harness = false
+
+[lints.clippy]
+unwrap_used = "deny"

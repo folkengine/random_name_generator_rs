@@ -151,55 +151,40 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
     let is_russian = matches.get_flag("russian");
 
     if matches.get_flag("demonic") {
-        Ok(RNG::from(&Language::Demonic))
+        RNG::try_from(&Language::Demonic)
     } else if matches.get_flag("elven") {
-        Ok(filter_russian(
-            is_russian,
-            &Language::Elven,
-            &Language::Эльфийский,
-        ))
+        filter_russian(is_russian, &Language::Elven, &Language::Эльфийский)
     } else if matches.get_flag("fantasy") {
-        Ok(filter_russian(
-            is_russian,
-            &Language::Fantasy,
-            &Language::Фантазия,
-        ))
+        filter_russian(is_russian, &Language::Fantasy, &Language::Фантазия)
     } else if matches.get_flag("goblin") {
-        Ok(filter_russian(
-            is_russian,
-            &Language::Goblin,
-            &Language::Гоблин,
-        ))
+        filter_russian(is_russian, &Language::Goblin, &Language::Гоблин)
     } else if matches.get_flag("klingon") {
-        Ok(RNG::from(&Language::Klingon))
+        RNG::try_from(&Language::Klingon)
     } else if matches.get_flag("roman") {
-        Ok(filter_russian(
-            is_russian,
-            &Language::Roman,
-            &Language::Римский,
-        ))
+        filter_russian(is_russian, &Language::Roman, &Language::Римский)
     } else if matches.get_flag("curse") {
-        Ok(RNG::from(&Language::Curse))
+        RNG::try_from(&Language::Curse)
     } else if matches.get_flag("german-curse") {
-        Ok(RNG::from(&Language::GermanCurse))
+        RNG::try_from(&Language::GermanCurse)
     } else if matches.get_flag("flipmode") {
         Ok(RNG::random())
     } else {
-        let raw = matches.get_one::<String>("raw").unwrap();
-        let result = RNG::new_from_file(raw.clone());
-
-        match result {
-            Ok(rng) => Ok(rng),
-            Err(_) => Err(RNGError::InvalidLanguageFile),
-        }
+        let raw = matches
+            .get_one::<String>("raw")
+            .ok_or(RNGError::ParsingError)?;
+        RNG::new_from_file(raw.clone())
     }
 }
 
-fn filter_russian(is_russian: bool, english: &Language, russian: &Language) -> RNG {
+fn filter_russian(
+    is_russian: bool,
+    english: &Language,
+    russian: &Language,
+) -> Result<RNG, RNGError> {
     if is_russian {
-        RNG::from(russian)
+        RNG::try_from(russian)
     } else {
-        RNG::from(english)
+        RNG::try_from(english)
     }
 }
 

@@ -22,10 +22,12 @@ static VOWELS: [char; 56] = [
 // https://regex101.com/r/UZ4REr/1
 static FULL_RE: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"^([-+]{0,1})([\p{Cyrillic}\p{Greek}\p{Arabic}\p{Hiragana}A-Za-zūæöäüß']+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
-        .unwrap()
+        .expect("FULL_RE is a valid regex")
 });
-static PREFIX_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(.+)(\-[vcVC]).*").unwrap());
-static SUFFIX_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(.+)(\+[vcVC]).*").unwrap());
+static PREFIX_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(.+)(\-[vcVC]).*").expect("PREFIX_RE is a valid regex"));
+static SUFFIX_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(.+)(\+[vcVC]).*").expect("SUFFIX_RE is a valid regex"));
 
 /// `rng_syllable`: Struct for managing properties of individual syllables with in a language file. Each line within a file
 /// translates into a syllable struct. The reason behind it is to take over most of the complexity of parsing each
@@ -71,19 +73,19 @@ pub struct Syllable {
 
 impl Syllable {
     pub fn ends_with_vowel(&self) -> bool {
-        VOWELS.contains(&self.value.chars().last().unwrap())
+        Syllable::str_ends_with_vowel(self.value.as_str())
     }
 
     pub fn str_ends_with_vowel(s: &str) -> bool {
-        VOWELS.contains(&s.chars().last().unwrap())
+        s.chars().last().is_some_and(|c| VOWELS.contains(&c))
     }
 
     pub fn starts_with_vowel(&self) -> bool {
-        VOWELS.contains(&self.value.chars().next().unwrap())
+        Syllable::str_starts_with_vowel(self.value.as_str())
     }
 
     pub fn str_starts_with_vowel(s: &str) -> bool {
-        VOWELS.contains(&s.chars().next().unwrap())
+        s.chars().next().is_some_and(|c| VOWELS.contains(&c))
     }
 
     fn determine_classification(s: &str) -> Classification {
@@ -131,7 +133,9 @@ impl Syllable {
     }
 
     fn classify(raw: &str) -> (Classification, String) {
-        let cap = FULL_RE.captures(raw).unwrap();
+        let cap = FULL_RE
+            .captures(raw)
+            .expect("callers verify the syllable matches FULL_RE first");
         (
             Syllable::determine_classification(&cap[1]),
             cap[2].to_string(),

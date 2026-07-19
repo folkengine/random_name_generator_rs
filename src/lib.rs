@@ -1,4 +1,5 @@
 #![warn(clippy::pedantic)]
+#![cfg_attr(test, allow(clippy::unwrap_used))]
 
 mod rng_joiner;
 mod rng_syllable;
@@ -19,7 +20,7 @@ pub enum RNGError {
 
 use anyhow::Result;
 use rand::{
-    distributions::{Distribution, Standard},
+    distr::{Distribution, StandardUniform},
     prelude::*,
 };
 use rust_embed::RustEmbed;
@@ -57,13 +58,15 @@ pub struct RNG {
 
 impl RNG {
     /// Use if you want to return the RNG entity, even if there are issues with some
-    /// of the syllables. Otherwise, use `RNG::from`.
+    /// of the syllables. Otherwise, use `RNG::try_from`.
     ///
     /// # Errors
     ///
     /// Errors out if the language file is not able to be processed correctly.
     pub fn new(language: &Language) -> Result<RNG, RNG> {
-        let rng = RNG::process(language);
+        let Ok(rng) = RNG::process(language) else {
+            return Err(RNG::empty(language.to_string()));
+        };
 
         if rng.is_valid() { Ok(rng) } else { Err(rng) }
     }
@@ -81,18 +84,22 @@ impl RNG {
         }
     }
 
+    /// # Panics
+    ///
+    /// Panics if the embedded language file for the chosen language cannot be
+    /// loaded, which cannot happen with the `debug-embed` feature enabled.
     #[must_use]
     pub fn random() -> RNG {
         let my_dialect_type: Language = rand::random();
-        RNG::process(&my_dialect_type)
+        RNG::process(&my_dialect_type).expect("embedded language files are always present")
     }
 
-    fn process(language: &Language) -> RNG {
-        let mut txt = Asset::get(language.get_filename().as_str()).unwrap();
-        RNG::classify(
-            std::str::from_utf8(txt.data.to_mut()).unwrap(),
-            language.to_string(),
-        )
+    fn process(language: &Language) -> Result<RNG, RNGError> {
+        let txt =
+            Asset::get(language.get_filename().as_str()).ok_or(RNGError::InvalidLanguageFile)?;
+        let lines =
+            std::str::from_utf8(txt.data.as_ref()).map_err(|_| RNGError::InvalidLanguageFile)?;
+        Ok(RNG::classify(lines, language.to_string()))
     }
 
     fn classify(lines: &str, name: String) -> RNG {
@@ -186,23 +193,36 @@ impl RNG {
 
     /// # Panics
     ///
-    /// Errors out if the language file is not able to be processed correctly.
+    /// Panics if the RNG's prefix, center, or suffix syllable sets are empty
+    /// or contain no syllable compatible with the one before it.
     #[must_use]
     pub fn generate_syllables_by_count(&self, mut syllable_count: u8) -> Syllables {
         let mut syllables = Syllables::new();
-        let mut last = self.prefixes.get_random().unwrap().clone();
+        let mut last = self
+            .prefixes
+            .get_random()
+            .expect("language has at least one prefix syllable")
+            .clone();
         syllables.add(last.clone());
 
         while syllable_count > 2 {
             let center_syllables = self.centers.filter_from(last.jnext);
-            last = center_syllables.get_random().unwrap().clone();
+            last = center_syllables
+                .get_random()
+                .expect("language has a center syllable compatible with the previous one")
+                .clone();
             syllables.add(last.clone());
             syllable_count -= 1;
         }
 
         let last_syllables = self.suffixes.filter_from(last.jnext);
 
-        syllables.add(last_syllables.get_random().unwrap().clone());
+        syllables.add(
+            last_syllables
+                .get_random()
+                .expect("language has a suffix syllable compatible with the previous one")
+                .clone(),
+        );
 
         syllables
     }
@@ -219,8 +239,10 @@ impl RNG {
     }
 }
 
-impl From<&Language> for RNG {
-    fn from(language: &Language) -> Self {
+impl TryFrom<&Language> for RNG {
+    type Error = RNGError;
+
+    fn try_from(language: &Language) -> Result<Self, Self::Error> {
         RNG::process(language)
     }
 }
@@ -663,9 +685,9 @@ impl fmt::Display for Language {
     }
 }
 
-impl Distribution<Language> for Standard {
+impl Distribution<Language> for StandardUniform {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Language {
-        match rng.gen_range(0..5) {
+        match rng.random_range(0..5) {
             0 => Language::Demonic,
             1 => Language::Elven,
             2 => Language::Fantasy,
