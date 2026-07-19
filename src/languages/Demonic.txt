@@ -6,8 +6,8 @@
 -ad
 -ae +c
 -ag
--ah
 -ahr +v
+-ahri
 -ai +c
 -ak +v
 -aka +c
@@ -24,583 +24,225 @@
 -ap
 -ar
 -as
--ay
--az
--azi
--ba
+-ash
+-asmo +c
+-asta +c
+-aza
 -baal
--bal
--ban
--bar
--be
+-bael
+-baph
+-barb
+-behe +c
 -bel
--beel
--bhū +c
--bi
--bo
--bu
--ca
--caa +c
--cer
--cha
--che +c
--cho
--cla
--cor
--ci +c
--cro
--cul
--da +c
+-beri
+-bif
+-char
+-chem
+-chor
+-cim
+-croc
 -dae +c
--dai +c
--daj
--dan
--de +c
--demi +c
+-dag
+-dant
+-deca +c
 -demo +c
--di
--dia +c
--div +v
--dra
--dre
--dzo
--e +c
--eb
--ei
--el
--en
--et
--eu +c
--fa
--fla
--fo
--for
+-drac
+-drek
+-eli
+-foc
+-forn
 -fur
--eur
--ga
--gho
--gla
--go
--gor
--gre
--gri
--gu
--gua
+-gam
+-glas
+-gorg
+-grem
+-grig
 -gus
--ha
+-haag
 -hab
 -hal
--han
--hav
--he
--i
--ib
--if
--inc
--ip
--j -v
--ji
--ka
--ki
--kil
--ko
--kr +v
--kum
--la
--le
--leg +v
+-haur
 -lem
--lev +v
--li
--lo
--lu
--ma
--mai +c
+-ler
+-lev
+-lil
+-luc
+-mai
 -mal
 -mam
--mar
--mas
--me
--mel
--meph +v
--mi
--mil
--mo
--moa +c
+-mard
+-mast
+-meph
 -mol
--mor
--mur
--na
--naa +v
+-morm
+-murm
+-nab
 -nam
--ne
--nge +c
--ni
--nin
--o
--on
--ono +c
--or
--ör
--ori
--oro
--pa
--pai
--pe
--ph +v
--phe
--pho
--pi
--pith
--po
--pon
--pro
--pru
--pu
--pw +c
--pwcc +v
--ra
--ran
--rang
+-orc
+-oro +c
+-pai +c
+-paz
+-phen
+-pruf
 -rak
--ro
--ru
--sa
+-rav
+-ron
 -sab
--sai +c
 -sam
--se
--sem
--sha
--shai +c
--shay
--she
--si
--so
--st +v
+-shai
+-shax
+-sit
 -sto
--sth +v
--su
--suc
 -sur
--t
--ta
 -tan
--tc
--tch +v
--th +v
--the
--to
--tu
--ty
--u +c
--v +c
--va
--vas
--ve
--we
--wen
--ya
--ye
--yen
--x +c
--xa
--xe
+-tchor
+-tuch
+-typh
+-uko +c
+-val
+-vap
+-vass
+-vep
+-xa +c
 -xez
--xi
--y +v
--ye
--za
--ze
--zi
--zo
-a
-abo +c
+-yeq
+-zag
+-zep
+-zim
 add -c +v
-al
+al -c
 am -c
 ama -c +c
-an
-ang
-ass
-ast
-au +c
-av +v
+ast -c
 ay -c
-az -v +v
-ba
-ban
+bal
 bat
 be
-ber
-bha
-bite
-bo +c
-bor
-ca
-cho
-ci
-chu
-chul
-cri
-cu +c
-da
-daj
-der
-di
+bo
+chos
+dah
 dra +c
 dus
-e
-en
-eni
-er
 ez -c +v
-fo -v
-fro -v +c
-go
 gor
-ha
-han
-he +c
-ho +c
+ha -c +c
 i -c +c
 ia -c +c
 it -c
-ka
-kar
 ki
-ko
-la
-le
-les
+kob
+lab
 li
-lo
 loc +v
-ma
-me
-mei +c
-mi
-min
-mo
-mod
-mosh
-naan -v +v
-ne
-ni
-nin
-no
-o
+lu
+ma +c
+mar
+mas
+mo -c +c
+mor
+nur
 oc
-och +v
-olly -c
-ony -c +c
+olly -c +v
 or
-pa
-phas
-phe
 phi
 pho
-pho +c
-pu
-ra
-ran
-rang
-ri
+ra +c
+ras
 rat
 rax +v
 real
-ro
+rin
+rob
 roma -c +c
-ron
-ru
-rus
-sa
-sal
+ruf
 sh
 sha
-shy
-si
-ske
 sta
-ste
-sto +c
+stem
 su
-t
 ta
-tal +v
-te
-ter
 thi +c
-tia +c
-u
-ur
+tho
+ul -c
 una -c +c
-va
-ya +c
-yo +c
+uz -c
+vi
+ya
 za -v
-zb -v +v
-ze +c
-zi
+ze
+zeb
+zo
 zu
-+a
-+ab
-+ac
-+ach
-+ag
-+ah
-+ai -c
-+aii -c
 +akku -c
 +al
-+ael
-+an
-+ang
-+ap
-+as
-+aus -c
 +aroth
-+ax
-+bel -c
-+ba
-+bas
++as
++b'el -c
 +beth
-+bi
-+bia
-+biel -v
 +bou -v
-+bub -v
++bub
 +bus
-+cale
-+can
-+cas
-+cell
-+ch
-+cha
-+che
-+chies
 +chon
 +christ -v
-+chu
-+cian
-+com
-+cong
-+cus
-+da
 +dai
 +deus
-+dha
-+di
-+dim
-+dit
-+dög
-+duk
-+dya
-+el
-+enti
-+eos
-+er
-+es
-+eth
-+eus -c
-+ex
-+far -v
-+fer -v
-+flas -v
-+fron -v
-+frons -v
-+fuge -v
-+fur
-+ga
-+gan
-+gat
-+ge
-+gi
-+gin
-+go
-+gon
++don
++er -c
++es -c
++gion
 +gor
-+gos
-+gra
-+ha
-+hab
-+hak -v
-+haka -v
-+hem
-+ia -c
-+ian -c
-+iar -c
++goth
 +ias -c
-+iax -c
-+id
-+ie
 +iel
-+in
-+ine -c
-+ion
-+ir
-+ite
 +ith
-+its
-+ius -c
-+j -v
-+jal
-+je
-+jes -v
-+k
 +ka
-+ki
-+ka
-+ke
-+kee
-+la
-+lac
-+laam
-+laas
-+lam
-+lar
-+las
 +lat
-+le
 +lech
-+leth
-+lek
-+les
-+li
 +lial
-+lim
-+lin
-+lion
-+lis
-+lith
 +lius
 +loch
-+lor
-+lous
++lok
 +ma
-+mah
++mael
 +man
-+met
-+mo
 +mon
-+mosh
-+moth -c
-+mous -v
-+mue
-+mur
-+na
++moth
 +nah
-+nak
-+ne
-+neus
-+ni
-+nin
-+nio
-+no
 +nock
-+nn -v
-+nth -v
-+nu
 +nyu
-+och
-+ock
-+oul
-+on
-+oni
-+ong
-+ort
-+ory
-+os
-+oyn
-+par
-+pes
-+pet
-+phan -v
-+phar
++on -c
 +phas
-+pheus
++phegor
++pheles
 +phon
-+phus
-+pid
-+po
++phus -c
 +pos
-+puch
-+pus
-+ra
-+ras
++ra -v
 +rax
-+re
 +rept -v
 +res
-+ri
-+rian
-+ries
-+ris
 +rit
-+rith
-+rong
 +ros
 +roth
-+rt -v
 +run
-+ry
 +s -v
-+sa
 +sag
 +sakku -v
-+se
-+shee
-+sheth
-+sia
-+sias
-+sion
-+sih
-+sit
 +son
-+st -v
-+sta
-+su
 +sura
-+sya
-+ta
 +tan
-+tar
-+te
-+ti
++than
 +tos
-+than -v
-+thim -v
-+thin -v
-+thius -v
-+thus
-+thym -v
-+tis
-+tu
-+uge -c
-+ul
-+um
-+urge
-+us
-+va
-+vac
++uk -c
 +van
-+ve
-+vil
-+vits
-+wang
++vros
 +xas -v
-+y -c
-+ya
-+yak
-+yama -v
-+yaz
-+ym
-+yol
-+yu
-+x -v
 +xu
++y -c
++ym
++yon
++z'el -v
 +zel -v
-+zhi -v
-+zon
 +zou
-+zu
++zu -v
++zuzu

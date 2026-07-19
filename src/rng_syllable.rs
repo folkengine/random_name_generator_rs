@@ -1,10 +1,10 @@
-use lazy_static::lazy_static;
 use regex::Regex;
 use std::fmt;
 use std::str::FromStr;
+use std::sync::LazyLock;
 
-use crate::rng_joiner::Joiner;
 use crate::RNGError;
+use crate::rng_joiner::Joiner;
 
 static _CONSONANTS: [char; 57] = [
     'b', 'ɓ', 'ʙ', 'β', 'c', 'd', 'ɗ', 'ɖ', 'ð', 'f', 'g', 'h', 'j', 'k', 'l', 'ł', 'm', 'ɱ', 'n',
@@ -19,14 +19,13 @@ static VOWELS: [char; 56] = [
     'ѡ', // Russian
 ];
 
-lazy_static! {
-    // https://regex101.com/r/UZ4REr/1
-    static ref FULL_RE: Regex =
-        Regex::new(r"^([-+]{0,1})([\p{Cyrillic}\p{Greek}\p{Arabic}\p{Hiragana}A-Za-zūæö']+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
-            .unwrap();
-    static ref PREFIX_RE: Regex = Regex::new(r"(.+)(\-[vcVC]).*").unwrap();
-    static ref SUFFIX_RE: Regex = Regex::new(r"(.+)(\+[vcVC]).*").unwrap();
-}
+// https://regex101.com/r/UZ4REr/1
+static FULL_RE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^([-+]{0,1})([\p{Cyrillic}\p{Greek}\p{Arabic}\p{Hiragana}A-Za-zūæöäüß']+)\s*([\+\-][vcVC]){0,1}\s{0,1}([\+\-][vcVC]){0,1}$")
+        .unwrap()
+});
+static PREFIX_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(.+)(\-[vcVC]).*").unwrap());
+static SUFFIX_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(.+)(\+[vcVC]).*").unwrap());
 
 /// `rng_syllable`: Struct for managing properties of individual syllables with in a language file. Each line within a file
 /// translates into a syllable struct. The reason behind it is to take over most of the complexity of parsing each

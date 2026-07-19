@@ -1,5 +1,5 @@
-use clap::{command, Arg, ArgAction, ArgMatches};
-use rnglib::{Language, RNGError, RNG};
+use clap::{Arg, ArgAction, ArgMatches, command};
+use rnglib::{Language, RNG, RNGError};
 
 static HELP_TEMPLATE: &str = "{about} {version}
 
@@ -31,6 +31,7 @@ fn main() -> Result<(), RNGError> {
     Ok(())
 }
 
+#[allow(clippy::too_many_lines)]
 fn cmd() -> clap::Command {
     command!()
         .help_template(HELP_TEMPLATE)
@@ -63,6 +64,13 @@ fn cmd() -> clap::Command {
                 .action(ArgAction::SetTrue),
         )
         .arg(
+            Arg::new("klingon")
+                .short('k')
+                .long("klingon")
+                .required(false)
+                .action(ArgAction::SetTrue),
+        )
+        .arg(
             Arg::new("roman")
                 .short('r')
                 .long("roman")
@@ -73,6 +81,13 @@ fn cmd() -> clap::Command {
             Arg::new("curse")
                 .short('c')
                 .long("curse")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("[UNDER CONSTRUCTION]"),
+        )
+        .arg(
+            Arg::new("german-curse")
+                .long("german-curse")
                 .required(false)
                 .action(ArgAction::SetTrue)
                 .help("[UNDER CONSTRUCTION]"),
@@ -155,6 +170,8 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
             &Language::Goblin,
             &Language::Гоблин,
         ))
+    } else if matches.get_flag("klingon") {
+        Ok(RNG::from(&Language::Klingon))
     } else if matches.get_flag("roman") {
         Ok(filter_russian(
             is_russian,
@@ -163,6 +180,8 @@ fn get_rng(matches: &ArgMatches) -> Result<RNG, RNGError> {
         ))
     } else if matches.get_flag("curse") {
         Ok(RNG::from(&Language::Curse))
+    } else if matches.get_flag("german-curse") {
+        Ok(RNG::from(&Language::GermanCurse))
     } else if matches.get_flag("flipmode") {
         Ok(RNG::random())
     } else {

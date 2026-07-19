@@ -130,6 +130,10 @@ $> rng -e
 Elven: daedar latherdre
 ```
 
+## Skills
+
+* [sync-languages](.claude/skills/sync-languages/SKILL.md) - Sync language syllable files from the upstream Ruby project (folkengine/random_name_generator) into src/languages/, reporting new, changed, and unchanged files, and wiring any brand-new languages into the Language enum.
+
 ## Dependencies
 
 * [Anyhow](https://github.com/dtolnay/anyhow)

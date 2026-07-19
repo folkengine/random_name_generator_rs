@@ -65,11 +65,7 @@ impl RNG {
     pub fn new(language: &Language) -> Result<RNG, RNG> {
         let rng = RNG::process(language);
 
-        if rng.is_valid() {
-            Ok(rng)
-        } else {
-            Err(rng)
-        }
+        if rng.is_valid() { Ok(rng) } else { Err(rng) }
     }
 
     /// # Errors
@@ -147,7 +143,7 @@ impl RNG {
 
     #[must_use]
     pub fn generate_name(&self) -> String {
-        self.generate_name_by_count(NORMAL_WEIGHT.gen())
+        self.generate_name_by_count(NORMAL_WEIGHT.random())
     }
 
     /// Returns a vector of names based on the number passed in. Returns
@@ -174,7 +170,7 @@ impl RNG {
 
     #[must_use]
     pub fn generate_short(&self) -> String {
-        self.generate_name_by_count(SHORT_WEIGHT.gen())
+        self.generate_name_by_count(SHORT_WEIGHT.random())
     }
 
     #[must_use]
@@ -185,7 +181,7 @@ impl RNG {
 
     #[must_use]
     pub fn generate_syllables(&self) -> Syllables {
-        self.generate_syllables_by_count(NORMAL_WEIGHT.gen())
+        self.generate_syllables_by_count(NORMAL_WEIGHT.random())
     }
 
     /// # Panics
@@ -276,6 +272,28 @@ mod lib_tests {
         let result = RNG::try_from(&Language::Roman).unwrap();
 
         assert_eq!(result.name, Language::Roman.to_string());
+        assert!(result.bad_syllables.len() < 1);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
+    }
+
+    #[test]
+    fn try_from__klingon() {
+        let result = RNG::try_from(&Language::Klingon).unwrap();
+
+        assert_eq!(result.name, Language::Klingon.to_string());
+        assert!(result.bad_syllables.len() < 1);
+        assert!(result.prefixes.len() > 0);
+        assert!(result.centers.len() > 0);
+        assert!(result.suffixes.len() > 0);
+    }
+
+    #[test]
+    fn try_from__german_curse() {
+        let result = RNG::try_from(&Language::GermanCurse).unwrap();
+
+        assert_eq!(result.name, Language::GermanCurse.to_string());
         assert!(result.bad_syllables.len() < 1);
         assert!(result.prefixes.len() > 0);
         assert!(result.centers.len() > 0);
@@ -445,7 +463,7 @@ mod lib_tests {
         let min = create_min();
 
         let chain: Vec<String> = (1..10)
-            .map(|_| min.generate_name_by_count(NORMAL_WEIGHT.gen()))
+            .map(|_| min.generate_name_by_count(NORMAL_WEIGHT.random()))
             .collect();
 
         chain
@@ -610,7 +628,7 @@ mod lib_tests {
     proptest! {
         #[test]
         fn test_gen_rnd_syllable_count(_ in 0..100i32) {
-            let count = NORMAL_WEIGHT.gen();
+            let count = NORMAL_WEIGHT.random();
             assert!((count < 6) && (count > 1), "count of {} should be less than 6 and greater than 1", count);
         }
     }
@@ -626,15 +644,22 @@ pub enum Language {
     Эльфийский,
     Fantasy,
     Фантазия,
+    GermanCurse,
     Goblin,
     Гоблин,
+    Klingon,
     Roman,
     Римский,
 }
 
 impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{self:?}")
+        match self {
+            // The language file is named after the upstream Ruby project's
+            // german-curse.txt; a hyphen can't appear in a variant name.
+            Language::GermanCurse => write!(f, "German-curse"),
+            _ => write!(f, "{self:?}"),
+        }
     }
 }
 
@@ -680,6 +705,14 @@ mod test_language {
     #[test]
     fn to_filename() {
         assert_eq!(String::from("Elven.txt"), Language::Elven.get_filename());
+    }
+
+    #[test]
+    fn to_filename__german_curse() {
+        assert_eq!(
+            String::from("German-curse.txt"),
+            Language::GermanCurse.get_filename()
+        );
     }
 
     #[test]
