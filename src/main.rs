@@ -15,11 +15,18 @@ fn main() -> Result<(), RNGError> {
     let count: usize = *get_number(&matches).ok_or(RNGError::ParsingError)?;
     let rng = get_rng(&matches)?;
 
-    println!(
-        "{}: {}",
-        rng.name,
-        rng.generate_names_string(count, matches.get_flag("short"))
-    );
+    if matches.get_flag("no-prefix") {
+        println!(
+            "{}",
+            rng.generate_names_string(count, matches.get_flag("short"))
+        );
+    } else {
+        println!(
+            "{}: {}",
+            rng.name,
+            rng.generate_names_string(count, matches.get_flag("short"))
+        );
+    }
 
     Ok(())
 }
@@ -99,7 +106,15 @@ fn cmd() -> clap::Command {
                 .value_name("FILE")
                 .help("Reads in a raw language file"),
         )
-        .arg(
+         .arg(
+            Arg::new("no-prefix")
+                .short('p')
+                .long("no-prefix")
+                .required(false)
+                .action(ArgAction::SetTrue)
+                .help("Don't print language chosen (for use with -x)"),
+        )
+         .arg(
             Arg::new("number")
                 .short('n')
                 .long("number")
