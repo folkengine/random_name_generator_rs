@@ -81,12 +81,15 @@ Options:
   -e, --elven
   -f, --fantasy
   -g, --goblin
+  -k, --klingon
   -r, --roman
   -c, --curse            [UNDER CONSTRUCTION]
+      --german-curse     [UNDER CONSTRUCTION]
   -x, --flipmode         Flipmode is the greatest! (Random language)
       --russian          Use Russian language file, if available
       --short            Creates shorter names
       --raw <FILE>       Reads in a raw language file
+  -p, --no-prefix        Don't print language chosen (for use with -x)
   -n, --number <number>  Number of names created. [default: 2]
   -h, --help             Print help
   -V, --version          Print version
